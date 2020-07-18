@@ -6,8 +6,6 @@
 
   <ItemGroup>
     <Folder Include="DAL\" />
-    <Folder Include="BLL\" />
-    <Folder Include="Domain\" />
   </ItemGroup>
 
 </Project>
