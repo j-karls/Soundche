@@ -10,6 +10,9 @@ namespace Soundche.Pages
 {
     public class IndexModel : PageModel
     {
+        [BindProperty]
+        public string Login { get; set; }
+
         private readonly ILogger<IndexModel> _logger;
 
         public IndexModel(ILogger<IndexModel> logger)
@@ -20,6 +23,11 @@ namespace Soundche.Pages
         public void OnGet()
         {
 
+        }
+
+        public void OnPost()
+        {
+            var login = Request.Form["Login"];
         }
     }
 }
