@@ -30,6 +30,12 @@ namespace Core.BLL
             return null; //repository.GetPlaylists();
         }
 
+        public Playlist NewPlaylist(string playlistName)
+        {
+            new Playlist { Name = playlistName };
+            //return repository.NewPlaylist(new Playlist{});
+            return null;
+        }
         public Playlist Addtrack(Track track, Playlist playlist)
         {
             playlist.AddTrak(track);
