@@ -16,6 +16,10 @@ namespace Core.Domain
 
         //public void StartListening();
         //public event SwitchedSongEventHandler;
-        event EventHandler<SwitchedSongEventArgs> SwitchedSongEvent;
+        event EventHandler<SwitchedSongEventArgs> SwitchedSongEvent; // this should probably be moved to outside this class maybe?
+
+        Playlist CreateNewPlaylist();
+        Playlist AddToPlaylist(Playlist playlist);
+        Playlist GetPlaylist(string name);
     }
 }

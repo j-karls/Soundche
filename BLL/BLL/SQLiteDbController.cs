@@ -56,4 +56,19 @@ public class SQLiteDbController : IDatabaseController
     }
 
     private void OnTimerElapsed(object sender, ElapsedEventArgs e) => StartNewSong();
+
+    public Playlist CreateNewPlaylist()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Playlist AddToPlaylist(Playlist playlist)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Playlist GetPlaylist(string name)
+    {
+        throw new NotImplementedException();
+    }
 }
