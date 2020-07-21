@@ -49,7 +49,7 @@ namespace Soundche
 
             services.AddRazorPages().AddRazorPagesOptions(options =>
             {
-                options.Conventions.AuthorizeFolder("/admin");
+                options.Conventions.AuthorizePage("/VideoPlayer");
             });
         }
 
