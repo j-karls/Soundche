@@ -3,14 +3,14 @@ using MongoDB.Driver;
 using System;
 using System.Timers;
 
-public class MongoDbController : IDatabaseController
+public class SQLiteDbController : IDatabaseController
 {
     public Timer PlaybackTimer = null;
     public Track CurrentTrack = null;
 
     // TODO: decouple database and playlistcontroller
 
-    MongoDbController()
+    SQLiteDbController()
     {
         InitializeDb(); 
     }

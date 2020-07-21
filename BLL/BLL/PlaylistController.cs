@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Core.BLL
 {
-    class PlaylistController
+    public class PlaylistController
     {
         //private database repository; 
         public Playlist ActivePlaylist { get; set; }
