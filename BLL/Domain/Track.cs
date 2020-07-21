@@ -4,10 +4,19 @@ using System.Text;
 
 namespace Core.Domain
 {
-    class Track
+    public class Track
     {
         public string Name { get; set; }
-        public string Link { get; set; }
-        public int Length { get; set; }
+        public string YoutubeUrl { get; set; }
+        public int StartTime { get; set; }
+        public int EndTime { get; set; }
+
+        public Track(string name, string youtubeUrl, int startTime, int endTime)
+        {
+            Name = name;
+            YoutubeUrl = youtubeUrl;
+            StartTime = startTime;
+            EndTime = endTime;
+        }
     }
 }

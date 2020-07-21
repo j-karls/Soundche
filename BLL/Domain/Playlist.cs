@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Core.Domain
 {
-    class Playlist
+    public class Playlist
     {
         public string Name { get; set; }
         public List<Track> Tracks { get; set; }
