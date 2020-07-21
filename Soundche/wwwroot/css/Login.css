@@ -23,13 +23,13 @@ html, body {
 }
 
 .card-header h3 {
-    color: white;
+    color: #ffff00;
 }
 
 .input-group-prepend span {
     width: 50px;
     background-color: #006633;
-    color: black;
+    color: #ffff00;
     border: 0 !important;
 }
 
@@ -39,7 +39,7 @@ input:focus {
 }
 
 .login_btn {
-    color: black;
+    color: #ffff00;
     background-color: #006633;
     width: 100px;
 }
@@ -49,8 +49,17 @@ input:focus {
         background-color: white;
     }
 
+a {
+    color: #ffff00;
+}
+
+.text-muted {
+    color: #999966 !important;
+    /*color: #6c757d !important;*/
+}
+
 .links {
-    color: white;
+    color: #999966;
 }
 
     .links a {
