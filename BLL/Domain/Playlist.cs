@@ -6,6 +6,7 @@ namespace Core.Domain
 {
     class Playlist
     {
+        public string Name { get; set; }
         public List<Track> Tracks { get; set; }
 
         public void AddTrak(Track track)
