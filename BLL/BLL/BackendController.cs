@@ -19,5 +19,14 @@ namespace Core.BLL
 
 
         // It also raises the database event to the top, so that the individual clients can react to it
+
+
+        // timer
+        // current song
+        // start playback
+        // connect playlist
+        // save playlist ?
+        // load playlist ?
+        // Aggregates playlist manager and database manager and maybe a room manager, if this ends up making sense
     }
 }
