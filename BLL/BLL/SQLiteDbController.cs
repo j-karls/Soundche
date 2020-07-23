@@ -1,61 +1,51 @@
 ﻿using Core.Domain;
 using MongoDB.Driver;
 using System;
-using System.Timers;
+using System.Collections.Generic;
 
 public class SQLiteDbController : IDatabaseController
 {
-    public Timer PlaybackTimer = null;
-    public Track CurrentTrack = null;
+    public string DbPath { get; set; }
 
-    // TODO: decouple database and playlistcontroller
-
-    SQLiteDbController()
+    SQLiteDbController(string dbPath = "sqlite.db")
     {
-        InitializeDb(); 
+        DbPath = dbPath;
     }
 
-    private void InitializeDb()
+    public void InitializeDb()
     {
-        //var client = new MongoClient();
+        // https://docs.microsoft.com/en-us/dotnet/standard/data/sqlite/?tabs=netcore-cli
         // make new documentbased db if none exists, establish connection
+
+
+        /*
+         using (var connection = new SqliteConnection("Data Source=hello.db"))
+        {
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText =
+            @"
+                SELECT name
+                FROM user
+                WHERE id = $id
+            ";
+            command.Parameters.AddWithValue("$id", id);
+
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    var name = reader.GetString(0);
+
+                    Console.WriteLine($"Hello, {name}!");
+                }
+            }
+        }
+        */
+
         throw new NotImplementedException();
     }
-
-    public event EventHandler<SwitchedSongEventArgs> SwitchedSongEvent;
-
-    public void StartPlayback(Playlist playlist)
-    {
-        if (CurrentTrack is null) // If no song is running - NOTE, this assumes that there is actually a playlist
-        {
-            StartNewSong();
-        }
-    }
-
-    private void StartNewSong()
-    {
-        Track track = GetNewTrack();
-        CurrentTrack = track;
-        StartTimer(track.EndTime - track.StartTime);
-        SwitchedSongEvent(this, new SwitchedSongEventArgs(track.YoutubeUrl, track.StartTime));
-    }
-
-    private Track GetNewTrack() // Get new track from a playlist
-    {
-        // Put this into some "collected playlists manager" class
-        return new Track("Yir Boi", "urlboi", 0, 10);
-        // return new NotImplementedException();
-    }
-
-    private void StartTimer(double interval)
-    {
-        PlaybackTimer = new Timer(interval);
-        PlaybackTimer.Elapsed += OnTimerElapsed; //try using short lambda syntax here
-        PlaybackTimer.AutoReset = false;
-        PlaybackTimer.Enabled = true;
-    }
-
-    private void OnTimerElapsed(object sender, ElapsedEventArgs e) => StartNewSong();
 
     public Playlist CreateNewPlaylist()
     {
@@ -69,6 +59,12 @@ public class SQLiteDbController : IDatabaseController
 
     public Playlist GetPlaylist(string name)
     {
+        throw new NotImplementedException();
+    }
+
+    public List<string> GetUserInfo(string username)
+    {
+        // gets playlist names and other misc publically available stuff
         throw new NotImplementedException();
     }
 }

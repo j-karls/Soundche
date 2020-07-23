@@ -19,6 +19,12 @@ namespace Soundche
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+
+            // TODO: Create new singleton service - one roomController and all its constituent classes
+            // Then, inside each session creation, subscribe some method in the video player page to the switchedSongEvent
+            // It then changes the "src" value to this new eventarg.url
+            // Also inside session creation, query the database singleton for your playlist
         }
 
         public IConfiguration Configuration { get; }
