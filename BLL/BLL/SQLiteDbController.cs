@@ -7,7 +7,7 @@ public class SQLiteDbController : IDatabaseController
 {
     public string DbPath { get; set; }
 
-    SQLiteDbController(string dbPath = "sqlite.db")
+    public SQLiteDbController(string dbPath = "sqlite.db")
     {
         DbPath = dbPath;
     }

@@ -8,7 +8,6 @@ namespace Core.BLL
 {
     public class RoomController
     {
-
         public Timer PlaybackTimer = null;
         public Track CurrentTrack = null;
 
@@ -20,6 +19,12 @@ namespace Core.BLL
         // basically is the room (that manages the people that are inside, wanting to listen to songs together)
 
         // It also raises the database event to the top, so that the individual clients can react to it
+
+        public RoomController()
+        {
+            PlaylistController = new PlaylistController();
+            DatabaseController = new SQLiteDbController();
+        }
 
         public event EventHandler<SwitchedSongEventArgs> SwitchedSongEvent;
 
