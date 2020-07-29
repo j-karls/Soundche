@@ -23,7 +23,7 @@ namespace Core.BLL
         public RoomController()
         {
             PlaylistController = new PlaylistController();
-            DatabaseController = new SQLiteDbController();
+            DatabaseController = new LiteDbController();
         }
 
         public event EventHandler<SwitchedSongEventArgs> SwitchedSongEvent;

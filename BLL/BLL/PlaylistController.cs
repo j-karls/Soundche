@@ -45,13 +45,13 @@ namespace Core.BLL
 
         public Playlist NewPlaylist(string playlistName)
         {
-            new Playlist { Name = playlistName };
+            new Playlist(playlistName);
             //return repository.NewPlaylist(new Playlist{});
             return null;
         }
         public Playlist Addtrack(Track track, Playlist playlist)
         {
-            playlist.AddTrak(track);
+            playlist.AddTrack(track);
             Playlist newplaylist = null;// = repository.UpdatePlaylist(EditPlaylist);
             return newplaylist;
         }
