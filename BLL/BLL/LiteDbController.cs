@@ -55,7 +55,7 @@ namespace Core.BLL
 
         private User GetShitHardcodedUserBoi()
         {
-            return new User("Emilen Stabilen", new List<Playlist> { new Playlist("cancerlisten", new List<Track> { 
+            return User.CreateUser("Emilen Stabilen", new List<Playlist> { Playlist.CreatePlaylist("cancerlisten", new List<Track> { 
                 new Track("♂ Leave the Gachimuchi on ♂", "https://www.youtube.com/watch?v=BH726JXRok0", 0, 300),
                 new Track("♂️ AssClap ♂️ (Right version) REUPLOAD", "https://www.youtube.com/watch?v=NdqbI0_0GsM", 15, 100)
             })});
@@ -75,32 +75,12 @@ namespace Core.BLL
                 .ToList();
         }
 
-        public User GetSpecificUser()
+        public User GetSpecificUser(string username)
         {
             //users.FindById();
             throw new NotImplementedException();
         }
 
 
-
-        public Playlist CreateNewPlaylist()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Playlist AddToPlaylist(Playlist playlist)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Playlist GetPlaylist(string name)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<string> GetUserInfo(string username)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

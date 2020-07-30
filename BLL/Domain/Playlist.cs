@@ -11,11 +11,10 @@ namespace Core.Domain
         public List<Track> Tracks { get; set; }
 
         public Playlist() { }
-        public Playlist(string name, List<Track> tracks = null)
+        public static Playlist CreatePlaylist(string name, List<Track> tracks = null)
         {
-            /*if (String.IsNullOrEmpty(name)) throw new InvalidDataException();
-            Name = name;
-            Tracks = tracks ?? new List<Track>();*/
+            if (String.IsNullOrEmpty(name)) throw new InvalidDataException();
+            return new Playlist { Name = name, Tracks = tracks ?? new List<Track>() };
         }
 
         public void AddTrack(Track track)

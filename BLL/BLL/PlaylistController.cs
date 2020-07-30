@@ -45,7 +45,7 @@ namespace Core.BLL
 
         public Playlist NewPlaylist(string playlistName)
         {
-            new Playlist(playlistName);
+            //new Playlist (playlistName);
             //return repository.NewPlaylist(new Playlist{});
             return null;
         }

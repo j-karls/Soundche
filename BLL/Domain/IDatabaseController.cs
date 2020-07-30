@@ -11,9 +11,11 @@ namespace Core.Domain
         void InitializeDb();
 
         // Change these to "saveplaylist" and "getplaylist". Move rest to playlist controller
-        Playlist CreateNewPlaylist();
-        Playlist AddToPlaylist(Playlist playlist);
-        Playlist GetPlaylist(string name);
-        List<string> GetUserInfo(string username);
+        //Playlist CreateNewPlaylist();
+        //Playlist AddToPlaylist(Playlist playlist);
+        //Playlist GetPlaylist(string name);
+        //List<string> GetUserInfo(string username);
+        public User GetSpecificUser(string username);
+
     }
 }

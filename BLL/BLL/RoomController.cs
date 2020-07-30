@@ -58,7 +58,7 @@ namespace Core.BLL
             PlaylistController.AddPlaylist(playlist);
         }
 
-        public Playlist GetPlaylist(string name) => DatabaseController.GetPlaylist(name);
+        public User GetUserInfo(string username) => DatabaseController.GetSpecificUser(username);
 
         public List<string> GetPlaylistNames(string username) => DatabaseController.GetUserInfo(username); 
         // gets playlist names and other misc publically available stuff

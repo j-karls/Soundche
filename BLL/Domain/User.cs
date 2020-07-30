@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Core.Domain
@@ -12,11 +13,17 @@ namespace Core.Domain
 
 
         public User() { } // Public empty ctor necessary for database
-        public User(string name, List<Playlist> playlists = null)
+
+        public static User CreateUser(string name, List<Playlist> playlists = null)
         {
-            /*if (String.IsNullOrEmpty(name)) throw new InvalidDataException();
-            Name = name;
-            Playlists = playlists ?? new List<Playlist>();*/
+            if (String.IsNullOrEmpty(name)) throw new InvalidDataException();
+
+            return new User { Name = name, Playlists = playlists ?? new List<Playlist>() };
+        }
+
+        public Playlist GetPlaylist(string name)
+        {
+            return Playlists.First(x => x.Name == name);
         }
     }
 }
