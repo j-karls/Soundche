@@ -26,5 +26,24 @@ namespace Core.Domain
         {
             Tracks.Remove(track);
         }
+
+
+        /*
+                 public Playlist Addtrack(Track track, Playlist playlist)
+        {
+            playlist.AddTrack(track);
+            Playlist newplaylist = null;// = repository.UpdatePlaylist(EditPlaylist);
+            return newplaylist;
+        }
+
+        public Playlist RemoveTrack (Track track, Playlist playlist)
+        {
+            playlist.RemoveTrack(track);
+            Playlist newplaylist = null; //= repository.UpdatePlaylist(playlist);
+            return newplaylist;
+        }
+
+         */
+
     }
 }

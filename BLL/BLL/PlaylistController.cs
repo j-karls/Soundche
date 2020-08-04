@@ -1,6 +1,7 @@
 ﻿using Core.Domain;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Core.BLL
@@ -17,51 +18,23 @@ namespace Core.BLL
 
         public SongQueueMethod SongQueueType { get; set; }
 
+        //private func songfunc
+        
+        private Track GetTrackRandomize()
+        {
+            // Flatten list, then get random element
+            Random rand = new Random();
+            Track[] flat = ActivePlaylists.SelectMany(x => x.Tracks).ToArray();
+            return flat[rand.Next(flat.Length)];
+        }
+
         public List<Playlist> ActivePlaylists { get; private set; }
 
 
-        //private database repository; 
-        public Playlist ActivePlaylist { get; set; }
-        public PlaylistController()
-        {
-            //repository = new database{};
-        }
 
-        public void SetActivePlaylist (string playlistName)
-        {
-            ActivePlaylist = GetPlaylist(playlistName);
-            //repository.SetActivePlaylist(playlistName);
-        }
 
-        public Playlist GetPlaylist(string playlistName)
-        {
-            return null; //repository.GetPlaylist(playlistName);
-        }
 
-        public Playlist GetPlaylists()
-        {
-            return null; //repository.GetPlaylists();
-        }
 
-        public Playlist NewPlaylist(string playlistName)
-        {
-            //new Playlist (playlistName);
-            //return repository.NewPlaylist(new Playlist{});
-            return null;
-        }
-        public Playlist Addtrack(Track track, Playlist playlist)
-        {
-            playlist.AddTrack(track);
-            Playlist newplaylist = null;// = repository.UpdatePlaylist(EditPlaylist);
-            return newplaylist;
-        }
-
-        public Playlist RemoveTrack (Track track, Playlist playlist)
-        {
-            playlist.RemoveTrack(track);
-            Playlist newplaylist = null; //= repository.UpdatePlaylist(playlist);
-            return newplaylist;
-        }
         public Track GetNewTrack() // Get new track from a playlist
         {
             // Put this into some "collected playlists manager" class
