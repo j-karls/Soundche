@@ -14,7 +14,7 @@ namespace Core.BLL
         private IQueueMethod _queueFunc;
         public List<Playlist> ActivePlaylists { get; private set; }
 
-        public PlaylistController(List<Playlist> playlists, SongQueueMethodEnum queueType)
+        public PlaylistController(List<Playlist> playlists, SongQueueMethodEnum queueType = SongQueueMethodEnum.WeightedRoundRobin)
         {
             ActivePlaylists = playlists;
             SwitchSongQueueMethod(queueType);
@@ -34,7 +34,11 @@ namespace Core.BLL
             }
         }
 
-        public Track GetNextTrack() => _queueFunc.Next();
+        public Track GetNextTrack()
+        {
+            if (ActivePlaylists.IsNullOrEmpty()) throw new DataMisalignedException();
+            return _queueFunc.Next();
+        }
 
         public void AddPlaylist(Playlist playlist)
         {
@@ -43,7 +47,8 @@ namespace Core.BLL
             SwitchSongQueueMethod(SongQueueType);
 
             // TODO: This likely has some problems regarding which song we got to. So we should probably like 
-            // to add the playlist gracefully to an existing songqueuemethod somehow. Probably add that method to the interface
+            // to add the playlist gracefully to an existing songqueuemethod somehow. Probably add 
+            // "AddPlaylist" to the IQueueMethod interface 
         }
     }
 }

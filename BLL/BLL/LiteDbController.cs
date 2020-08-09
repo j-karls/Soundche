@@ -81,6 +81,8 @@ namespace Core.BLL
             throw new NotImplementedException();
         }
 
+        // save playlist ?
+        // load playlist ?
 
     }
 }

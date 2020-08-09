@@ -11,18 +11,15 @@ namespace Core.BLL
         public Timer PlaybackTimer = null;
         public Track CurrentTrack = null;
 
-        public PlaylistController PlaylistController { get; set; }
-        public IDatabaseController DatabaseController { get; set; }
+        public PlaylistController PlaylistController { get; private set; }
+        public IDatabaseController DatabaseController { get; private set; }
 
         // This class is the singleton - as such, only one room is currently allowed in the program
         // It is the top level class that manages the database, the playlistmanager (which controlls which song to play) and
         // basically is the room (that manages the people that are inside, wanting to listen to songs together)
 
-        // It also raises the database event to the top, so that the individual clients can react to it
-
         public RoomController()
         {
-            PlaylistController = new PlaylistController();
             DatabaseController = new LiteDbController();
         }
 
@@ -33,39 +30,24 @@ namespace Core.BLL
         private void StartTimer(double interval)
         {
             PlaybackTimer = new Timer(interval);
-            PlaybackTimer.Elapsed += OnTimerElapsed; //try using short lambda syntax here
+            PlaybackTimer.Elapsed += OnTimerElapsed;
             PlaybackTimer.AutoReset = false;
             PlaybackTimer.Enabled = true;
         }
         private void StartNewSong()
         {
-            Track newTrack = PlaylistController.GetNewTrack();
+            Track newTrack = PlaylistController.GetNextTrack();
             CurrentTrack = newTrack;
             StartTimer(newTrack.EndTime - newTrack.StartTime);
             SwitchedSongEvent(this, new SwitchedSongEventArgs(newTrack.YoutubeUrl, newTrack.StartTime));
         }
 
-        public void StartPlayback()
-        {
-            if (CurrentTrack is null) // If no song is running - NOTE, this assumes that there is actually a playlist
-            {
-                StartNewSong();
-            }
-        }
-        
         public void ConnectPlaylist(Playlist playlist)
         {
-            PlaylistController.AddPlaylist(playlist);
+            if (PlaylistController is null) PlaylistController = new PlaylistController(new List<Playlist>{ playlist });
+            else PlaylistController.AddPlaylist(playlist);
         }
 
         public User GetUserInfo(string username) => DatabaseController.GetSpecificUser(username);
-
-        public List<string> GetPlaylistNames(string username) => DatabaseController.GetUserInfo(username); 
-        // gets playlist names and other misc publically available stuff
-
-        // connect playlist
-        // save playlist ?
-        // load playlist ?
-        // Aggregates playlist manager and database manager and maybe a room manager, if this ends up making sense
     }
 }
