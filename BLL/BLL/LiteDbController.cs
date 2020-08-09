@@ -8,9 +8,10 @@ namespace Core.BLL
 {
     public class LiteDbController : IDatabaseController
     {
-        public string DbPath { get; set; }
+        // LiteDB Documentation at https://www.litedb.org/docs/getting-started/
 
-        private ILiteCollection<User> users;
+        public string DbPath { get; private set; }
+        private ILiteCollection<User> _users;
 
         public LiteDbController(string dbPath = "lite.db")
         {
@@ -24,35 +25,28 @@ namespace Core.BLL
             using(var db = new LiteDatabase(DbPath))
             {
                 // Get a collection (or create, if doesn't exist) 
-                users = db.GetCollection<User>("users");
+                _users = db.GetCollection<User>("users");
 
+                // TRY THIS SHIT with IDS's SUCH THAT I CAN GET A SINGLE ITEM LATER
+                // users.Insert(new BsonValue(BsonType.Int32), hardcodeduser); 
 
-
-
-                User hardcodeduser = GetShitHardcodedUserBoi(); //////////////TODO BOIIII
-
-
-
-
-                // users.Insert(new BsonValue(BsonType.Int32), hardcodeduser); TRY THIS SHIT with IDS's SUCH THAT I CAN GET A SINGLE ITEM LATER
-
-                // Insert new customer document (Id will be auto-incremented)
-                users.Insert(hardcodeduser);
-
-
-                /*
-                // Let's create an index in phone numbers (using expression). It's a multikey index
-                col.EnsureIndex(x => x.Phones); 
-
-                // and now we can query phones
-                var r = col.FindOne(x => x.Phones.Contains("8888-5555"));
-                 */
-
-                User emilen = QueryUsersTemp()[0];
-                Console.WriteLine(emilen);
+                ////////////// TESTING BOIIII
+                // User hardcodeduser = GetShitHardcodedUserBoi(); 
+                // _users.Insert(hardcodeduser);
+                // User emilen = QueryUsersTemp()[0];
+                // Console.WriteLine(emilen);
             }
         }
 
+        public void UpdateUser(User user) => _users.Update(user);
+
+        public User GetUser(string username)
+        {
+            // Returns null if no fitting user is found
+            return _users.FindOne(x => x.Name == username); 
+        }
+
+        /*
         private User GetShitHardcodedUserBoi()
         {
             return User.CreateUser("Emilen Stabilen", new List<Playlist> { Playlist.CreatePlaylist("cancerlisten", new List<Track> { 
@@ -61,28 +55,14 @@ namespace Core.BLL
             })});
         }
 
-        public void UpdateUser(User user)
-        {
-            users.Update(user);
-        }
-
         public List<User> QueryUsersTemp()
         {
-            // Use LINQ to query documents (filter, sort, transform)
-            return users.Query()
+            // Use LINQ to query documents with more complex search queries
+            return _users.Query()
                 .Where(x => x.Name.StartsWith("Emilen"))
                 .OrderBy(x => x.Name)
                 .ToList();
         }
-
-        public User GetSpecificUser(string username)
-        {
-            //users.FindById();
-            throw new NotImplementedException();
-        }
-
-        // save playlist ?
-        // load playlist ?
-
+        */
     }
 }

@@ -48,6 +48,6 @@ namespace Core.BLL
             else PlaylistController.AddPlaylist(playlist);
         }
 
-        public User GetUserInfo(string username) => DatabaseController.GetSpecificUser(username);
+        public User GetUserInfo(string username) => DatabaseController.GetUser(username);
     }
 }

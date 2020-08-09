@@ -11,8 +11,7 @@ namespace Core.Domain
         public string Name { get; set; }
         public List<Playlist> Playlists { get; set; }
 
-
-        public User() { } // Public empty ctor necessary for database
+        public User() { } // Public empty ctor necessary for database serialization
 
         public static User CreateUser(string name, List<Playlist> playlists = null)
         {

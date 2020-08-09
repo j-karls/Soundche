@@ -7,15 +7,16 @@ namespace Core.Domain
 {
     public class Playlist
     {
-        public string Name { get; private set; }
-        public List<Track> Tracks { get; private set; }
+        public string Name { get; set; }
+        public List<Track> Tracks { get; set; }
 
         public Playlist() { }
 
-        public static Playlist CreatePlaylist(string name, List<Track> tracks = null)
+        public Playlist(string name, List<Track> tracks = null)
         {
             if (String.IsNullOrEmpty(name)) throw new InvalidDataException();
-            return new Playlist { Name = name, Tracks = tracks ?? new List<Track>() };
+            Name = name;
+            Tracks = tracks ?? new List<Track>();
         }
 
         public void AddTrack(Track track)
