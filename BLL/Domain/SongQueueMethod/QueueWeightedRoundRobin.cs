@@ -23,17 +23,18 @@ namespace Core.Domain.SongQueueMethod
         public Track Next()
         {
             // Get next track
-            int rand = _rand.Next(100); /*
-            var tup = _tuple[ _playlistIdx];
+            double decimalRand = _rand.Next(100) / 100; // Values range from 0.00 to 0.99
+            var tup = _tuple.First(x => decimalRand < x.cumsumSongPercentage); 
+            // By the nature of cumulative sums, there is always going to be one playlist with a cumsumsongpercentage of 1.00
+            // meaning that we always select one playlist at random
+            // the more tracks a playlist, the more likely it is to be selected
+
             Track nextTrack = tup.playlist.Tracks[tup.trackIdx];
 
-            // Update indexes
-            _playlistIdx = (_playlistIdx + 1) % _tuple.Count;
+            // Update the track index of the corresponding playlist 
             tup.trackIdx = (tup.trackIdx + 1) % tup.playlist.Tracks.Count;
 
-            return nextTrack;*/
-
-            throw new NotImplementedException(); // almost done fuck
+            return nextTrack;
         }
     }
 }
