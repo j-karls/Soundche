@@ -19,7 +19,7 @@ namespace Core.BLL
             InitializeDb();
         }
 
-        public void InitializeDb() 
+        private void InitializeDb() 
         { 
             // Open database (or create if doesn't exist)
             using(var db = new LiteDatabase(DbPath))
@@ -46,10 +46,25 @@ namespace Core.BLL
             return _users.FindOne(x => x.Name == username); 
         }
 
-        /*
-        private User GetShitHardcodedUserBoi()
+        public void AddUser(User user)
         {
-            return User.CreateUser("Emilen Stabilen", new List<Playlist> { Playlist.CreatePlaylist("cancerlisten", new List<Track> { 
+            _users.Insert(user);
+        }
+
+        public void InsertShitHardcodedUserBoi()
+        {
+            _users.Insert(User.CreateUser("Emilen Stabilen", new List<Playlist> { new Playlist("cancerlisten", new List<Track> {
+                new Track("♂ Leave the Gachimuchi on ♂", "https://www.youtube.com/watch?v=BH726JXRok0", 0, 300),
+                new Track("♂️ AssClap ♂️ (Right version) REUPLOAD", "https://www.youtube.com/watch?v=NdqbI0_0GsM", 15, 100)
+            })}));
+
+            Console.WriteLine("Got it");
+        }
+
+        /*
+        public User GetShitHardcodedUserBoi()
+        {
+            return User.CreateUser("Emilen Stabilen", new List<Playlist> { new Playlist("cancerlisten", new List<Track> { 
                 new Track("♂ Leave the Gachimuchi on ♂", "https://www.youtube.com/watch?v=BH726JXRok0", 0, 300),
                 new Track("♂️ AssClap ♂️ (Right version) REUPLOAD", "https://www.youtube.com/watch?v=NdqbI0_0GsM", 15, 100)
             })});
