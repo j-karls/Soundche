@@ -8,13 +8,13 @@ using System.Text;
 
 namespace Core.BLL
 {
-    public class PlaylistController
+    public class PlaylistManager
     {
         public SongQueueMethodEnum SongQueueType { get; private set; }
         private IQueueMethod _queueFunc;
         public List<Playlist> ActivePlaylists { get; private set; }
 
-        public PlaylistController(List<Playlist> playlists, SongQueueMethodEnum queueType = SongQueueMethodEnum.WeightedRoundRobin)
+        public PlaylistManager(List<Playlist> playlists, SongQueueMethodEnum queueType = SongQueueMethodEnum.WeightedRoundRobin)
         {
             ActivePlaylists = playlists;
             SwitchSongQueueMethod(queueType);

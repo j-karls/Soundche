@@ -1,7 +1,9 @@
 ﻿using Core.Domain;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using System.Timers;
 
 namespace Core.BLL
@@ -11,8 +13,8 @@ namespace Core.BLL
         public Timer PlaybackTimer = null;
         public Track CurrentTrack = null;
 
-        public PlaylistController PlaylistController { get; private set; }
-        public IDatabaseController DatabaseController { get; private set; }
+        public PlaylistManager PlaylistController { get; private set; }
+        public IDatabaseManager DatabaseController { get; private set; }
 
         // This class is the singleton - as such, only one room is currently allowed in the program
         // It is the top level class that manages the database, the playlistmanager (which controlls which song to play) and
@@ -20,7 +22,7 @@ namespace Core.BLL
 
         public RoomController()
         {
-            DatabaseController = new LiteDbController();
+            DatabaseController = new LiteDbManager();
         }
 
         public event EventHandler<SwitchedSongEventArgs> SwitchedSongEvent;
@@ -44,10 +46,15 @@ namespace Core.BLL
 
         public void ConnectPlaylist(Playlist playlist)
         {
-            if (PlaylistController is null) PlaylistController = new PlaylistController(new List<Playlist>{ playlist });
+            if (PlaylistController is null) PlaylistController = new PlaylistManager(new List<Playlist>{ playlist });
             else PlaylistController.AddPlaylist(playlist);
         }
 
         public User GetUserInfo(string username) => DatabaseController.GetUser(username);
+
+        public Task CallStuff()
+        {
+            return new Task(DatabaseController.InsertShitHardcodedUserBoi);
+        }
     }
 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Core.Domain
 {
-    public interface IDatabaseController
+    public interface IDatabaseManager
     {
         // Needs to be initialized as a singleton, such that all sessions use the same connection to the database
 

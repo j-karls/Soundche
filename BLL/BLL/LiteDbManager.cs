@@ -6,14 +6,14 @@ using System.Text;
 
 namespace Core.BLL
 {
-    public class LiteDbController : IDatabaseController
+    public class LiteDbManager : IDatabaseManager
     {
         // LiteDB Documentation at https://www.litedb.org/docs/getting-started/
 
         public string DbPath { get; private set; }
         private ILiteCollection<User> _users;
 
-        public LiteDbController(string dbPath = "lite.db")
+        public LiteDbManager(string dbPath = "lite.db")
         {
             DbPath = dbPath;
             InitializeDb();
