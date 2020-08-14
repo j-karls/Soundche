@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Soundche", "Soundche\Soundc
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WEB", "WEB", "{C37B2571-595D-4296-ABE9-75D4F8B46DC5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "BLL\Core.csproj", "{57375F44-5CAE-4FF6-A88C-CF8B7D2A9AB0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "BLL\Core.csproj", "{57375F44-5CAE-4FF6-A88C-CF8B7D2A9AB0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{68E4E6A6-616A-4DB9-98AB-84924F755107}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soundche - (Final) Den sande scooter v2", "Soundche - (Final) Den sande scooter v2\Soundche - (Final) Den sande scooter v2.csproj", "{E6073A34-438E-4E0C-9D6C-5DCE2FF0B6D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +27,10 @@ Global
 		{57375F44-5CAE-4FF6-A88C-CF8B7D2A9AB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57375F44-5CAE-4FF6-A88C-CF8B7D2A9AB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57375F44-5CAE-4FF6-A88C-CF8B7D2A9AB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6073A34-438E-4E0C-9D6C-5DCE2FF0B6D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6073A34-438E-4E0C-9D6C-5DCE2FF0B6D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6073A34-438E-4E0C-9D6C-5DCE2FF0B6D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6073A34-438E-4E0C-9D6C-5DCE2FF0B6D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,6 +38,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{4A46F092-3ED9-4654-BABF-74DEB71A7593} = {C37B2571-595D-4296-ABE9-75D4F8B46DC5}
 		{57375F44-5CAE-4FF6-A88C-CF8B7D2A9AB0} = {68E4E6A6-616A-4DB9-98AB-84924F755107}
+		{E6073A34-438E-4E0C-9D6C-5DCE2FF0B6D6} = {C37B2571-595D-4296-ABE9-75D4F8B46DC5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FE7BB872-FEB2-458F-83CE-E36B021225E5}
