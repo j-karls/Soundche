@@ -10,11 +10,11 @@ namespace Soundche.Pages.Shared
 {
     public class VideoPlayerModel : PageModel
     {
-        private readonly RoomController _roomController;
+        public readonly RoomController RoomController;
 
         public VideoPlayerModel(RoomController roomController)
         {
-            _roomController = roomController;
+            RoomController = roomController; // RoomController is our singleton - ergo only one room is active at a time
         }
 
         public void OnGet()

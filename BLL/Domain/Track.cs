@@ -11,6 +11,7 @@ namespace Core.Domain
         public int StartTime { get; set; }
         public int EndTime { get; set; }
 
+        public Track() { }
         public Track(string name, string youtubeUrl, int startTime, int endTime)
         {
             Name = name;

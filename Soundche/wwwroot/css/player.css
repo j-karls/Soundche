@@ -1,0 +1,13 @@
+﻿body {
+}
+
+.test_btn {
+    color: #ffff00;
+    background-color: #006633;
+    width: 100px;
+}
+
+    .test_btn:hover {
+        color: black;
+        background-color: white;
+    }

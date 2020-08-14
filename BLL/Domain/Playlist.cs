@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace Core.Domain
@@ -9,7 +10,16 @@ namespace Core.Domain
         public string Name { get; set; }
         public List<Track> Tracks { get; set; }
 
-        public void AddTrak(Track track)
+        public Playlist() { }
+
+        public Playlist(string name, List<Track> tracks = null)
+        {
+            if (String.IsNullOrEmpty(name)) throw new InvalidDataException();
+            Name = name;
+            Tracks = tracks ?? new List<Track>();
+        }
+
+        public void AddTrack(Track track)
         {
             Tracks.Add(track);
         }
