@@ -1,0 +1,16 @@
+﻿@model Soundche____Final__Den_sande_scooter_v2.Models.HangoutViewModel
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    string currentSong = Model.CurrentSong + "?enablejsapi";
+
+    if (Model.AutoPlay)
+    {
+        currentSong += "&autoplay=1";
+    }
+}
+<div class="embed-responsive embed-responsive-21by9">
+    <iframe class="embed-responsive-item" src="@currentSong" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+<partial name="_AudioPlayer" />
