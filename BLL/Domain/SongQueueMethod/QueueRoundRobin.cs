@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Core.Domain.SongQueueMethod
+namespace Soundche.Core.Domain.SongQueueMethod
 {
     public class QueueRoundRobin : IQueueMethod
     {

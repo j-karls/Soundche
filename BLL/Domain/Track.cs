@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Core.Domain
+namespace Soundche.Core.Domain
 {
     public class Track
     {

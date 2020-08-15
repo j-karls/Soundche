@@ -1,12 +1,12 @@
-﻿using Core.Domain;
-using Core.Domain.SongQueueMethod;
+﻿using Soundche.Core.Domain;
+using Soundche.Core.Domain.SongQueueMethod;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Core.BLL
+namespace Soundche.Core.BLL
 {
     public class PlaylistManager
     {

@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Soundche____Final__Den_sande_scooter_v2
+namespace Soundche.Web
 {
     public class Startup
     {

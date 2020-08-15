@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Core.Domain
+namespace Soundche.Core.Domain
 {
     public class User
     {

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
-namespace Soundche____Final__Den_sande_scooter_v2.Controllers
+namespace Soundche.Web.Controllers
 {
     public class LoginController : Controller
     {

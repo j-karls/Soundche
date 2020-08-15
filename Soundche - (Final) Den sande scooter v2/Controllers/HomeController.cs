@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Soundche____Final__Den_sande_scooter_v2.Models;
+using Soundche.Web.Models;
 
-namespace Soundche____Final__Den_sande_scooter_v2.Controllers
+namespace Soundche.Web.Controllers
 {
     public class HomeController : Controller
     {

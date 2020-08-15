@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
-namespace Core.Domain.SongQueueMethod
+namespace Soundche.Core.Domain.SongQueueMethod
 {
     public class QueueWeightedRoundRobin : IQueueMethod
     {

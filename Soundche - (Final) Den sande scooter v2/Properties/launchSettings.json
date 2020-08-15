@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Soundche____Final__Den_sande_scooter_v2": {
+    "Soundche.Web": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

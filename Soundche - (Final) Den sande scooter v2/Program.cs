@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Soundche____Final__Den_sande_scooter_v2
+namespace Soundche.Web
 {
     public class Program
     {

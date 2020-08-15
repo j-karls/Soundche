@@ -1,4 +1,4 @@
-﻿using Core.Domain;
+﻿using Soundche.Core.Domain;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 
-namespace Core.BLL
+namespace Soundche.Core.BLL
 {
     public class RoomController
     {

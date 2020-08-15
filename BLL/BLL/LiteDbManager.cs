@@ -1,10 +1,10 @@
-﻿using Core.Domain;
+﻿using Soundche.Core.Domain;
 using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Core.BLL
+namespace Soundche.Core.BLL
 {
     public class LiteDbManager : IDatabaseManager
     {

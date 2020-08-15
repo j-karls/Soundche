@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>Soundche</RootNamespace>
+    <RootNamespace>Soundche.Web</RootNamespace>
     <UserSecretsId>e0a85032-d18d-48bd-8d23-60aca93910ba</UserSecretsId>
     <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
   </PropertyGroup>

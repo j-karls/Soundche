@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Core.Domain.SongQueueMethod
+namespace Soundche.Core.Domain.SongQueueMethod
 {
     public enum SongQueueMethodEnum // How do we select the next song?
     {
