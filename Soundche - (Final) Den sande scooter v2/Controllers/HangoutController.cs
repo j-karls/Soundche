@@ -19,6 +19,10 @@ namespace Soundche.Web.Controllers
         public HangoutController(RoomManager room) // TODO: Should get something higher level (backend manager or smt), one that creates multiple rooms
         {
             _room = room;
+
+            // Setting temp playlists
+            _room.CallStuff();
+            _room.ConnectPlaylist(_room.GetUserInfo("Emilen Stabilen").Playlists[0]);
         }
 
         public IActionResult Index()
@@ -49,9 +53,26 @@ namespace Soundche.Web.Controllers
             return new EmptyResult();
         }
 
-        public IActionResult Play(Track track)
+        public IActionResult Play(/*Track track = null*/)
         {
-            return Ok(track.YoutubeUrl);
+            // track = track ?? new Track("Yirboi", "https://www.youtube.com/embed/rPkzkV1icWY", 1, 5);
+
+            // Add the user's playlist to the playback
+            // Send a js query to the embeded video
+            // And if nothing is currently playing, then start the playback
+
+            _room.SwitchedSongEvent += OnSwitchSong;
+            _room.StartPlayback();
+            return Ok("Started Playback");
         }
+
+        private void OnSwitchSong(object sender, SwitchedSongEventArgs e)
+        {
+            // TODO It seems to switch songs all the time, somehow the timer doesnt work properly
+            // Try using an element on screen that I bind the URL property to.
+
+            Console.WriteLine(e);
+        }
+
     }
 }

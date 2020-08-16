@@ -54,8 +54,8 @@ namespace Soundche.Core.BLL
         public void InsertShitHardcodedUserBoi()
         {
             _users.Insert(new User("Emilen Stabilen", new List<Playlist> { new Playlist("cancerlisten", new List<Track> {
-                new Track("♂ Leave the Gachimuchi on ♂", "https://www.youtube.com/watch?v=BH726JXRok0", 0, 300),
-                new Track("♂️ AssClap ♂️ (Right version) REUPLOAD", "https://www.youtube.com/watch?v=NdqbI0_0GsM", 15, 100)
+                new Track("♂ Leave the Gachimuchi on ♂", "https://www.youtube.com/watch?v=BH726JXRok0", 0, 5),
+                new Track("♂️ AssClap ♂️ (Right version) REUPLOAD", "https://www.youtube.com/watch?v=NdqbI0_0GsM", 4, 11)
             })}));
         }
 

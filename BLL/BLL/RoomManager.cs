@@ -34,8 +34,9 @@ namespace Soundche.Core.BLL
             PlaybackTimer = new Timer(interval);
             PlaybackTimer.Elapsed += OnTimerElapsed;
             PlaybackTimer.AutoReset = false;
-            PlaybackTimer.Enabled = true;
+            PlaybackTimer.Start();
         }
+
         private void StartNewSong()
         {
             Track newTrack = PlaylistController.GetNextTrack();
@@ -43,6 +44,10 @@ namespace Soundche.Core.BLL
             StartTimer(newTrack.EndTime - newTrack.StartTime);
             SwitchedSongEvent(this, new SwitchedSongEventArgs(newTrack.YoutubeUrl, newTrack.StartTime));
         }
+
+        public void StartPlayback() => StartNewSong();
+
+        public void SkipSong() => StartNewSong();
 
         public void ConnectPlaylist(Playlist playlist)
         {
