@@ -13,11 +13,11 @@ namespace Soundche.Core.Domain
 
         public User() { } // Public empty ctor necessary for database serialization
 
-        public static User CreateUser(string name, List<Playlist> playlists = null)
+        public User(string name, List<Playlist> playlists = null)
         {
             if (String.IsNullOrEmpty(name)) throw new InvalidDataException();
-
-            return new User { Name = name, Playlists = playlists ?? new List<Playlist>() };
+            Name = name;
+            Playlists = playlists ?? new List<Playlist>();
         }
 
         public Playlist GetPlaylist(string name)

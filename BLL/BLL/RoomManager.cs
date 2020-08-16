@@ -8,7 +8,7 @@ using System.Timers;
 
 namespace Soundche.Core.BLL
 {
-    public class RoomController
+    public class RoomManager
     {
         public Timer PlaybackTimer = null;
         public Track CurrentTrack = null;
@@ -20,7 +20,7 @@ namespace Soundche.Core.BLL
         // It is the top level class that manages the database, the playlistmanager (which controlls which song to play) and
         // basically is the room (that manages the people that are inside, wanting to listen to songs together)
 
-        public RoomController()
+        public RoomManager()
         {
             DatabaseController = new LiteDbManager();
         }
@@ -52,9 +52,14 @@ namespace Soundche.Core.BLL
 
         public User GetUserInfo(string username) => DatabaseController.GetUser(username);
 
-        public Task CallStuff()
+        public void CallStuff()
         {
-            return new Task(DatabaseController.InsertShitHardcodedUserBoi);
+            DatabaseController.InsertShitHardcodedUserBoi();
+        }
+
+        public void GetStuff()
+        {
+            var u = DatabaseController.GetShit();
         }
     }
 }
