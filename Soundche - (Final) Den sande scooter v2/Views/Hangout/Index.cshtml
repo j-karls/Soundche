@@ -12,6 +12,7 @@
 }
 
 <head>
+    <!-- Include Ajax -->
     <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
 </head>
@@ -23,6 +24,15 @@
 <div>
     <label id="name"></label>
 </div>
+
+<!--
+// TODO: Make audioplayer partial view work with my id text replacement in performSongSwitch()
+// TODO: Make sure the getActiveSong interval is only enabled if we have first called the Play IActionResult (such that the page has /Play in the querystring).
+// TODO: Code it to work with playlists
+
+// NOTE: I might also just setTimeout on the getActiveSong function, a timeout that fits with the amount of time it should play the song. 
+// NOTE: But that wouldn't work well if we skip something server-side, etc. etc. Better if the server handles it all'
+-->
 
 <script type="text/javascript">
     var name = "";
@@ -44,36 +54,30 @@
     }
 
     function checkIfSwitchSong(activeSong) {
-        alert(activeSong);
-
-        if (activeSong.switchedSongTime != lastTimeSwitchedSong) // is it a different song since last we checked?
+        // is it a different song since last we checked?
+        if (activeSong.switchedSongTime != lastTimeSwitchedSong) {
+            //alert(activeSong.switchedSongTime); TODO REMOVE
+            //alert(lastTimeSwitchedSong);
             performSongSwitch(activeSong);
+        }
     }
 
-    function performSongSwitch(activeSong) {
-        name = activeSong.name;
+    function performSongSwitch(newSong) {
+        alert(newSong);
+
+        name = newSong.name;
         $("#name").text(name);
-        startTime = activeSong.startTime;
-        //$("#startTime").text(startTime);
-        endTime = activeSong.endTime;
-        //$("#endTime").text(endTime);
-        youtubeUrl = activeSong.youtubeUrl;
-        //$("#youtubeUrl").text(youtubeUrl);
-        lastTimeSwitchedSong = activeSong.switchedSongTime;
+        startTime = newSong.startTime;
+        $("#startTime").text(startTime);
+        endTime = newSong.endTime;
+        $("#endTime").text(endTime);
+        youtubeUrl = newSong.youtubeUrl;
+        $("#youtubeUrl").text(youtubeUrl);
+        lastTimeSwitchedSong = newSong.switchedSongTime;
     }
 </script>
 
 <!--<script type="text/javascript">
     setTimeout("window.location.href = '@Url.Action("RefreshPage", "Hangout")/';", 5000);
 </script>-->
-<!--<div>
-    <label>@Model.RealCurrentSong.Name</label>
-</div>-->
-<!--<div>
-    <label>@ViewBag.Name</label>
-</div>-->
-<!--<script type="text/javascript">
-    setTimeout("location.reload(true);", 5000);
-</script>-->
-
 <partial name="_AudioPlayer" />

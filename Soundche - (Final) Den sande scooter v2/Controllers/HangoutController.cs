@@ -17,6 +17,7 @@ namespace Soundche.Web.Controllers
     {
         private readonly RoomManager _room;
         private SwitchedSongEventArgs _activeSong = new SwitchedSongEventArgs(new Track("♂️ AssClap ♂️ (Right version) REUPLOAD", "https://www.youtube.com/watch?v=NdqbI0_0GsM", 4, 11), DateTime.Now);
+        // TODO: remove this hardcoded switchedsongeventargs, and have it all go through the room's playlist instead. 
 
         public HangoutController(RoomManager room) // TODO: Should get something higher level (backend manager or smt), one that creates multiple rooms
         {
@@ -48,18 +49,15 @@ namespace Soundche.Web.Controllers
             return Ok("Hej");
         }
 
-        public IActionResult Test()
-        {
-            var testvm = new HangoutViewModel();
-            //var tim = new System.Timers.Timer(5000);
-            //tim.AutoReset = false;
-            //tim.Start();
-            ViewBag.Name = "Penis";
-            return View("index", testvm); // try something with partial view here?
-        }
-
         public IActionResult GetActiveSong()
         {
+            // TODO: This function should only be called if we've called "play" before. 
+
+
+            // This is how we refresh to get new song information onto the page
+            // Because once the page is rendered for the user, we can't communicate with it - it has to communicate with us.
+            // We can only try to call server with JavaScript, see when to then see if we should update
+
             //sends the activeSong as Json, showing info about what song is currently playing and when it was started
             return Json(new
             {
@@ -67,30 +65,11 @@ namespace Soundche.Web.Controllers
                 startTime = _activeSong.NewTrack.StartTime,
                 endTime = _activeSong.NewTrack.EndTime,
                 youtubeUrl = _activeSong.NewTrack.YoutubeUrl,
-                switchedSongTime = _activeSong.SwitchedSongTime
+                switchedSongTime = _activeSong.SwitchedSongTimeTicks
             }); 
         }
 
 
-        //[HttpPost]
-        public IActionResult RefreshPage()
-        {
-            // This is how we refresh to get new song information onto the page? 
-            // Because once the page is rendered for the user, we can't communicate with it - it has to communicate with us.
-
-            // We can only try to call server with JavaScript, see when we should update??????
-            
-
-            //if (_room.CurrentTrack == ViewBag.CurrentTrack) return PartialView("_AudioPlayer", new HangoutViewModel());
-            //else return View("index", new HangoutViewModel() { CurrentSong = _room.CurrentTrack.YoutubeUrl });
-            
-
-            if (_room.CurrentTrack != ViewBag.CurrentTrack) return PartialView("_AudioPlayer", new HangoutViewModel());
-            else return PartialView("_AudioPlayer", new HangoutViewModel() { RealCurrentSong = new Track("♂️ AssClap ♂️ (Right version) REUPLOAD", "https://www.youtube.com/watch?v=NdqbI0_0GsM", 4, 11) }); // CurrentSong = _room.CurrentTrack.YoutubeUrl
-
-            
-            /// TRY TO MAKE JAVASCRIPT CALL THIS EVERY SECOND
-        }
 
         public IActionResult CallStuff()
         {
@@ -101,11 +80,10 @@ namespace Soundche.Web.Controllers
 
         public IActionResult Play(/*Track track = null*/)
         {
-            // track = track ?? new Track("Yirboi", "https://www.youtube.com/embed/rPkzkV1icWY", 1, 5);
-
             // Add the user's playlist to the playback
             // Send a js query to the embeded video
             // And if nothing is currently playing, then start the playback
+            // ?????????????????????
 
             _room.SwitchedSongEvent += OnSwitchSong;
             _room.StartPlayback();
