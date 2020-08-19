@@ -41,8 +41,8 @@ namespace Soundche.Core.BLL
         {
             Track newTrack = PlaylistController.GetNextTrack();
             CurrentTrack = newTrack;
-            StartTimer(newTrack.EndTime - newTrack.StartTime);
-            SwitchedSongEvent(this, new SwitchedSongEventArgs(newTrack.YoutubeUrl, newTrack.StartTime));
+            StartTimer((newTrack.EndTime * 1000) - (newTrack.StartTime * 1000)); // Convert ms to s
+            SwitchedSongEvent(this, new SwitchedSongEventArgs(newTrack, DateTime.Now));
         }
 
         public void StartPlayback() => StartNewSong();

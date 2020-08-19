@@ -59,14 +59,11 @@ namespace Soundche.Core.BLL
             })}));
         }
 
-        public void Dispose()
-        {
-            _db.Dispose();
-        }
+        public void Dispose() => _db.Dispose();
 
         public User GetShit()
         {
-            return GetUser("Emilen Stabilen"); // SEEMS TO NOT RETURN THE ENTIRE USER?? 
+            return GetUser("Emilen Stabilen"); 
         }
 
         /*

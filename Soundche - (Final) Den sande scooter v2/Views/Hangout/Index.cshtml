@@ -10,7 +10,70 @@
         currentSong += "&autoplay=1";
     }
 }
+
+<head>
+    <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+</head>
+
 <div class="embed-responsive embed-responsive-21by9">
     <iframe class="embed-responsive-item" src="@currentSong" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
+
+<div>
+    <label id="name"></label>
+</div>
+
+<script type="text/javascript">
+    var name = "";
+    var startTime = 0;
+    var endTime = 0;
+    var youtubeUrl = "";
+    var lastTimeSwitchedSong = 0;
+
+    setInterval(getActiveSong, 5000); // check if we switched song every x amount of milliseconds
+
+    function getActiveSong() {
+        $.ajax({
+            url: '@Url.Action("GetActiveSong", "Hangout")',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: checkIfSwitchSong,
+            error: function () { alert('Fuck You'); },
+        });
+    }
+
+    function checkIfSwitchSong(activeSong) {
+        alert(activeSong);
+
+        if (activeSong.switchedSongTime != lastTimeSwitchedSong) // is it a different song since last we checked?
+            performSongSwitch(activeSong);
+    }
+
+    function performSongSwitch(activeSong) {
+        name = activeSong.name;
+        $("#name").text(name);
+        startTime = activeSong.startTime;
+        //$("#startTime").text(startTime);
+        endTime = activeSong.endTime;
+        //$("#endTime").text(endTime);
+        youtubeUrl = activeSong.youtubeUrl;
+        //$("#youtubeUrl").text(youtubeUrl);
+        lastTimeSwitchedSong = activeSong.switchedSongTime;
+    }
+</script>
+
+<!--<script type="text/javascript">
+    setTimeout("window.location.href = '@Url.Action("RefreshPage", "Hangout")/';", 5000);
+</script>-->
+<!--<div>
+    <label>@Model.RealCurrentSong.Name</label>
+</div>-->
+<!--<div>
+    <label>@ViewBag.Name</label>
+</div>-->
+<!--<script type="text/javascript">
+    setTimeout("location.reload(true);", 5000);
+</script>-->
+
 <partial name="_AudioPlayer" />

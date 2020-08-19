@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -15,6 +16,7 @@ namespace Soundche.Web.Controllers
     public class HangoutController : Controller
     {
         private readonly RoomManager _room;
+        private SwitchedSongEventArgs _activeSong = new SwitchedSongEventArgs(new Track("♂️ AssClap ♂️ (Right version) REUPLOAD", "https://www.youtube.com/watch?v=NdqbI0_0GsM", 4, 11), DateTime.Now);
 
         public HangoutController(RoomManager room) // TODO: Should get something higher level (backend manager or smt), one that creates multiple rooms
         {
@@ -46,6 +48,50 @@ namespace Soundche.Web.Controllers
             return Ok("Hej");
         }
 
+        public IActionResult Test()
+        {
+            var testvm = new HangoutViewModel();
+            //var tim = new System.Timers.Timer(5000);
+            //tim.AutoReset = false;
+            //tim.Start();
+            ViewBag.Name = "Penis";
+            return View("index", testvm); // try something with partial view here?
+        }
+
+        public IActionResult GetActiveSong()
+        {
+            //sends the activeSong as Json, showing info about what song is currently playing and when it was started
+            return Json(new
+            {
+                name = _activeSong.NewTrack.Name,
+                startTime = _activeSong.NewTrack.StartTime,
+                endTime = _activeSong.NewTrack.EndTime,
+                youtubeUrl = _activeSong.NewTrack.YoutubeUrl,
+                switchedSongTime = _activeSong.SwitchedSongTime
+            }); 
+        }
+
+
+        //[HttpPost]
+        public IActionResult RefreshPage()
+        {
+            // This is how we refresh to get new song information onto the page? 
+            // Because once the page is rendered for the user, we can't communicate with it - it has to communicate with us.
+
+            // We can only try to call server with JavaScript, see when we should update??????
+            
+
+            //if (_room.CurrentTrack == ViewBag.CurrentTrack) return PartialView("_AudioPlayer", new HangoutViewModel());
+            //else return View("index", new HangoutViewModel() { CurrentSong = _room.CurrentTrack.YoutubeUrl });
+            
+
+            if (_room.CurrentTrack != ViewBag.CurrentTrack) return PartialView("_AudioPlayer", new HangoutViewModel());
+            else return PartialView("_AudioPlayer", new HangoutViewModel() { RealCurrentSong = new Track("♂️ AssClap ♂️ (Right version) REUPLOAD", "https://www.youtube.com/watch?v=NdqbI0_0GsM", 4, 11) }); // CurrentSong = _room.CurrentTrack.YoutubeUrl
+
+            
+            /// TRY TO MAKE JAVASCRIPT CALL THIS EVERY SECOND
+        }
+
         public IActionResult CallStuff()
         {
             _room.CallStuff();
@@ -68,10 +114,7 @@ namespace Soundche.Web.Controllers
 
         private void OnSwitchSong(object sender, SwitchedSongEventArgs e)
         {
-            // TODO It seems to switch songs all the time, somehow the timer doesnt work properly
-            // Try using an element on screen that I bind the URL property to.
-
-            Console.WriteLine(e);
+            _activeSong = e;
         }
 
     }
