@@ -14,30 +14,26 @@ namespace Soundche.Core.BLL
         private IQueueMethod _queueFunc;
         public List<Playlist> ActivePlaylists { get; private set; }
 
-        public PlaylistManager(List<Playlist> playlists, SongQueueMethodEnum queueType = SongQueueMethodEnum.WeightedRoundRobin)
+        public PlaylistManager(SongQueueMethodEnum queueType = SongQueueMethodEnum.Randomize /*TODO WeightedRoundRobin should be default*/)
         {
-            ActivePlaylists = playlists;
+            ActivePlaylists = new List<Playlist>();
             SwitchSongQueueMethod(queueType);
         }
 
         public void SwitchSongQueueMethod(SongQueueMethodEnum queueType)
         {
-            switch (queueType)
+            _queueFunc = queueType switch
             {
-                case SongQueueMethodEnum.Randomize: _queueFunc = new QueueRandomize(ActivePlaylists);
-                    break;
-                case SongQueueMethodEnum.RoundRobin: _queueFunc = new QueueRoundRobin(ActivePlaylists);
-                    break;
-                case SongQueueMethodEnum.WeightedRoundRobin: _queueFunc = new QueueWeightedRoundRobin(ActivePlaylists);
-                    break;
-                default: throw new NotImplementedException();
-            }
+                SongQueueMethodEnum.Randomize => new QueueRandomize(ActivePlaylists),
+                SongQueueMethodEnum.RoundRobin => new QueueRoundRobin(ActivePlaylists),
+                SongQueueMethodEnum.WeightedRoundRobin => new QueueWeightedRoundRobin(ActivePlaylists),
+                _ => throw new NotImplementedException(),
+            };
         }
 
         public Track GetNextTrack()
         {
-            if (ActivePlaylists.IsNullOrEmpty()) throw new DataMisalignedException();
-            return _queueFunc.Next();
+            return ActivePlaylists.IsNullOrEmpty() ? null : _queueFunc.Next();
         }
 
         public void AddPlaylist(Playlist playlist)
@@ -49,6 +45,12 @@ namespace Soundche.Core.BLL
             // TODO: This likely has some problems regarding which song we got to. So we should probably like 
             // to add the playlist gracefully to an existing songqueuemethod somehow. Probably add 
             // "AddPlaylist" to the IQueueMethod interface 
+        }
+
+        public void RemovePlaylist(Playlist playlist)
+        {
+            bool success = ActivePlaylists.Remove(playlist);
+            if (!success) throw new DataMisalignedException("Playlist could not be removed");
         }
     }
 }

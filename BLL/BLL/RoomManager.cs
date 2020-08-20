@@ -23,6 +23,7 @@ namespace Soundche.Core.BLL
         public RoomManager()
         {
             DatabaseController = new LiteDbManager();
+            PlaylistController = new PlaylistManager();
         }
 
         public event EventHandler<SwitchedSongEventArgs> SwitchedSongEvent;
@@ -40,19 +41,29 @@ namespace Soundche.Core.BLL
         private void StartNewSong()
         {
             Track newTrack = PlaylistController.GetNextTrack();
+            if (newTrack == null) return;
+
             CurrentTrack = newTrack;
             StartTimer((newTrack.EndTime * 1000) - (newTrack.StartTime * 1000)); // Convert ms to s
             SwitchedSongEvent(this, new SwitchedSongEventArgs(newTrack, DateTime.Now));
         }
 
-        public void StartPlayback() => StartNewSong();
-
         public void SkipSong() => StartNewSong();
 
         public void ConnectPlaylist(Playlist playlist)
         {
-            if (PlaylistController is null) PlaylistController = new PlaylistManager(new List<Playlist>{ playlist });
-            else PlaylistController.AddPlaylist(playlist);
+            // Adds the playlist to the playback and starts the playback (if it isn't already started)
+
+            // TODO: Maybe there should be a check to see if the playlist is already on the list? Or maybe possibility of a deepcopy, if adding the playlist twice is something we want to allow?
+
+            PlaylistController.AddPlaylist(playlist);
+            if (CurrentTrack == null) StartNewSong();
+        }
+
+        public void DisconnectPlaylist(Playlist playlist)
+        {
+            // Removes playlist - playback will stop after the end of the current song
+            PlaylistController.RemovePlaylist(playlist);
         }
 
         public User GetUserInfo(string username) => DatabaseController.GetUser(username);

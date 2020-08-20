@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Soundche.Core.BLL;
 using Soundche.Core.Domain;
 using Soundche.Web.Models;
@@ -19,9 +20,12 @@ namespace Soundche.Web.Controllers
         private SwitchedSongEventArgs _activeSong = new SwitchedSongEventArgs(new Track("♂️ AssClap ♂️ (Right version) REUPLOAD", "https://www.youtube.com/watch?v=NdqbI0_0GsM", 4, 11), DateTime.Now);
         // TODO: remove this hardcoded switchedsongeventargs, and have it all go through the room's playlist instead. 
 
+        // TODO: Remove everywhere where it says EMILEN STABILEN
+
         public HangoutController(RoomManager room) // TODO: Should get something higher level (backend manager or smt), one that creates multiple rooms
         {
             _room = room;
+            _room.SwitchedSongEvent += OnSwitchSong; // Switch song when the room does the same
 
             // Setting temp playlists
             _room.CallStuff();
@@ -30,7 +34,11 @@ namespace Soundche.Web.Controllers
 
         public IActionResult Index()
         {
-            return View(new HangoutViewModel());
+            var up = _room.GetUserInfo("Emilen Stabilen").Playlists;
+            up.Add(new Playlist() { Name = "penis" });
+            var ups = up.Select(x => x.Name);
+            return View(new HangoutViewModel() { UserPlaylists = new SelectList(ups) });
+            //return View(new HangoutViewModel() { UserPlaylists = new SelectList(_room.GetUserInfo("Emilen Stabilen").Playlists.Select(x => x.Name)) });
         }
 
         public IActionResult PostHangout()
@@ -78,16 +86,24 @@ namespace Soundche.Web.Controllers
             return new EmptyResult();
         }
 
-        public IActionResult Play(/*Track track = null*/)
+        public IActionResult Play(HangoutViewModel vm)
         {
             // Add the user's playlist to the playback
             // Send a js query to the embeded video
             // And if nothing is currently playing, then start the playback
             // ?????????????????????
 
-            _room.SwitchedSongEvent += OnSwitchSong;
-            _room.StartPlayback();
-            return Ok("Started Playback");
+            //return Ok("Started Playback");
+            _room.ConnectPlaylist(_room.GetUserInfo("Emilen Stabilen").Playlists[Int32.Parse(vm.SelectedPlaylist)]); ////////// TODO: Get user info through cookie or something here
+            
+            return View("index", new HangoutViewModel { PlaylistOnQueue = (true, Int32.Parse(vm.SelectedPlaylist)) });
+            //return View("hangout", new HangoutViewModel { PlaylistOnQueue = (true, playlistNr) });
+        }
+
+        public IActionResult StopPlay(int playlistNr)
+        {
+            _room.DisconnectPlaylist(_room.GetUserInfo("Emilen Stabilen").Playlists[playlistNr]); ////////// TODO: Get user info through cookie or something here
+            return View("index", new HangoutViewModel { PlaylistOnQueue = (false, 0) });
         }
 
         private void OnSwitchSong(object sender, SwitchedSongEventArgs e)
