@@ -22,18 +22,10 @@
 </div>
 
 <div>
-    <label id="name"></label>
+    <label id="name">asfasfasfs</label>
 </div>
 
-<input type="button" value="Hello" onclick="@("location.href='"+ Url.Action("Play", "Hangout")+ "'")" />
-<!--<input type="button" value="Hello" onclick="("location.href='"+ Url.Action("Play", "Hangout", new { playlistNr = Model.SelectedPlaylist })+ "'")" />-->
-
-
-@Html.DropDownListFor(m => m.SelectedPlaylist, Model.UserPlaylists, "Select Playlist");
-
-<!--<form asp-controller="Hangout" asp-action="Play" method="post">
-    <!-- Input and Submit elements -->
-<!--</form>-->
+<!--<input type="button" value="@Model.SelectedPlaylist" onclick="@("location.href='"+ Url.Action("Play", "Hangout", new { playlistNr = Model.SelectedPlaylist })+ "'")" />-->
 <!--
 // TODO: Make audioplayer partial view work with my id text replacement in performSongSwitch()
 // TODO: Make sure the getActiveSong interval is only enabled if we have first called the Play IActionResult (such that the page has /Play in the querystring).
@@ -43,6 +35,15 @@
 // NOTE: But that wouldn't work well if we skip something server-side, etc. etc. Better if the server handles it all'
 -->
 
+
+@using (Html.BeginForm("Play", "Hangout"))
+{
+    <!-- Courtesy of the living legend from: https://stackoverflow.com/questions/50191984/how-to-get-dropdownlist-selected-value-in-mvc-->
+    @Html.DropDownListFor(m => m.SelectedPlaylist, Model.UserPlaylists, "Select");
+    <button type="submit" class="btn">Submit</button>
+}
+
+
 <script type="text/javascript">
     var name = "";
     var startTime = 0;
@@ -50,7 +51,7 @@
     var youtubeUrl = "";
     var lastTimeSwitchedSong = 0;
 
-    setInterval(getActiveSong, 15000); // check if we switched song every x amount of milliseconds
+    setInterval(getActiveSong, 5000); // check if we switched song every x amount of milliseconds
 
     function getActiveSong() {
         $.ajax({
@@ -63,7 +64,10 @@
     }
 
     function checkIfSwitchSong(activeSong) {
-        // is it a different song since last we checked?
+        // Are we currently playing songs?
+        if (!activeSong.active) return;
+
+        // Is it a different song since last we checked?
         if (activeSong.switchedSongTime != lastTimeSwitchedSong) {
             //alert(activeSong.switchedSongTime); TODO REMOVE
             //alert(lastTimeSwitchedSong);
@@ -77,11 +81,11 @@
         name = newSong.name;
         $("#name").text(name);
         startTime = newSong.startTime;
-        $("#startTime").text(startTime);
+        //$("#startTime").text(startTime);
         endTime = newSong.endTime;
-        $("#endTime").text(endTime);
+        //$("#endTime").text(endTime);
         youtubeUrl = newSong.youtubeUrl;
-        $("#youtubeUrl").text(youtubeUrl);
+        //$("#youtubeUrl").text(youtubeUrl);
         lastTimeSwitchedSong = newSong.switchedSongTime;
     }
 </script>

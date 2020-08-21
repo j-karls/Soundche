@@ -2,6 +2,7 @@
 using Soundche.Core.Domain;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Timers;
 
 namespace Soundche.Web.Models
@@ -13,19 +14,20 @@ namespace Soundche.Web.Models
         public Track RealCurrentSong { get; set; } = new Track("♂ Leave the Gachimuchi on ♂", "https://www.youtube.com/watch?v=BH726JXRok0", 0, 5);
         //RealCurrentSong = new Track("♂️ AssClap ♂️ (Right version) REUPLOAD", "https://www.youtube.com/watch?v=NdqbI0_0GsM", 4, 11);
 
-        public (bool, int) PlaylistOnQueue { get; set; } = (false, 0);
+        public (bool, string) PlaylistOnQueue { get; set; } = (false, "");
 
-        public SelectList UserPlaylists { get; set; }
-        public string SelectedPlaylist { get; set; }
-
-        // TODO: Make the gender example from "https://stackoverflow.com/questions/27901175/how-to-get-dropdownlist-selectedvalue-in-controller-in-mvc"
-        // Use Playlist type, and have a getPlaylistSelectItems() function
-
-        public static IEnumerable<SelectListItem> GetPlaylistSelectItems()
+        public HangoutViewModel()
         {
-            var lst = new List<Playlist>();
-            foreach (Playlist playlist in lst)
-                yield return new SelectListItem { Text = playlist.Name };
-        } //TODO USE THIS
+            //UserPlaylists = userPlaylist.Select(x => x.Name).ToList();
+
+            //asdfghjkl = new SelectList(UserPlaylists, "PlaylistId", "PlaylistName", SelectedPlaylistId);
+            //var userPlaylistDropDownListOptions = userPlaylist.Select(x => x.Name);
+            //UserPlaylistDropDownListOptions = UserPlaylists.Select(x => new SelectListItem(x, x));
+            //UserPlaylistDropDownListOptions[0].Selected = true;
+            //SelectedPlaylistId = 1;
+        }
+
+        public string SelectedPlaylist { get; set; }
+        public IEnumerable<SelectListItem> UserPlaylists { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace Soundche.Web.Controllers
     public class HangoutController : Controller
     {
         private readonly RoomManager _room;
-        private SwitchedSongEventArgs _activeSong = new SwitchedSongEventArgs(new Track("♂️ AssClap ♂️ (Right version) REUPLOAD", "https://www.youtube.com/watch?v=NdqbI0_0GsM", 4, 11), DateTime.Now);
+        private SwitchedSongEventArgs _activeSong = null; // = new SwitchedSongEventArgs(new Track("♂️ AssClap ♂️ (Right version) REUPLOAD", "https://www.youtube.com/watch?v=NdqbI0_0GsM", 4, 11), DateTime.Now);
         // TODO: remove this hardcoded switchedsongeventargs, and have it all go through the room's playlist instead. 
 
         // TODO: Remove everywhere where it says EMILEN STABILEN
@@ -28,17 +28,20 @@ namespace Soundche.Web.Controllers
             _room.SwitchedSongEvent += OnSwitchSong; // Switch song when the room does the same
 
             // Setting temp playlists
-            _room.CallStuff();
-            _room.ConnectPlaylist(_room.GetUserInfo("Emilen Stabilen").Playlists[0]);
+            _room.CallStuff(); //TODO REMOVE
         }
 
         public IActionResult Index()
         {
-            var up = _room.GetUserInfo("Emilen Stabilen").Playlists;
+            /*var up = _room.GetUserInfo("Emilen Stabilen").Playlists;
             up.Add(new Playlist() { Name = "penis" });
-            var ups = up.Select(x => x.Name);
-            return View(new HangoutViewModel() { UserPlaylists = new SelectList(ups) });
-            //return View(new HangoutViewModel() { UserPlaylists = new SelectList(_room.GetUserInfo("Emilen Stabilen").Playlists.Select(x => x.Name)) });
+            var ups = new SelectList(up.Select(x => x.Name));
+
+            return View(new HangoutViewModel { UserPlaylists = ups, SelectedPlaylist = up[1].Name });*/
+
+            var up = _room.GetUserInfo("Emilen Stabilen").Playlists;
+            var ups = new SelectList(up.Select(x => x.Name));
+            return View(new HangoutViewModel { UserPlaylists = ups, SelectedPlaylist = up[0].Name });
         }
 
         public IActionResult PostHangout()
@@ -52,23 +55,23 @@ namespace Soundche.Web.Controllers
         {
             HttpContext.Response.StatusCode = 404;
 
-            var test = new HangoutViewModel();
-            test.CurrentSong = "https://www.youtube.com/embed/rPkzkV1icWY";
+            //var test = new HangoutViewModel(_room.GetUserInfo("Emilen Stabilen").Playlists);
+            //test.CurrentSong = "https://www.youtube.com/embed/rPkzkV1icWY";
             return Ok("Hej");
         }
 
         public IActionResult GetActiveSong()
         {
-            // TODO: This function should only be called if we've called "play" before. 
-
-
             // This is how we refresh to get new song information onto the page
             // Because once the page is rendered for the user, we can't communicate with it - it has to communicate with us.
             // We can only try to call server with JavaScript, see when to then see if we should update
 
+            if (_activeSong == null) return Json(new { active = false });
+
             //sends the activeSong as Json, showing info about what song is currently playing and when it was started
             return Json(new
             {
+                active = true,
                 name = _activeSong.NewTrack.Name,
                 startTime = _activeSong.NewTrack.StartTime,
                 endTime = _activeSong.NewTrack.EndTime,
@@ -77,8 +80,6 @@ namespace Soundche.Web.Controllers
             }); 
         }
 
-
-
         public IActionResult CallStuff()
         {
             _room.CallStuff();
@@ -86,6 +87,7 @@ namespace Soundche.Web.Controllers
             return new EmptyResult();
         }
 
+        [HttpPost]
         public IActionResult Play(HangoutViewModel vm)
         {
             // Add the user's playlist to the playback
@@ -93,17 +95,21 @@ namespace Soundche.Web.Controllers
             // And if nothing is currently playing, then start the playback
             // ?????????????????????
 
-            //return Ok("Started Playback");
-            _room.ConnectPlaylist(_room.GetUserInfo("Emilen Stabilen").Playlists[Int32.Parse(vm.SelectedPlaylist)]); ////////// TODO: Get user info through cookie or something here
-            
-            return View("index", new HangoutViewModel { PlaylistOnQueue = (true, Int32.Parse(vm.SelectedPlaylist)) });
-            //return View("hangout", new HangoutViewModel { PlaylistOnQueue = (true, playlistNr) });
+            if (vm.SelectedPlaylist is null) throw new DataMisalignedException("No playlist selected");
+            Playlist playlist = _room.GetUserInfo("Emilen Stabilen").Playlists.Find(x => x.Name == vm.SelectedPlaylist);
+            if (playlist is null) throw new DataMisalignedException("A playlist of that name does not exist");
+            _room.ConnectPlaylist(playlist);
+            ////////// TODO: Get user info through cookie or something here
+
+            vm.PlaylistOnQueue = (true, vm.SelectedPlaylist);
+            vm.UserPlaylists = new SelectList(_room.GetUserInfo("Emilen Stabilen").Playlists.Select(x => x.Name));
+            return View("index", vm);
         }
 
-        public IActionResult StopPlay(int playlistNr)
+        public IActionResult StopPlay(int playlistNr) //TODO DO THIS.
         {
-            _room.DisconnectPlaylist(_room.GetUserInfo("Emilen Stabilen").Playlists[playlistNr]); ////////// TODO: Get user info through cookie or something here
-            return View("index", new HangoutViewModel { PlaylistOnQueue = (false, 0) });
+            _room.DisconnectPlaylist(_room.GetUserInfo("Emilen Stabilen").Playlists[playlistNr]); 
+            return View("index", new HangoutViewModel { PlaylistOnQueue = (false, "") });
         }
 
         private void OnSwitchSong(object sender, SwitchedSongEventArgs e)
