@@ -11,11 +11,16 @@ namespace Soundche.Core.Domain.SongQueueMethod
         private List<(Playlist playlist, int trackIdx, double cumsumSongPercentage)> _tuple;
         Random _rand = new Random();
 
-        public QueueWeightedRoundRobin(List<Playlist> playlists)
+        public QueueWeightedRoundRobin(List<Playlist> playlists) => Initialize(playlists);
+
+        private void Initialize(List<Playlist> playlists, List<int> trackStartIdxs = null)
         {
-            double totalNumTracks = playlists.Select(x => x.Tracks.Count).Aggregate((x,y) => x + y);
-            IEnumerable<double> cumsum = playlists.Select(x => x.Tracks.Count / totalNumTracks).CumulativeSum();
-            _tuple = playlists.Zip(cumsum).Select(x => (playlist: x.First, trackIdx: 0, cumsumSongPercentage: x.Second)).ToList();
+            trackStartIdxs = trackStartIdxs ?? playlists.Select(x => 0).ToList(); 
+            double totalNumTracks = playlists.Select(x => x.Tracks.Count).Aggregate((x, y) => x + y);
+            List<double> cumsum = playlists.Select(x => x.Tracks.Count / totalNumTracks).CumulativeSum().ToList();
+            _tuple = (from i 
+                      in Enumerable.Range(0, playlists.Count) 
+                      select (playlist: playlists[i], trackIdx: trackStartIdxs[i], cumsumSongPercentage: cumsum[i])).ToList();
 
             // Cumsumsongpercentage is the cumulative chance for the playlist to be selected to play next. 
         }
@@ -35,6 +40,25 @@ namespace Soundche.Core.Domain.SongQueueMethod
             tup.trackIdx = (tup.trackIdx + 1) % tup.playlist.Tracks.Count;
 
             return nextTrack;
+        }
+
+        public void AddPlaylist(Playlist playlist)
+        {
+            List<Playlist> playlists = _tuple.Select(x => x.playlist).ToList();
+            List<int> trackIdxs = _tuple.Select(x => x.trackIdx).ToList();
+            playlists.Add(playlist);
+            trackIdxs.Add(0);
+            Initialize(playlists, trackIdxs);
+        }
+
+        public void RemovePlaylist(Playlist playlist)
+        {
+            List<Playlist> playlists = _tuple.Select(x => x.playlist).ToList();
+            List<int> trackIdxs = _tuple.Select(x => x.trackIdx).ToList();
+            playlists.Add(playlist);
+            trackIdxs.Add(0);
+            // Adds the new playlist to the collected playlists, and initializes it to play its 0th song when selected
+            Initialize(playlists, trackIdxs);
         }
     }
 }

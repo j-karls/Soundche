@@ -27,5 +27,15 @@ namespace Soundche.Core.Domain.SongQueueMethod
 
             return nextTrack;
         }
+
+        public void AddPlaylist(Playlist playlist)
+        {
+            _tuple.Add((playlist, 0));
+        }
+
+        public void RemovePlaylist(Playlist playlist)
+        {
+            _tuple.RemoveAll(x => x.playlist == playlist);
+        }
     }
 }

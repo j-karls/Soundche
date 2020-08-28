@@ -21,5 +21,16 @@ namespace Soundche.Core.Domain.SongQueueMethod
             Track[] flat = _playlists.SelectMany(x => x.Tracks).ToArray();
             return flat[_rand.Next(flat.Length)];
         }
+
+        public void AddPlaylist(Playlist playlist)
+        {
+            _playlists.Add(playlist);
+        }
+
+        public void RemovePlaylist(Playlist playlist)
+        {
+            bool res = _playlists.Remove(playlist);
+            if (res is false) throw new InvalidOperationException("No such playlist was found");
+        }
     }
 }
