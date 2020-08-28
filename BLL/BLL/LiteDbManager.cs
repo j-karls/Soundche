@@ -53,9 +53,14 @@ namespace Soundche.Core.BLL
 
         public void InsertShitHardcodedUserBoi()
         {
+            //.Insert(new User("Emilen Stabilen", new List<Playlist> { new Playlist("cancerlisten", new List<Track> {
+            //    new Track("♂ Leave the Gachimuchi on ♂", "https://www.youtube.com/watch?v=BH726JXRok0", 0, 5),
+            //    new Track("♂️ AssClap ♂️ (Right version) REUPLOAD", "https://www.youtube.com/watch?v=NdqbI0_0GsM", 4, 11)
+            //})}));
+
             _users.Insert(new User("Emilen Stabilen", new List<Playlist> { new Playlist("cancerlisten", new List<Track> {
-                new Track("♂ Leave the Gachimuchi on ♂", "https://www.youtube.com/watch?v=BH726JXRok0", 0, 5),
-                new Track("♂️ AssClap ♂️ (Right version) REUPLOAD", "https://www.youtube.com/watch?v=NdqbI0_0GsM", 4, 11)
+                new Track("Think About Things - Daði Freyr (Cover)", "Anne Reburn", "QESmN9-S0UY", 0, 5),
+                new Track("May the Angels (DARK)", "Music TheMost", "n5FG3iRVkWQ", 4, 11)
             })}));
         }
 

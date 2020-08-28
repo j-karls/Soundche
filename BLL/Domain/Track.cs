@@ -12,9 +12,9 @@ namespace Soundche.Core.Domain
         public int EndTime { get; set; }
 
         public Track() { }
-        public Track(string name, string youtubeUrl, int startTime, int endTime)
+        public Track(string title, string author, string youtubeUrl, int startTime, int endTime)
         {
-            Name = name;
+            Name = title;
             YoutubeUrl = youtubeUrl; // TODO: We should have some regex filtering or shortening of URL here
             StartTime = startTime;
             EndTime = endTime;
