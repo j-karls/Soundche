@@ -17,16 +17,12 @@ namespace Soundche.Web.Controllers
     public class HangoutController : Controller
     {
         private readonly RoomManager _room;
-        private SwitchedSongEventArgs _activeSong = null; // = new SwitchedSongEventArgs(new Track("♂️ AssClap ♂️ (Right version) REUPLOAD", "https://www.youtube.com/watch?v=NdqbI0_0GsM", 4, 11), DateTime.Now);
-        // TODO: remove this hardcoded switchedsongeventargs, and have it all go through the room's playlist instead. 
 
         // TODO: Remove everywhere where it says EMILEN STABILEN
 
         public HangoutController(RoomManager room) // TODO: Should get something higher level (backend manager or smt), one that creates multiple rooms
         {
             _room = room;
-            _room.SwitchedSongEvent += OnSwitchSong; // Switch song when the room does the same
-
             // Setting temp playlists
             _room.CallStuff(); //TODO REMOVE
         }
@@ -64,19 +60,21 @@ namespace Soundche.Web.Controllers
         {
             // This is how we refresh to get new song information onto the page
             // Because once the page is rendered for the user, we can't communicate with it - it has to communicate with us.
-            // We can only try to call server with JavaScript, see when to then see if we should update
+            // We can only try to call client->server with JavaScript, to then see if we should update the current song
 
-            if (_activeSong == null) return Json(new { active = false });
+            var lastEvent = _room._lastSwitchedSongEvent;
+
+            if (lastEvent is null) return Json(new { active = false });
 
             //sends the activeSong as Json, showing info about what song is currently playing and when it was started
-            return Json(new
+            else return Json(new
             {
                 active = true,
-                name = _activeSong.NewTrack.Name,
-                startTime = _activeSong.NewTrack.StartTime,
-                endTime = _activeSong.NewTrack.EndTime,
-                youtubeUrl = _activeSong.NewTrack.YoutubeUrl,
-                switchedSongTime = _activeSong.SwitchedSongTimeTicks
+                name = lastEvent.NewTrack.Name,
+                startTime = lastEvent.NewTrack.StartTime,
+                endTime = lastEvent.NewTrack.EndTime,
+                youtubeUrl = lastEvent.NewTrack.YoutubeUrl,
+                switchedSongTime = lastEvent.SwitchedSongTimeTicks
             }); 
         }
 
@@ -111,11 +109,5 @@ namespace Soundche.Web.Controllers
             _room.DisconnectPlaylist(_room.GetUserInfo("Emilen Stabilen").Playlists[playlistNr]); 
             return View("index", new HangoutViewModel { PlaylistOnQueue = (false, "") });
         }
-
-        private void OnSwitchSong(object sender, SwitchedSongEventArgs e)
-        {
-            _activeSong = e;
-        }
-
     }
 }

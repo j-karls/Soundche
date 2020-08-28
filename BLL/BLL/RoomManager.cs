@@ -10,6 +10,8 @@ namespace Soundche.Core.BLL
 {
     public class RoomManager
     {
+        public SwitchedSongEventArgs _lastSwitchedSongEvent { get; private set; } = null; 
+
         public Timer PlaybackTimer = null;
         public Track CurrentTrack = null;
 
@@ -24,9 +26,15 @@ namespace Soundche.Core.BLL
         {
             DatabaseController = new LiteDbManager();
             PlaylistController = new PlaylistManager();
+            SwitchedSongEvent += OnSwitchSong; // Set the lastSwitchedSongEvent every time the song is switched
         }
 
         public event EventHandler<SwitchedSongEventArgs> SwitchedSongEvent;
+
+        private void OnSwitchSong(object sender, SwitchedSongEventArgs e)
+        {
+            _lastSwitchedSongEvent = e;
+        }
 
         private void OnTimerElapsed(object sender, ElapsedEventArgs e) => StartNewSong();
 
