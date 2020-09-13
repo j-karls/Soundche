@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -35,6 +36,16 @@ namespace Soundche.Web.Controllers
 
             return View(new HangoutViewModel { UserPlaylists = ups, SelectedPlaylist = up[1].Name });*/
 
+            // Get current user, then get the corresponding playlists
+
+
+
+
+
+
+
+            // TODO: ERSTAT EMILEN MED "User.Identity.Name", hvilket svarer til det der står i den dict
+            //var up = _room.GetUserInfo(User.Identity.Name).Playlists;
             var up = _room.GetUserInfo("Emilen Stabilen").Playlists;
             var ups = new SelectList(up.Select(x => x.Name));
             return View(new HangoutViewModel { UserPlaylists = ups, SelectedPlaylist = up[0].Name });
@@ -63,7 +74,6 @@ namespace Soundche.Web.Controllers
             // We can only try to call client->server with JavaScript, to then see if we should update the current song
 
             var lastEvent = _room._lastSwitchedSongEvent;
-
             if (lastEvent is null) return Json(new { active = false });
 
             //sends the activeSong as Json, showing info about what song is currently playing and when it was started

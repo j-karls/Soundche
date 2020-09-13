@@ -19,7 +19,6 @@ namespace Soundche.Web.Controllers
             this.configuration = configuration;
         }
 
-
         public IActionResult Index()
         {
             return View();
@@ -31,14 +30,10 @@ namespace Soundche.Web.Controllers
            
             if (users.Contains(userName))
             {
-                var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.Name, userName)
-                    };
+                var claims = new List<Claim> { new Claim(ClaimTypes.Name, userName) };
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
                 return RedirectToAction("Index", "Hangout");
-
             }
 
             //STRING IN ERROR MODEL NEEDS TO BE LONG OR PROGRAM WILL CRASH DO NOT DELETE
