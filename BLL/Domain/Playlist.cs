@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Text;
 
@@ -7,6 +8,7 @@ namespace Soundche.Core.Domain
 {
     public class Playlist
     {
+        [Required]
         public string Name { get; set; }
         public List<Track> Tracks { get; set; }
 

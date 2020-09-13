@@ -1,0 +1,18 @@
+﻿@model Soundche.Core.Domain.Playlist
+@{
+    ViewBag.Title = "AddPlaylist";
+}
+
+<h2>Add New Playlist</h2
+
+@using (Html.BeginForm(/*"AddPlaylist", "Hangout", FormMethod.Post*/))
+{
+
+    @Html.ValidationSummary()
+
+    @Html.TextBoxFor(playlist => playlist.Name, new { @class="form-control", placeholder = " Playlist name"})
+
+    <button class="btn btn-success" type="submit">Create Playlist</button> 
+    <!-- this doesnt work, sadness. maybe has something to do with nested forms? Or maybe I should try making my own submit form that doesn't use the BeginForm helper function?-->
+}
+

@@ -119,5 +119,22 @@ namespace Soundche.Web.Controllers
             _room.DisconnectPlaylist(_room.GetUserInfo("Emilen Stabilen").Playlists[playlistNr]); 
             return View("index", new HangoutViewModel { PlaylistOnQueue = (false, "") });
         }
+
+        [HttpGet]
+        public ActionResult AddPlaylist()
+        {
+            return View(); // Automatically finds and returns the cshtml file corresponding to the function name "AddPlaylist"
+        }
+
+        [HttpPost]
+        public ActionResult AddPlaylist(Playlist playlist)
+        {
+            // do validation
+            if (!ModelState.IsValid) return View(playlist);
+
+            // save playlist
+            // redirect
+            return Redirect("/");
+        }
     }
 }
