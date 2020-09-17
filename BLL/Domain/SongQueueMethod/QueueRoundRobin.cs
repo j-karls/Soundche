@@ -25,7 +25,7 @@ namespace Soundche.Core.Domain.SongQueueMethod
             _playlistIdx = (_playlistIdx + 1) % _tuple.Count;
             tup.trackIdx = (tup.trackIdx + 1) % tup.playlist.Tracks.Count;
 
-            return nextTrack;
+            return nextTrack.Exclude ? Next() : nextTrack; // if the next song is excluded, then just find the next one again
         }
 
         public void AddPlaylist(Playlist playlist)

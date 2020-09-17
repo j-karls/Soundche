@@ -10,6 +10,7 @@ namespace Soundche.Core.Domain
         public string YoutubeUrl { get; set; }
         public int StartTime { get; set; }
         public int EndTime { get; set; }
+        public bool Exclude { get; set; }
 
         public Track() { }
         public Track(string title, string author, string youtubeUrl, int startTime, int endTime)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -112,6 +113,8 @@ namespace Soundche.Web.Controllers
             vm.PlaylistOnQueue = (true, vm.SelectedPlaylist);
             vm.UserPlaylists = new SelectList(_room.GetUserInfo("Emilen Stabilen").Playlists.Select(x => x.Name));
             return View("index", vm);
+
+            // TODO: Remove this hangouts controller, probably put it in a partialview or something. No need to refresh or change the URL just because we joined the waitlist
         }
 
         public IActionResult StopPlay(int playlistNr) //TODO DO THIS.
@@ -123,7 +126,8 @@ namespace Soundche.Web.Controllers
         [HttpGet]
         public ActionResult AddPlaylist()
         {
-            return View(); // Automatically finds and returns the cshtml file corresponding to the function name "AddPlaylist"
+            // Automatically finds and returns the cshtml file corresponding to the function name "AddPlaylist"
+            return View(new Playlist() { Name = "default", Tracks = new List<Track>() { new Track(), new Track() } }); 
         }
 
         [HttpPost]
@@ -133,8 +137,10 @@ namespace Soundche.Web.Controllers
             if (!ModelState.IsValid) return View(playlist);
 
             // save playlist
+
+
             // redirect
-            return Redirect("/");
+            return Redirect("index");
         }
     }
 }
