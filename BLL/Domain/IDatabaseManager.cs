@@ -11,7 +11,5 @@ namespace Soundche.Core.Domain
         public User GetUser(string username);
         public void UpdateUser(User user); 
         public void AddUser(User user);
-        public void InsertShitHardcodedUserBoi();
-        public User GetShit();
     }
 }

@@ -1,5 +1,7 @@
-﻿using System;
+﻿using LiteDB;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -8,6 +10,8 @@ namespace Soundche.Core.Domain
 {
     public class User
     {
+        [Required(AllowEmptyStrings = false)]
+        [BsonId] // BsonId is required for when I want to update an existing user, since I have to find it within the DB 
         public string Name { get; set; }
         public List<Playlist> Playlists { get; set; }
 

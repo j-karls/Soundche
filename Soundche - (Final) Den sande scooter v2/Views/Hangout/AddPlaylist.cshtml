@@ -17,7 +17,7 @@
         @Html.TextBoxFor(playlist => playlist.Name, new { @class = "form-control", placeholder = " Playlist name" });
         <button class="btn btn-success" type="submit">Create Playlist</button>
 
-        @for (int i = 0; i < Model.Tracks.Count; i++)
+        @for (int i = 0; i < (Model.Tracks is null ? 0 : Model.Tracks.Count); i++)
         {
             @Html.TextAreaFor(playlist => playlist.Tracks[i].Name);
 
@@ -27,5 +27,7 @@
     }
 </div>
 
-<!-- TODO: Need some JS to change the view whenever I add/remove a song -->
+<!-- TODO: Need some JS to change the view whenever I add/remove a song... BELOW -->
 <!-- TODO: All of it needs to be repackaged for a partial view at some point. -->
+
+<!-- http://ivanz.com/2011/06/16/editing-variable-length-reorderable-collections-in-asp-net-mvc-part-1/ -->

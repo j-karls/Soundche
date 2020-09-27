@@ -15,8 +15,8 @@ namespace Soundche.Core.BLL
         public Timer PlaybackTimer = null;
         public Track CurrentTrack = null;
 
-        public PlaylistManager PlaylistController { get; private set; }
-        public IDatabaseManager DatabaseController { get; private set; }
+        private PlaylistManager PlaylistController { get; set; }
+        private IDatabaseManager DatabaseController { get; set; }
 
         // This class is the singleton - as such, only one room is currently allowed in the program
         // It is the top level class that manages the database, the playlistmanager (which controlls which song to play) and
@@ -61,8 +61,7 @@ namespace Soundche.Core.BLL
         public void ConnectPlaylist(Playlist playlist)
         {
             // Adds the playlist to the playback and starts the playback (if it isn't already started)
-
-            // TODO: Maybe there should be a check to see if the playlist is already on the list? Or maybe possibility of a deepcopy, if adding the playlist twice is something we want to allow?
+            // Note that adding one playlist multiple times is allowed and should not cause any issues
 
             PlaylistController.AddPlaylist(playlist);
             if (CurrentTrack == null) StartNewSong();
@@ -74,16 +73,8 @@ namespace Soundche.Core.BLL
             PlaylistController.RemovePlaylist(playlist);
         }
 
-        public User GetUserInfo(string username) => DatabaseController.GetUser(username);
-
-        public void CallStuff()
-        {
-            DatabaseController.InsertShitHardcodedUserBoi();
-        }
-
-        public void GetStuff()
-        {
-            var u = DatabaseController.GetShit();
-        }
+        public User GetUser(string username) => DatabaseController.GetUser(username);
+        public void AddUser(User user) => DatabaseController.AddUser(user);
+        public void UpdateUser(User user) => DatabaseController.UpdateUser(user);
     }
 }

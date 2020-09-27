@@ -20,52 +20,23 @@ namespace Soundche.Web.Controllers
     {
         private readonly RoomManager _room;
 
-        // TODO: Remove everywhere where it says EMILEN STABILEN
-
         public HangoutController(RoomManager room) // TODO: Should get something higher level (backend manager or smt), one that creates multiple rooms
         {
             _room = room;
-            // Setting temp playlists
-            _room.CallStuff(); //TODO REMOVE
         }
 
         public IActionResult Index()
         {
-            /*var up = _room.GetUserInfo("Emilen Stabilen").Playlists;
-            up.Add(new Playlist() { Name = "penis" });
-            var ups = new SelectList(up.Select(x => x.Name));
-
-            return View(new HangoutViewModel { UserPlaylists = ups, SelectedPlaylist = up[1].Name });*/
-
             // Get current user, then get the corresponding playlists
-
-
-
-
-
-
-
-            // TODO: ERSTAT EMILEN MED "User.Identity.Name", hvilket svarer til det der står i den dict
-            //var up = _room.GetUserInfo(User.Identity.Name).Playlists;
-            var up = _room.GetUserInfo("Emilen Stabilen").Playlists;
-            var ups = new SelectList(up.Select(x => x.Name));
-            return View(new HangoutViewModel { UserPlaylists = ups, SelectedPlaylist = up[0].Name });
-        }
-
-        public IActionResult PostHangout()
-        {
-            var test = new HangoutViewModel();
-            test.CurrentSong = "https://www.youtube.com/embed/rPkzkV1icWY";
-            return View("index", test);
-        }
-
-        public IActionResult GetHangout(string name)
-        {
-            HttpContext.Response.StatusCode = 404;
-
-            //var test = new HangoutViewModel(_room.GetUserInfo("Emilen Stabilen").Playlists);
-            //test.CurrentSong = "https://www.youtube.com/embed/rPkzkV1icWY";
-            return Ok("Hej");
+            // Gets the name of the user defined within our authentication cookie
+            User user = _room.GetUser(User.Identity.Name);
+            if (user is null) 
+            { 
+                _room.AddUser(new Core.Domain.User(User.Identity.Name)); 
+                user = _room.GetUser(User.Identity.Name);
+            }
+            var ups = new SelectList(user.Playlists.Select(x => x.Name));
+            return View(new HangoutViewModel { UserPlaylists = ups, SelectedPlaylist = user.Playlists.IsNullOrEmpty() ? null : user.Playlists[0].Name });
         }
 
         public IActionResult GetActiveSong()
@@ -89,14 +60,6 @@ namespace Soundche.Web.Controllers
             }); 
         }
 
-        public IActionResult CallStuff()
-        {
-            _room.CallStuff();
-            _room.GetStuff();
-            return new EmptyResult();
-        }
-
-        [HttpPost]
         public IActionResult Play(HangoutViewModel vm)
         {
             // Add the user's playlist to the playback
@@ -105,13 +68,12 @@ namespace Soundche.Web.Controllers
             // ?????????????????????
 
             if (vm.SelectedPlaylist is null) throw new DataMisalignedException("No playlist selected");
-            Playlist playlist = _room.GetUserInfo("Emilen Stabilen").Playlists.Find(x => x.Name == vm.SelectedPlaylist);
+            Playlist playlist = _room.GetUser(User.Identity.Name).Playlists.Find(x => x.Name == vm.SelectedPlaylist);
             if (playlist is null) throw new DataMisalignedException("A playlist of that name does not exist");
             _room.ConnectPlaylist(playlist);
-            ////////// TODO: Get user info through cookie or something here
 
             vm.PlaylistOnQueue = (true, vm.SelectedPlaylist);
-            vm.UserPlaylists = new SelectList(_room.GetUserInfo("Emilen Stabilen").Playlists.Select(x => x.Name));
+            vm.UserPlaylists = new SelectList(_room.GetUser(User.Identity.Name).Playlists.Select(x => x.Name));
             return View("index", vm);
 
             // TODO: Remove this hangouts controller, probably put it in a partialview or something. No need to refresh or change the URL just because we joined the waitlist
@@ -119,7 +81,7 @@ namespace Soundche.Web.Controllers
 
         public IActionResult StopPlay(int playlistNr) //TODO DO THIS.
         {
-            _room.DisconnectPlaylist(_room.GetUserInfo("Emilen Stabilen").Playlists[playlistNr]); 
+            _room.DisconnectPlaylist(_room.GetUser(User.Identity.Name).Playlists[playlistNr]); 
             return View("index", new HangoutViewModel { PlaylistOnQueue = (false, "") });
         }
 
@@ -127,7 +89,7 @@ namespace Soundche.Web.Controllers
         public ActionResult AddPlaylist()
         {
             // Automatically finds and returns the cshtml file corresponding to the function name "AddPlaylist"
-            return View(new Playlist() { Name = "default", Tracks = new List<Track>() { new Track(), new Track() } }); 
+            return View(new Playlist() { Tracks = new List<Track>() { /*new Track(), new Track()*/ } }); 
         }
 
         [HttpPost]
@@ -137,7 +99,9 @@ namespace Soundche.Web.Controllers
             if (!ModelState.IsValid) return View(playlist);
 
             // save playlist
-
+            User usr = _room.GetUser(User.Identity.Name);
+            usr.Playlists.Add(playlist);
+            _room.UpdateUser(usr);
 
             // redirect
             return Redirect("index");
