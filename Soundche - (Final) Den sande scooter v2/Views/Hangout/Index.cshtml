@@ -2,14 +2,22 @@
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@{
-    string currentSong = Model.CurrentSong + "?enablejsapi";
 
-    if (Model.AutoPlay)
-    {
-        currentSong += "&autoplay=1";
+<style> /*GET INTO RIGHT STYLING SHEET*/
+    .video-wrapper {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 */
+        padding-top: 25px;
     }
-}
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+</style>
 
 <head>
     <!-- Include Ajax -->
@@ -17,124 +25,170 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
 </head>
 
-<div id="player" class="embed-responsive embed-responsive-21by9"></div>
+<body>
+    <div class="video-wrapper">
+        <div id="player"></div>
+    </div>
 
-<div>
-    <label id="name">asfasfasfs</label>
-</div>
+    <!--<input type="button" value="@Model.SelectedPlaylist" onclick="@("location.href='"+ Url.Action("Play", "Hangout", new { playlistNr = Model.SelectedPlaylist })+ "'")" />-->
+    <!--
+    // TODO: Make audioplayer partial view work with my id text replacement in performSongSwitch()
+    // TODO: Make sure the getActiveSong interval is only enabled if we have first called the Play IActionResult (such that the page has /Play in the querystring).
+    // TODO: Code it to work with playlists
 
-<!--<input type="button" value="@Model.SelectedPlaylist" onclick="@("location.href='"+ Url.Action("Play", "Hangout", new { playlistNr = Model.SelectedPlaylist })+ "'")" />-->
-<!--
-// TODO: Make audioplayer partial view work with my id text replacement in performSongSwitch()
-// TODO: Make sure the getActiveSong interval is only enabled if we have first called the Play IActionResult (such that the page has /Play in the querystring).
-// TODO: Code it to work with playlists
-
-// NOTE: I might also just setTimeout on the getActiveSong function, a timeout that fits with the amount of time it should play the song.
-// NOTE: But that wouldn't work well if we skip something server-side, etc. etc. Better if the server handles it all'
--->
+    // NOTE: I might also just setTimeout on the getActiveSong function, a timeout that fits with the amount of time it should play the song.
+    // NOTE: But that wouldn't work well if we skip something server-side, etc. etc. Better if the server handles it all'
+    -->
 
 
-@using (Html.BeginForm("Play", "Hangout"))
-{
-    <!-- Courtesy of the living legend from: https://stackoverflow.com/questions/50191984/how-to-get-dropdownlist-selected-value-in-mvc-->
-    @Html.DropDownListFor(m => m.SelectedPlaylist, Model.UserPlaylists, "Select");
-    <button type="submit" class="btn btn-danger">Submit</button>
-}
+    @using (Html.BeginForm("Play", "Hangout"))
+    {
+        //Courtesy of the living legend from: https://stackoverflow.com/questions/50191984/how-to-get-dropdownlist-selected-value-in-mvc
+        @Html.DropDownListFor(m => m.SelectedPlaylist, Model.UserPlaylists, "Select");
+        <button type="submit" class="btn btn-danger">Submit</button>
+    }
+
+    <partial name="_AudioPlayer" />
+</body>
 
 
 <script type="text/javascript">
-    // 2. This code loads the IFrame Player API code asynchronously.
-    var player;
+    var youtubeInterface = {
+        onPlayerReady(event) {
+            event.target.playVideo();
+        },
+
+        //MBY HAVE A STATE CHANGE TO MAKE SURE PEOPLE ARE ON THE SAME STATE?
+        onPlayerStateChange(event) {
+
+        },
+
+        playVideo() {
+            player.playVideo();
+        },
+
+        stopVideo() {
+            player.stopVideo();
+        },
+
+        pausePlay() {
+            if (player.getPlayerState() == 1) {
+                player.pauseVideo();
+            }
+            else {
+                player.playVideo();
+            }
+        },
+
+        muteUnmute() {
+            if (player.isMuted() == 1) {
+                player.unMute();
+            }
+            else {
+                player.mute();
+            }
+        },
+
+        setVolume(volume) {
+            player.setVolume(volume)
+        },
+
+        getVolume() {
+            return player.getVolume();
+        },
+
+        getDuration() {
+            return player.getDuration()
+        },
+
+        getCurrentTime() {
+            return player.getCurrentTime()
+        },
+
+        loadVideo(videoId, startSeconds) {
+            player.loadVideoById({
+                videoId: videoId,
+                startSeconds: startSeconds
+            })
+        },
+
+
+    }
+
+    var sessionStore = {
+        songName: "",
+        startTime: 0,
+        endTime: 0,
+        youtubeUrl: "",
+        lastTimeSwitchedSong: 0,
+        resyncInterval: 0,
+    }
+
+    var soundcheInterface = {
+        getActiveSong() {
+            $.ajax({
+                url: '@Url.Action("GetActiveSong", "Hangout")',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: soundcheInterface.updateActiveSong,
+                error: function () { alert('Fuck You'); },
+            });
+        },
+
+        updateActiveSong(sessionData) {
+            // Check if there is an active song and if its a different song since last time we checked
+            if (sessionData.isActive && (sessionData.switchedSongTime != sessionStore.lastTimeSwitchedSong)) {
+                sessionStore.songName = sessionData.songName;
+                sessionStore.startTime = sessionData.startTime;
+                sessionStore.endTime = sessionData.endTime;
+                sessionStore.youtubeUrl = sessionData.youtubeUrl;
+                sessionStore.lastTimeSwitchedSong = sessionData.switchedSongTime;
+
+                youtubeInterface.playVideo(sessionData.youtubeUrl, sessionData.startTime);
+            }
+        },
+
+        skipSong() {
+            $.ajax({
+                url: '@Url.Action("NextSong", "Hangout")',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: soundcheInterface.getActiveSong,
+                error: function () { alert('Fuck You'); },
+            });
+        },
+    }
+
+    //SOUNCHE INITIATION
+    soundcheInterface.getActiveSong();
+
+    //YOUTUBE API INSTANTIATION START
     var tag = document.createElement('script');
 
     tag.src = "https://www.youtube.com/iframe_api";
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-    // 3. This function creates an <iframe> (and YouTube player)
-    //    after the API code downloads.
+    var player;
+
     function onYouTubeIframeAPIReady() {
         player = new YT.Player('player', {
             height: '390',
             width: '640',
-            videoId: 'M7lc1UVf-VE',
+            videoId: sessionStore.youtubeUrl,
+            playerVars: {
+                autoplay: 1,
+                rel: 0,
+                modestbranding: 1,
+                disablekb: 1,
+                controls: 0,
+                fs: 0,
+            },
             events: {
-                'onReady': onPlayerReady,
-                //'onStateChange': onPlayerStateChange
+                'onReady': youtubeInterface.onPlayerReady,
+                'onStateChange': youtubeInterface.onPlayerStateChange
             }
-        });
-    }
-
-    // 4. The API will call this function when the video player is ready.
-    function onPlayerReady(event) {
-        event.target.playVideo();
-    }
-
-    // 5. The API calls this function when the player's state changes.
-    //    The function indicates that when playing a video (state=1),
-    //    the player should play for six seconds and then stop.
-    //var done = false;
-    //function onPlayerStateChange(event) {
-    //    if (event.data == YT.PlayerState.PLAYING && !done) {
-    //        setTimeout(stopVideo, 6000);
-    //        done = true;
-    //    }
-    //}
-
-    function stopVideo() {
-        player.stopVideo();
-    }
+        })
+    };
+    //YOUTUBE API INSTANTIATION END
 </script>
-
-<script type="text/javascript">
-    var name = "";
-    var startTime = 0;
-    var endTime = 0;
-    var youtubeUrl = "";
-    var lastTimeSwitchedSong = 0;
-
-    setInterval(getActiveSong, 5000); // check if we switched song every x amount of milliseconds
-
-    function getActiveSong() {
-        $.ajax({
-            url: '@Url.Action("GetActiveSong", "Hangout")',
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: checkIfSwitchSong,
-            error: function () { alert('Fuck You'); },
-        });
-    }
-
-    function checkIfSwitchSong(activeSong) {
-        // Are we currently playing songs?
-        if (!activeSong.active) return;
-
-        // Is it a different song since last we checked?
-        if (activeSong.switchedSongTime != lastTimeSwitchedSong) {
-            // alert(`Times: ${activeSong.switchedSongTime} VS ${lastTimeSwitchedSong}`);
-            performSongSwitch(activeSong);
-        }
-    }
-
-    function performSongSwitch(newSong) {
-        // Set all variables and update the values on the page, including the video player
-
-        // alert(newSong);
-        name = newSong.name;
-        $("#name").text(name);
-        startTime = newSong.startTime;
-        //$("#startTime").text(startTime);
-        endTime = newSong.endTime;
-        //$("#endTime").text(endTime);
-        youtubeUrl = newSong.youtubeUrl;
-        //$("#youtubeUrl").text(youtubeUrl);
-        lastTimeSwitchedSong = newSong.switchedSongTime;
-
-        player.loadVideoById(newSong.youtubeUrl, newSong.startTime);
-    }
-</script>
-
-<!--<script type="text/javascript">
-    setTimeout("window.location.href = '@Url.Action("RefreshPage", "Hangout")/';", 5000);
-</script>-->
-<partial name="_AudioPlayer" />

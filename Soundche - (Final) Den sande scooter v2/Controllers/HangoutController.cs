@@ -30,9 +30,9 @@ namespace Soundche.Web.Controllers
             // Get current user, then get the corresponding playlists
             // Gets the name of the user defined within our authentication cookie
             User user = _room.GetUser(User.Identity.Name);
-            if (user is null) 
-            { 
-                _room.AddUser(new Core.Domain.User(User.Identity.Name)); 
+            if (user is null)
+            {
+                _room.AddUser(new Core.Domain.User(User.Identity.Name));
                 user = _room.GetUser(User.Identity.Name);
             }
             var ups = new SelectList(user.Playlists.Select(x => x.Name));
@@ -51,13 +51,13 @@ namespace Soundche.Web.Controllers
             //sends the activeSong as Json, showing info about what song is currently playing and when it was started
             else return Json(new
             {
-                active = true,
-                name = lastEvent.NewTrack.Name,
+                isActive = true,
+                songName = lastEvent.NewTrack.Name,
                 startTime = lastEvent.NewTrack.StartTime,
                 endTime = lastEvent.NewTrack.EndTime,
                 youtubeUrl = lastEvent.NewTrack.YoutubeUrl,
                 switchedSongTime = lastEvent.SwitchedSongTimeTicks
-            }); 
+            });
         }
 
         public IActionResult Play(HangoutViewModel vm)
@@ -81,20 +81,62 @@ namespace Soundche.Web.Controllers
 
         public IActionResult StopPlay(int playlistNr) //TODO DO THIS.
         {
-            _room.DisconnectPlaylist(_room.GetUser(User.Identity.Name).Playlists[playlistNr]); 
+            _room.DisconnectPlaylist(_room.GetUser(User.Identity.Name).Playlists[playlistNr]);
             return View("index", new HangoutViewModel { PlaylistOnQueue = (false, "") });
         }
 
-        public IActionResult yt() //TODO DO THIS.
+        public IActionResult NextSong() //TODO DO THIS.
         {
-            return View("yt");
+            _room.SkipSong();
+            HttpContext.Response.StatusCode = 200;
+            return Ok();
+        }
+
+        public IActionResult yt() //TODO REMOVE!
+        {
+            var playlist = new Playlist();
+            playlist.Name = "test";
+            playlist.Tracks = new List<Track>();
+            playlist.AddTrack(
+                new Track
+                {
+                    Name = "Rasmus Klumper",
+                    StartTime = 0,
+                    EndTime = 71,
+                    YoutubeUrl = "dedo1vQHhgI"
+                });
+            playlist.AddTrack(
+                new Track
+                {
+                    Name = "Lord of the rigns",
+                    StartTime = 5460,
+                    EndTime = 5560,
+                    YoutubeUrl = "OJk_1C7oRZg"
+                });
+            playlist.AddTrack(
+                new Track
+                {
+                    Name = "Right Vesion?",
+                    StartTime = 0,
+                    EndTime = 263,
+                    YoutubeUrl = "JPxfAYYo7NA"
+                });
+
+            User usr = _room.GetUser(User.Identity.Name);
+            usr.Playlists.Add(playlist);
+            _room.UpdateUser(usr);
+
+            // redirect
+            return Redirect("index");
+
+            //return View("yt");
         }
 
         [HttpGet]
         public ActionResult AddPlaylist()
         {
             // Automatically finds and returns the cshtml file corresponding to the function name "AddPlaylist"
-            return View(new Playlist() { Tracks = new List<Track>() { /*new Track(), new Track()*/ } }); 
+            return View(new Playlist() { Tracks = new List<Track>() { /*new Track(), new Track()*/ } });
         }
 
         [HttpPost]
