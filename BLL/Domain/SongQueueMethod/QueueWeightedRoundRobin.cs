@@ -15,6 +15,8 @@ namespace Soundche.Core.Domain.SongQueueMethod
 
         private void Initialize(List<Playlist> playlists, List<int> trackStartIdxs = null)
         {
+            // TODO DO NULL CHECKS
+
             trackStartIdxs = trackStartIdxs ?? playlists.Select(x => 0).ToList(); 
             double totalNumTracks = playlists.Select(x => x.Tracks.Count).Aggregate((x, y) => x + y);
             List<double> cumsum = playlists.Select(x => x.Tracks.Count / totalNumTracks).CumulativeSum().ToList();
@@ -27,6 +29,9 @@ namespace Soundche.Core.Domain.SongQueueMethod
 
         public Track Next()
         {
+            // Return null if all playlists are empty
+            if (_tuple.All(x => x.playlist.Tracks.IsNullOrEmpty())) return null;
+
             // Get next track
             double decimalRand = _rand.Next(100) / 100; // Values range from 0.00 to 0.99
             var tup = _tuple.First(x => decimalRand < x.cumsumSongPercentage); 
