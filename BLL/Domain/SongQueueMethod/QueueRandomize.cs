@@ -17,8 +17,10 @@ namespace Soundche.Core.Domain.SongQueueMethod
 
         public Track Next()
         {
+            // TODO Need some null checks for if playlists are empty
+
             // Flatten list, then get random element
-            Track[] flat = _playlists.SelectMany(x => x.Tracks).ToArray();
+            Track[] flat = _playlists.SelectMany(x => x.Tracks).Where(x => !x.Exclude).ToArray();
             return flat[_rand.Next(flat.Length)];
         }
 
