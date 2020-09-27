@@ -85,6 +85,11 @@ namespace Soundche.Web.Controllers
             return View("index", new HangoutViewModel { PlaylistOnQueue = (false, "") });
         }
 
+        public IActionResult yt() //TODO DO THIS.
+        {
+            return View("yt");
+        }
+
         [HttpGet]
         public ActionResult AddPlaylist()
         {
