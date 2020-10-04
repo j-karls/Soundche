@@ -103,7 +103,7 @@ namespace Soundche.Web.Controllers
                     Name = "Rasmus Klumper",
                     StartTime = 0,
                     EndTime = 71,
-                    YoutubeUrl = "dedo1vQHhgI"
+                    YoutubeId = "dedo1vQHhgI"
                 });
             playlist.AddTrack(
                 new Track
@@ -111,7 +111,7 @@ namespace Soundche.Web.Controllers
                     Name = "Lord of the rigns",
                     StartTime = 5460,
                     EndTime = 5560,
-                    YoutubeUrl = "OJk_1C7oRZg"
+                    YoutubeId = "OJk_1C7oRZg"
                 });
             playlist.AddTrack(
                 new Track
@@ -119,7 +119,7 @@ namespace Soundche.Web.Controllers
                     Name = "Right Vesion?",
                     StartTime = 0,
                     EndTime = 263,
-                    YoutubeUrl = "JPxfAYYo7NA"
+                    YoutubeId = "JPxfAYYo7NA"
                 });
 
             User usr = _room.GetUser(User.Identity.Name);
@@ -136,7 +136,7 @@ namespace Soundche.Web.Controllers
         public ActionResult AddPlaylist()
         {
             // Automatically finds and returns the cshtml file corresponding to the function name "AddPlaylist"
-            return View(new Playlist() { Tracks = new List<Track>() { /*new Track(), new Track()*/ } });
+            return View(new Playlist() { Tracks = new List<Track>() { new Track() } /*remove this*/ });
         }
 
         [HttpPost]

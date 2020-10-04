@@ -17,15 +17,28 @@
         @Html.TextBoxFor(playlist => playlist.Name, new { @class = "form-control", placeholder = " Playlist name" });
         <button class="btn btn-success" type="submit">Create Playlist</button>
 
-        @for (int i = 0; i < (Model.Tracks is null ? 0 : Model.Tracks.Count); i++)
+        @for (int i = 0; i < (Model.Tracks?.Any() ?? true ? Model.Tracks.Count : 0); i++)
         {
-            @Html.TextAreaFor(playlist => playlist.Tracks[i].Name);
+            <div id="trackslist_@i">
+                @Html.EditorFor(model => Model.Tracks[i])
+                <!-- This is an editor template, not a partial view-->
+            </div>
 
-            @Html.CheckBoxFor(playlist => playlist.Tracks[i].Exclude);
-            /*Excludes the song from being played, useful fx. when a song has been removed from YT, but you dont want it erased from the playlist*/
+            <!-- TODO It doesn't send the cloned model back through form submit :( -->
         }
+        <button class="btn btn-success" type="button" onclick="createItemFromTemplate('trackslist__x0x_', 0, 'trackslist_0')">Add New Track</button>
     }
 </div>
+
+<div hidden>
+    <!-- A template of new (empty) track elements that I copy from, whenever a user adds one-->
+    @{ var templateModel = new Soundche.Core.Domain.Track(); } 
+    <div id="trackslist__x0x_">
+        @Html.EditorFor(model => templateModel)
+    </div>
+</div>
+
+<!-- TODO Still need delete and switch index functionality for each track element -->
 
 <!-- TODO: Search on: MVC Edit a variable length list view !!!!!!!!!!! Maybe I should just do post/get and have each Track be a partial view?s -->
 <!-- TODO: Need some JS to change the view whenever I add/remove a song... BELOW -->
@@ -41,5 +54,10 @@
         return url.match(re)[7];
         // Source: https://stackoverflow.com/a/51870158/5774018
         // Regex to get the youtube id from most kinds of youtube links
+    }
+
+    function createItemFromTemplate(templateId, indexNo, insertBeforeId) {
+        // Copy the template Element, replaces all the _x0x_ with the index no and add the new element
+        $('#' + insertBeforeId).before($.parseHTML($('#' + templateId).clone().prop('outerHTML').replace(/_x0x_/g, indexNo)));
     }
 </script>
