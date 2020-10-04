@@ -32,3 +32,14 @@
 <!-- TODO: All of it needs to be repackaged for a partial view at some point. -->
 <!-- http://ivanz.com/2011/06/16/editing-variable-length-reorderable-collections-in-asp-net-mvc-part-1/ -->
 <!-- http://blog.stevensanderson.com/2010/01/28/editing-a-variable-length-list-aspnet-mvc-2-style/ -->
+
+
+<!-- TODO ADD THIS, AND THEN MAKE SURE VIDEOS CAN STILL BE PLAYED-->
+<script type="text/javascript">
+    function getYoutubeIdFromUrl(url) {
+        let re = /^(https?:\/\/)?((www\.)?(youtube(-nocookie)?|youtube.googleapis)\.com.*(v\/|v=|vi=|vi\/|e\/|embed\/|user\/.*\/u\/\d+\/)|youtu\.be\/)([_0-9a-z-]+)/i;
+        return url.match(re)[7];
+        // Source: https://stackoverflow.com/a/51870158/5774018
+        // Regex to get the youtube id from most kinds of youtube links
+    }
+</script>
