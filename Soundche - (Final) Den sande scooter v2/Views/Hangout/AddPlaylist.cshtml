@@ -1,4 +1,4 @@
-﻿@model Soundche.Core.Domain.Playlist
+﻿@model AddPlaylistViewModel
 @{
     ViewBag.Title = "AddPlaylist";
 }
@@ -14,13 +14,13 @@
     @using (@Html.BeginForm())
     {
         @Html.ValidationSummary();
-        @Html.TextBoxFor(playlist => playlist.Name, new { @class = "form-control", placeholder = " Playlist name" });
+        @Html.TextBoxFor(model => Model.PlaylistModel.Name, new { @class = "form-control", placeholder = " Playlist name" });
         <button class="btn btn-success" type="submit">Create Playlist</button>
 
-        @for (int i = 0; i < (Model.Tracks?.Any() ?? true ? Model.Tracks.Count : 0); i++)
+        @for (int i = 0; i < (Model.PlaylistModel.Tracks?.Any() ?? true ? Model.PlaylistModel.Tracks.Count : 0); i++)
         {
             <div id="trackslist_@i">
-                @Html.EditorFor(model => Model.Tracks[i])
+                @Html.EditorFor(model => Model.PlaylistModel.Tracks[i])
                 <!-- This is an editor template, not a partial view-->
             </div>
 

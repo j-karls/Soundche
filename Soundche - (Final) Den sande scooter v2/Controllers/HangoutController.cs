@@ -140,7 +140,7 @@ namespace Soundche.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddPlaylist(Playlist playlist)
+        public ActionResult AddPlaylist(AddPlaylistViewModel playlist)
         {
             // do validation
             if (!ModelState.IsValid) return View(playlist);
@@ -153,5 +153,12 @@ namespace Soundche.Web.Controllers
             // redirect
             return Redirect("index");
         }
+
+        public ViewResult AddTrack() // Maybe change to actionresult?
+        {
+            return View(new Track());
+        }
+
+
     }
 }
