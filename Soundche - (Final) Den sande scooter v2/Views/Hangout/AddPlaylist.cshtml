@@ -1,4 +1,4 @@
-﻿@model AddPlaylistViewModel
+﻿@model Soundche.Core.Domain.Playlist
 @{
     ViewBag.Title = "AddPlaylist";
 }
@@ -14,39 +14,51 @@
     @using (@Html.BeginForm())
     {
         @Html.ValidationSummary();
-        @Html.TextBoxFor(model => Model.PlaylistModel.Name, new { @class = "form-control", placeholder = " Playlist name" });
+        @Html.TextBoxFor(model => Model.Name, new { @class = "form-control", placeholder = " Playlist name" });
         <button class="btn btn-success" type="submit">Create Playlist</button>
 
-        @for (int i = 0; i < (Model.PlaylistModel.Tracks?.Any() ?? true ? Model.PlaylistModel.Tracks.Count : 0); i++)
+        @using (Html.BeginForm())
         {
-            <div id="trackslist_@i">
-                @Html.EditorFor(model => Model.PlaylistModel.Tracks[i])
-                <!-- This is an editor template, not a partial view-->
+            <div id="editorRowsTeachers">
+                @foreach (var item in Model.Tracks)
+                    @Html.Partial("Track", item)
             </div>
-
-            <!-- TODO It doesn't send the cloned model back through form submit :( -->
+            <!--ATHtml.ActionLink("Add", "TeacherManager", null, new { id = "addItemTeachers", ATclass = "button" });--> 
         }
-        <button class="btn btn-success" type="button" onclick="createItemFromTemplate('trackslist__x0x_', 0, 'trackslist_0')">Add New Track</button>
+
+        <!--//for (int i = 0; i < (Model.Tracks?.Any() ?? true ? Model.Tracks.Count : 0); i++)-->
+        <!--<button class="btn btn-success" type="button" onclick="createItemFromTemplate('trackslist__x0x_', 0, 'trackslist_0')">Add New Track</button>-->
     }
+
+    <!--
+    FOLLOW http://blog.stevensanderson.com/2010/01/28/editing-a-variable-length-list-aspnet-mvc-2-style/
+    THEN FOLLOW https://blog.stevensanderson.com/2010/01/28/validating-a-variable-length-list-aspnet-mvc-2-style/
+
+    ONCLICK WE WANT TO REDIRECT TO JS FUNCTION THAT THEN CALLS AddTrack IN CONTROLLER, AND APPENDS THE RECIEVED VIEW TO THE DOM
+
+
+
+    <%= Html.ActionLink("Add another...", "BlankEditorRow", null, new { id = "addItem" }) %>
+
+    $("#addItem").click(function() {
+        $.ajax({
+            url: this.href,
+            cache: false,
+            success: function(html) { $("#editorRows").append(html); }
+        });
+        return false;
+    });
+
+      -->
 </div>
 
-<div hidden>
-    <!-- A template of new (empty) track elements that I copy from, whenever a user adds one-->
-    @{ var templateModel = new Soundche.Core.Domain.Track(); } 
-    <div id="trackslist__x0x_">
-        @Html.EditorFor(model => templateModel)
-    </div>
-</div>
 
 <!-- TODO Still need delete and switch index functionality for each track element -->
-
 <!-- TODO: Search on: MVC Edit a variable length list view !!!!!!!!!!! Maybe I should just do post/get and have each Track be a partial view?s -->
 <!-- TODO: Need some JS to change the view whenever I add/remove a song... BELOW -->
 <!-- TODO: All of it needs to be repackaged for a partial view at some point. -->
 <!-- http://ivanz.com/2011/06/16/editing-variable-length-reorderable-collections-in-asp-net-mvc-part-1/ -->
 <!-- http://blog.stevensanderson.com/2010/01/28/editing-a-variable-length-list-aspnet-mvc-2-style/ -->
-
-
 <!-- TODO ADD THIS, AND THEN MAKE SURE VIDEOS CAN STILL BE PLAYED-->
 <script type="text/javascript">
     function getYoutubeIdFromUrl(url) {

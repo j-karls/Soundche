@@ -136,7 +136,9 @@ namespace Soundche.Web.Controllers
         public ActionResult AddPlaylist()
         {
             // Automatically finds and returns the cshtml file corresponding to the function name "AddPlaylist"
-            return View(new Playlist() { Tracks = new List<Track>() { new Track() } /*remove this*/ });
+            //return View(new Playlist());
+
+            return View(new Playlist() { Tracks = new List<Track> { new Track(), new Track() } } );
         }
 
         [HttpPost]
@@ -147,16 +149,16 @@ namespace Soundche.Web.Controllers
 
             // save playlist
             User usr = _room.GetUser(User.Identity.Name);
-            usr.Playlists.Add(playlist);
+            usr.Playlists.Add(playlist.PlaylistModel);
             _room.UpdateUser(usr);
 
             // redirect
             return Redirect("index");
         }
 
-        public ViewResult AddTrack() // Maybe change to actionresult?
+        public ViewResult AddTrack() // Maybe change to actionresult? probably not
         {
-            return View(new Track());
+            return View(new Track()); // DOES THIS WORK WITH EDITOR TEMPLATES? IF NOT, CHANGE THE TEMPLATE TO AN ORDINARY VIEW
         }
 
 
