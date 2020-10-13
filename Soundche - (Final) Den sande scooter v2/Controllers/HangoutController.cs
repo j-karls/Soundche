@@ -136,31 +136,27 @@ namespace Soundche.Web.Controllers
         public ActionResult AddPlaylist()
         {
             // Automatically finds and returns the cshtml file corresponding to the function name "AddPlaylist"
-            //return View(new Playlist());
-
             return View(new Playlist() { Tracks = new List<Track> { new Track(), new Track() } } );
         }
 
         [HttpPost]
-        public ActionResult AddPlaylist(AddPlaylistViewModel playlist)
+        public ActionResult AddPlaylist(Playlist playlist)
         {
             // do validation
             if (!ModelState.IsValid) return View(playlist);
 
             // save playlist
             User usr = _room.GetUser(User.Identity.Name);
-            usr.Playlists.Add(playlist.PlaylistModel);
+            usr.Playlists.Add(playlist);
             _room.UpdateUser(usr);
 
             // redirect
             return Redirect("index");
         }
 
-        public ViewResult AddTrack() // Maybe change to actionresult? probably not
+        public PartialViewResult Track()
         {
-            return View(new Track()); // DOES THIS WORK WITH EDITOR TEMPLATES? IF NOT, CHANGE THE TEMPLATE TO AN ORDINARY VIEW
+            return PartialView(new Track());
         }
-
-
     }
 }

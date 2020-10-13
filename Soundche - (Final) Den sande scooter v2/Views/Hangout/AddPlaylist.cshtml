@@ -3,6 +3,12 @@
     ViewBag.Title = "AddPlaylist";
 }
 
+<head>
+    <!-- Include Ajax -->
+    <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+</head>
+
 <div>
     <h2>
         Add New Playlist
@@ -19,48 +25,38 @@
 
         @using (Html.BeginForm())
         {
-            <div id="editorRowsTeachers">
+            <div id="editorRowsTracks">
                 @foreach (var item in Model.Tracks)
                     @Html.Partial("Track", item)
             </div>
-            <!--ATHtml.ActionLink("Add", "TeacherManager", null, new { id = "addItemTeachers", ATclass = "button" });--> 
+            <button id="addNewTrackBtn" type="button">Add New Row</button>
         }
-
-        <!--//for (int i = 0; i < (Model.Tracks?.Any() ?? true ? Model.Tracks.Count : 0); i++)-->
-        <!--<button class="btn btn-success" type="button" onclick="createItemFromTemplate('trackslist__x0x_', 0, 'trackslist_0')">Add New Track</button>-->
     }
 
     <!--
-    FOLLOW http://blog.stevensanderson.com/2010/01/28/editing-a-variable-length-list-aspnet-mvc-2-style/
-    THEN FOLLOW https://blog.stevensanderson.com/2010/01/28/validating-a-variable-length-list-aspnet-mvc-2-style/
-
-    ONCLICK WE WANT TO REDIRECT TO JS FUNCTION THAT THEN CALLS AddTrack IN CONTROLLER, AND APPENDS THE RECIEVED VIEW TO THE DOM
-
-
-
-    <%= Html.ActionLink("Add another...", "BlankEditorRow", null, new { id = "addItem" }) %>
-
-    $("#addItem").click(function() {
-        $.ajax({
-            url: this.href,
-            cache: false,
-            success: function(html) { $("#editorRows").append(html); }
-        });
-        return false;
-    });
-
+    READ THE SECOND ONE TO BE SURE https://blog.stevensanderson.com/2010/01/28/validating-a-variable-length-list-aspnet-mvc-2-style/
       -->
 </div>
 
-
-<!-- TODO Still need delete and switch index functionality for each track element -->
-<!-- TODO: Search on: MVC Edit a variable length list view !!!!!!!!!!! Maybe I should just do post/get and have each Track be a partial view?s -->
-<!-- TODO: Need some JS to change the view whenever I add/remove a song... BELOW -->
-<!-- TODO: All of it needs to be repackaged for a partial view at some point. -->
-<!-- http://ivanz.com/2011/06/16/editing-variable-length-reorderable-collections-in-asp-net-mvc-part-1/ -->
-<!-- http://blog.stevensanderson.com/2010/01/28/editing-a-variable-length-list-aspnet-mvc-2-style/ -->
+<!-- TODO Need switch index functionality for each track element -->
 <!-- TODO ADD THIS, AND THEN MAKE SURE VIDEOS CAN STILL BE PLAYED-->
+<!-- All made courtesy to this genius https://stackoverflow.com/questions/29700557/mvc-5-dynamic-rows-with-begincollectionitem -->
+
 <script type="text/javascript">
+        $(function () {
+            $('#addNewTrackBtn').on('click', function () {
+                $.ajax({
+                    url: '@Url.Action("Track")',
+                        cache: false,
+                        success: function (html) { $("#editorRowsTracks").append(html); }
+                    });
+                    return false;
+            });
+            $('#editorRowsTracks').on('click', '.deleteRow', function () {
+                $(this).closest('.editorRow').remove();
+            });
+        });
+
     function getYoutubeIdFromUrl(url) {
         let re = /^(https?:\/\/)?((www\.)?(youtube(-nocookie)?|youtube.googleapis)\.com.*(v\/|v=|vi=|vi\/|e\/|embed\/|user\/.*\/u\/\d+\/)|youtu\.be\/)([_0-9a-z-]+)/i;
         return url.match(re)[7];
