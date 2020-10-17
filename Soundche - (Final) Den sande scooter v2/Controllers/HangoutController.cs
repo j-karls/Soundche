@@ -77,6 +77,7 @@ namespace Soundche.Web.Controllers
             return View("index", vm);
 
             // TODO: Remove this hangouts controller, probably put it in a partialview or something. No need to refresh or change the URL just because we joined the waitlist
+            // Yup just make it return an OK? 
         }
 
         public IActionResult StopPlay(int playlistNr) //TODO DO THIS.
@@ -132,11 +133,17 @@ namespace Soundche.Web.Controllers
             //return View("yt");
         }
 
+        // TODO EditPlaylist, should be HTTPGET? 
+        public ActionResult EditPlaylist(HangoutViewModel vm) 
+        {
+            return View(vm.SelectedPlaylist); 
+        }
+
         [HttpGet]
         public ActionResult AddPlaylist()
         {
             // Automatically finds and returns the cshtml file corresponding to the function name "AddPlaylist"
-            return View(new Playlist() { Tracks = new List<Track> { new Track(), new Track() } } );
+            return View(new Playlist() { Tracks = new List<Track>() } );
         }
 
         [HttpPost]
@@ -151,7 +158,7 @@ namespace Soundche.Web.Controllers
             _room.UpdateUser(usr);
 
             // redirect
-            return Redirect("index");
+            return Redirect("index"); // TODO remove the index redir? to just /?
         }
 
         public PartialViewResult Track()

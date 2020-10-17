@@ -4,7 +4,9 @@
 <div class="editorRow">
     @using (Html.BeginCollectionItem("tracks"))
     {
+        @Html.ValidationMessageFor(track => track.Name);
         @Html.TextAreaFor(track => track.Name)
+        
         @Html.CheckBoxFor(track => track.Exclude)
         <!--Excludes the song from being played, useful fx. when a song has been removed from YT, but you dont want it erased from the playlist-->
 
