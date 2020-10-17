@@ -32,14 +32,11 @@
             <button id="addNewTrackBtn" type="button">Add New Row</button>
         }
     }
-
-    <!--
-    READ THE SECOND ONE TO BE SURE https://blog.stevensanderson.com/2010/01/28/validating-a-variable-length-list-aspnet-mvc-2-style/
-      -->
 </div>
 
-<!-- TODO Need switch index functionality for each track element -->
+<!-- READ THE SECOND ONE TO BE SURE https://blog.stevensanderson.com/2010/01/28/validating-a-variable-length-list-aspnet-mvc-2-style/ -->
 <!-- TODO ADD THIS, AND THEN MAKE SURE VIDEOS CAN STILL BE PLAYED-->
+
 <!-- All made courtesy to this genius https://stackoverflow.com/questions/29700557/mvc-5-dynamic-rows-with-begincollectionitem -->
 
 <script type="text/javascript">
@@ -52,8 +49,17 @@
                     });
                     return false;
             });
+
             $('#editorRowsTracks').on('click', '.deleteRow', function () {
                 $(this).closest('.editorRow').remove();
+            });
+
+            $('#editorRowsTracks').on('click', '.moveUp', function () {
+                $(this).closest('.editorRow').insertBefore($(this).closest('.editorRow').prev());
+            });
+
+            $('#editorRowsTracks').on('click', '.moveDown', function () {
+                $(this).closest('.editorRow').insertAfter($(this).closest('.editorRow').next());
             });
         });
 
@@ -62,10 +68,5 @@
         return url.match(re)[7];
         // Source: https://stackoverflow.com/a/51870158/5774018
         // Regex to get the youtube id from most kinds of youtube links
-    }
-
-    function createItemFromTemplate(templateId, indexNo, insertBeforeId) {
-        // Copy the template Element, replaces all the _x0x_ with the index no and add the new element
-        $('#' + insertBeforeId).before($.parseHTML($('#' + templateId).clone().prop('outerHTML').replace(/_x0x_/g, indexNo)));
     }
 </script>
