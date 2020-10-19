@@ -133,15 +133,11 @@ namespace Soundche.Web.Controllers
             //return View("yt");
         }
 
-        // TODO EditPlaylist, should be HTTPGET? 
-        public ActionResult EditPlaylist(HangoutViewModel vm) 
-        {
-            return View(vm.SelectedPlaylist); 
-        }
-
         [HttpGet]
         public ActionResult AddPlaylist()
         {
+            // TODO If there's a currently selected playlist, then we edit it? Or something similar - vm.SelectedPlaylist
+
             // Automatically finds and returns the cshtml file corresponding to the function name "AddPlaylist"
             return View(new Playlist() { Tracks = new List<Track>() } );
         }

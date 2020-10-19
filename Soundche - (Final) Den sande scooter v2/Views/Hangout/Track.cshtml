@@ -4,14 +4,17 @@
 <div class="editorRow">
     @using (Html.BeginCollectionItem("tracks"))
     {
+        @Html.TextArea("", "", new { id = "yturl" })
+
         @Html.ValidationMessageFor(track => track.Name);
-        @Html.TextAreaFor(track => track.Name)
-        
+        @Html.LabelFor(track => track.Name)
+        <!-- The name loaded by youtube. Maybe we don't need this field at all ?? -->
+
         @Html.CheckBoxFor(track => track.Exclude)
         <!--Excludes the song from being played, useful fx. when a song has been removed from YT, but you dont want it erased from the playlist-->
 
-        @Html.HiddenFor(track => track.YoutubeUrl)
-        <textarea placeholder="Youtube URL..."></textarea>
+        @Html.LabelFor(track => track.YoutubeId, Model.YoutubeId, new { id = "ytid" })
+        <!--<textarea placeholder="Youtube URL..."></textarea>-->
         <!-- TODO Display yt.com/ + youtube_id -->
         <!-- TODO Get something working where you put in a youtube url, and it saves only the REGEXd id, but it still displays the full link -->
         <div>
@@ -19,7 +22,7 @@
                 <span class="smolBtn">
                     <a href="#" class="deleteRow">X</a>
                 </span>
-                
+
                 <span class="smolBtn">
                     <a href="#" class="moveUp">UP</a>
                 </span>
