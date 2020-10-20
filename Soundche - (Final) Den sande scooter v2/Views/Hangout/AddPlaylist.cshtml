@@ -64,18 +64,22 @@
             });
 
             $('#editorRowsTracks').on('blur', '#yturl', function (text) {
-                $(this).siblings('#ytid').val(getYoutubeIdFromUrl($(this).val())); /// TODO BOII THIS STILL DOESN*T PUT THINGS INTO YTID LABEL
+                ytid = getYoutubeIdFromUrl($(this).val());
+                if (ytid != null) {
+                    $(this).siblings('#ytid').text(ytid);
+                    $(this).siblings('#ytid2').val(ytid); //TODO CHANGE NAME. Need this one to actually ensure my value goes over
+                    $(this).siblings('#successlabel').text("Modified!");
+                }
+                else {
+                    $(this).siblings('#successlabel').text("Invalid. Value not changed!");
+                }
             });
         });
 
     function getYoutubeIdFromUrl(url) {
         let re = /^(https?:\/\/)?((www\.)?(youtube(-nocookie)?|youtube.googleapis)\.com.*(v\/|v=|vi=|vi\/|e\/|embed\/|user\/.*\/u\/\d+\/)|youtu\.be\/)([_0-9a-z-]+)/i;
-
-        console.log(url);
-        console.log(String(url));
-        console.log(String(url).match(re)[7]);
-
-        return String(url).match(re)[7];
+        match = String(url).match(re);
+        return (match == null) ? null : match[7];
         // Source: https://stackoverflow.com/a/51870158/5774018
         // Regex to get the youtube id from most kinds of youtube links
     }

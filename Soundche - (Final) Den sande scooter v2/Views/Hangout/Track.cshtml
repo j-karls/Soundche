@@ -13,10 +13,14 @@
         @Html.CheckBoxFor(track => track.Exclude)
         <!--Excludes the song from being played, useful fx. when a song has been removed from YT, but you dont want it erased from the playlist-->
 
+        <!-- TODO Add edit page -->
+        <!-- TODO Prettify the view and make partial -->
+        <!-- TODO Add error validation with [Required] and such -->
+        <!-- TODO LOAD VIDEO NAME IN WITH YT CALL (EMILS CODE) JQUERY -->
+        <!-- TODO ENSURE I HAVE HIDDEN FIELDS FOR ALL MY VALUES -->
+
+        @Html.HiddenFor(track => track.YoutubeId, new { id = "ytid2" }) <!-- need this to ensure my value actually posts properly, even though it ought to be bound in the line below, but whatever -->
         @Html.LabelFor(track => track.YoutubeId, Model.YoutubeId, new { id = "ytid" })
-        <!--<textarea placeholder="Youtube URL..."></textarea>-->
-        <!-- TODO Display yt.com/ + youtube_id -->
-        <!-- TODO Get something working where you put in a youtube url, and it saves only the REGEXd id, but it still displays the full link -->
         <div>
             <span>
                 <span class="smolBtn">
@@ -32,5 +36,7 @@
                 </span>
             </span>
         </div>
+
+        @Html.Label("", "", new { id = "successlabel" })
     }
 </div>
