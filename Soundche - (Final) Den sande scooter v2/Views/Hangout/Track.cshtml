@@ -19,7 +19,7 @@
         <!-- TODO LOAD VIDEO NAME IN WITH YT CALL (EMILS CODE) JQUERY -->
         <!-- TODO ENSURE I HAVE HIDDEN FIELDS FOR ALL MY VALUES -->
 
-        @Html.HiddenFor(track => track.YoutubeId, new { id = "ytid2" }) <!-- need this to ensure my value actually posts properly, even though it ought to be bound in the line below, but whatever -->
+        @Html.HiddenFor(track => track.YoutubeId, new { id = "ytidvalue" }) <!-- need this to ensure my value actually posts properly, even though it ought to be bound in the line below, but whatever -->
         @Html.LabelFor(track => track.YoutubeId, Model.YoutubeId, new { id = "ytid" })
         <div>
             <span>

@@ -67,14 +67,26 @@
                 ytid = getYoutubeIdFromUrl($(this).val());
                 if (ytid != null) {
                     $(this).siblings('#ytid').text(ytid);
-                    $(this).siblings('#ytid2').val(ytid); //TODO CHANGE NAME. Need this one to actually ensure my value goes over
+                    $(this).siblings('#ytidvalue').val(ytid); // Need this one to actually ensure my value goes over
                     $(this).siblings('#successlabel').text("Modified!");
+                    // TODO Get and insert name of yt video and save it on db: https://stackoverflow.com/a/39174584/5774018
+
+                    console.log(mynewf())
                 }
                 else {
                     $(this).siblings('#successlabel').text("Invalid. Value not changed!");
                 }
             });
         });
+
+    function mynewf(id) {
+        var url = 'https://www.youtube.com/watch?v=' + id;
+
+        $.getJSON('https://noembed.com/embed',
+            { format: 'json', url: url }, function (data) {
+                alert(data.title);
+            });
+    }
 
     function getYoutubeIdFromUrl(url) {
         let re = /^(https?:\/\/)?((www\.)?(youtube(-nocookie)?|youtube.googleapis)\.com.*(v\/|v=|vi=|vi\/|e\/|embed\/|user\/.*\/u\/\d+\/)|youtu\.be\/)([_0-9a-z-]+)/i;
