@@ -7,6 +7,8 @@
     <!-- Include Ajax -->
     <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="/Views/custom.css" type="text/css" />
 </head>
 
 <div>
@@ -92,11 +94,13 @@
     }
 
     function showSpinner(spinner) {
-        spinner.html('<image src="../Shared/spinner.gif" alt="Loading..." />');
+        //spinner.html('<image src="../Shared/spinner.gif" alt="Loading..." />');
+        spinner.show();
     }
 
     function hideSpinner(spinner) {
-        spinner.html("");
+        //spinner.html("");
+        spinner.hide();
     }
 
     function getYoutubeIdFromUrl(url) {
