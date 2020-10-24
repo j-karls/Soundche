@@ -69,9 +69,8 @@
                     $(this).siblings('#ytid').text(ytid);
                     $(this).siblings('#ytidvalue').val(ytid); // Need this one to actually ensure my value goes over
                     $(this).siblings('#successlabel').text("Modified!");
-                    // TODO Get and insert name of yt video and save it on db: https://stackoverflow.com/a/39174584/5774018
 
-                    console.log(mynewf())
+                    yttitle = loadYtTitleIntoElements(ytid, $(this).siblings('#yttitle'), $(this).siblings('#yttitlevalue'), $(this).siblings('#spinner'));
                 }
                 else {
                     $(this).siblings('#successlabel').text("Invalid. Value not changed!");
@@ -79,13 +78,25 @@
             });
         });
 
-    function mynewf(id) {
+    function loadYtTitleIntoElements(id, tar, spinner) {
+        // https://stackoverflow.com/a/39174584/5774018
         var url = 'https://www.youtube.com/watch?v=' + id;
+        
+        showSpinner(spinner);
 
         $.getJSON('https://noembed.com/embed',
             { format: 'json', url: url }, function (data) {
-                alert(data.title);
+                tar.text(data.title);
+                hideSpinner(spinner);
             });
+    }
+
+    function showSpinner(spinner) {
+        spinner.html('<image src="../Shared/spinner.gif" alt="Loading..." />');
+    }
+
+    function hideSpinner(spinner) {
+        spinner.html("");
     }
 
     function getYoutubeIdFromUrl(url) {

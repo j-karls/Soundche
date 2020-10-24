@@ -6,9 +6,11 @@
     {
         @Html.TextArea("", "", new { id = "yturl" })
 
-        @Html.ValidationMessageFor(track => track.Name);
-        @Html.LabelFor(track => track.Name)
-        <!-- The name loaded by youtube. Maybe we don't need this field at all ?? -->
+        @Html.LabelFor(track => track.Name, Model.Name, new { id = "yttitle" }) <!-- TODO Maybe replace Model.Name with "" ?-->
+        @Html.HiddenFor(track => track.Name, new { id = "yttitlevalue" })
+
+        <div id="spinner"/>
+        <!-- TODO Cant get this to work for some reason. It cant find my local img src. -->
 
         @Html.CheckBoxFor(track => track.Exclude)
         <!--Excludes the song from being played, useful fx. when a song has been removed from YT, but you dont want it erased from the playlist-->
@@ -20,7 +22,7 @@
         <!-- TODO ENSURE I HAVE HIDDEN FIELDS FOR ALL MY VALUES -->
 
         @Html.HiddenFor(track => track.YoutubeId, new { id = "ytidvalue" }) <!-- need this to ensure my value actually posts properly, even though it ought to be bound in the line below, but whatever -->
-        @Html.LabelFor(track => track.YoutubeId, Model.YoutubeId, new { id = "ytid" })
+        @Html.LabelFor(track => track.YoutubeId, Model.YoutubeId, new { id = "ytid" })        
         <div>
             <span>
                 <span class="smolBtn">
