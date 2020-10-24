@@ -7,9 +7,9 @@
     <!-- Include Ajax -->
     <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
-
-    <link rel="stylesheet" href="/Views/custom.css" type="text/css" />
 </head>
+
+<link rel="stylesheet" href="~/css/custom.css" type="text/css"/>
 
 <div>
     <h2>
@@ -80,7 +80,7 @@
             });
         });
 
-    function loadYtTitleIntoElements(id, tar, spinner) {
+    function loadYtTitleIntoElements(id, tar, tarval, spinner) {
         // https://stackoverflow.com/a/39174584/5774018
         var url = 'https://www.youtube.com/watch?v=' + id;
         
@@ -89,18 +89,17 @@
         $.getJSON('https://noembed.com/embed',
             { format: 'json', url: url }, function (data) {
                 tar.text(data.title);
+                tarval.text(data.title);
                 hideSpinner(spinner);
             });
     }
 
     function showSpinner(spinner) {
-        //spinner.html('<image src="../Shared/spinner.gif" alt="Loading..." />');
-        spinner.show();
+        spinner.addClass("loader");
     }
 
     function hideSpinner(spinner) {
-        //spinner.html("");
-        spinner.hide();
+        spinner.removeClass("loader");
     }
 
     function getYoutubeIdFromUrl(url) {

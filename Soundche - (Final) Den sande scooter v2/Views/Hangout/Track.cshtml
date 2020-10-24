@@ -9,8 +9,7 @@
         @Html.LabelFor(track => track.Name, Model.Name, new { id = "yttitle" }) <!-- TODO Maybe replace Model.Name with "" ?-->
         @Html.HiddenFor(track => track.Name, new { id = "yttitlevalue" })
 
-        <div id="spinner" class="loader">Loading...</div>
-        <!-- TODO Cant get this to work for some reason. -->
+        <div id="spinner">Loading...</div>
 
         @Html.CheckBoxFor(track => track.Exclude)
         <!--Excludes the song from being played, useful fx. when a song has been removed from YT, but you dont want it erased from the playlist-->
