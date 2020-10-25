@@ -27,6 +27,7 @@ namespace Soundche.Web.Models
             //SelectedPlaylistId = 1;
         }
 
+        public List<Playlist> Playlists { get; set; }
         public string SelectedPlaylist { get; set; }
         public IEnumerable<SelectListItem> UserPlaylists { get; set; }
     }

@@ -36,7 +36,7 @@ namespace Soundche.Web.Controllers
                 user = _room.GetUser(User.Identity.Name);
             }
             var ups = new SelectList(user.Playlists.Select(x => x.Name));
-            return View(new HangoutViewModel { UserPlaylists = ups, SelectedPlaylist = user.Playlists.IsNullOrEmpty() ? null : user.Playlists[0].Name });
+            return View(new HangoutViewModel { UserPlaylists = ups, SelectedPlaylist = user.Playlists.IsNullOrEmpty() ? null : user.Playlists[0].Name, Playlists = _room.GetUser(User.Identity.Name).Playlists });
         }
 
         public IActionResult GetActiveSong()
@@ -136,11 +136,24 @@ namespace Soundche.Web.Controllers
         [HttpGet]
         public ActionResult AddPlaylist()
         {
+            //Playlist lst = _room.GetUser(User.Identity.Name).GetPlaylist(vm.SelectedPlaylist);
+
             // TODO If there's a currently selected playlist, then we edit it? Or something similar - vm.SelectedPlaylist
 
             // Automatically finds and returns the cshtml file corresponding to the function name "AddPlaylist"
             return View(new Playlist() { Tracks = new List<Track>() } );
+
+            // If none is selected, we create new??
         }
+
+        public ActionResult EditPlaylist(string selected) //TODO User should probably be part of the hangoutviewmodel as well
+        {
+            if (String.IsNullOrEmpty(selected)) throw new NotImplementedException(); // TODO BUTTON SHOULD BE GREYED OUT
+            return PartialView("AddPlaylist", _room.GetUser(User.Identity.Name).GetPlaylist(selected) );
+        }
+
+        [HttpPost]
+        public ActionResult EditPlaylist(Playlist playlist) => AddPlaylist(playlist);
 
         [HttpPost]
         public ActionResult AddPlaylist(Playlist playlist)
@@ -150,9 +163,14 @@ namespace Soundche.Web.Controllers
 
             // save playlist
             User usr = _room.GetUser(User.Identity.Name);
-            usr.Playlists.Add(playlist);
+            usr.Playlists.Add(playlist); // TODO Make a check and edit playlist if it's not a new one
             _room.UpdateUser(usr);
 
+
+            // TODO INSTEAD OF REDIRECTING, FIND A WAY TO UNLOAD THE PARTIALVIEW INSTEAD.
+            // Maybe somehow call a client-side function that removes the HTML? $('#partial').html("");
+            // Canot do that. But we can instead just have the client be the controlling part. Where it calls this function, and then 
+            // waits for the result. https://stackoverflow.com/questions/2709978/call-javascript-from-mvc-controller-action
             // redirect
             return Redirect("index"); // TODO remove the index redir? to just /?
         }

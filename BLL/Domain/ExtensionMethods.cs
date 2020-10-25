@@ -20,5 +20,10 @@ namespace Soundche.Core.Domain
         {
             return list == null || list.Count == 0;
         }
+
+        public static IEnumerable<T> OrEmptyIfNull<T>(this IEnumerable<T> source)
+        {
+            return source ?? System.Linq.Enumerable.Empty<T>();
+        }
     }
 }

@@ -28,7 +28,7 @@
         @using (Html.BeginForm())
         {
             <div id="editorRowsTracks">
-                @foreach (var item in Model.Tracks)
+                @foreach (var item in Model.Tracks ?? new List<Soundche.Core.Domain.Track>())
                     @Html.Partial("Track", item)
             </div>
             <button id="addNewTrackBtn" type="button">Add New Row</button>
