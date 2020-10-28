@@ -23,7 +23,7 @@
     {
         @Html.ValidationSummary();
         @Html.TextBoxFor(model => Model.Name, new { @class = "form-control", placeholder = " Playlist name" });
-        <button class="btn btn-success" type="submit">Create Playlist</button>
+        <button id="playlistsubmitter" class="btn btn-success" type="submit">Create Playlist</button>
 
         @using (Html.BeginForm())
         {
@@ -43,42 +43,42 @@
 <!-- All made courtesy to this genius https://stackoverflow.com/questions/29700557/mvc-5-dynamic-rows-with-begincollectionitem -->
 
 <script type="text/javascript">
-        $(function () {
-            $('#addNewTrackBtn').on('click', function () {
-                $.ajax({
-                    url: '@Url.Action("Track")',
-                        cache: false,
-                        success: function (html) { $("#editorRowsTracks").append(html); }
-                    });
-                    return false;
-            });
-
-            $('#editorRowsTracks').on('click', '.deleteRow', function () {
-                $(this).closest('.editorRow').remove();
-            });
-
-            $('#editorRowsTracks').on('click', '.moveUp', function () {
-                $(this).closest('.editorRow').insertBefore($(this).closest('.editorRow').prev());
-            });
-
-            $('#editorRowsTracks').on('click', '.moveDown', function () {
-                $(this).closest('.editorRow').insertAfter($(this).closest('.editorRow').next());
-            });
-
-            $('#editorRowsTracks').on('blur', '#yturl', function (text) {
-                ytid = getYoutubeIdFromUrl($(this).val());
-                if (ytid != null) {
-                    $(this).siblings('#ytid').text(ytid);
-                    $(this).siblings('#ytidvalue').val(ytid); // Need this one to actually ensure my value goes over
-                    $(this).siblings('#successlabel').text("Modified!");
-
-                    yttitle = loadYtTitleIntoElements(ytid, $(this).siblings('#yttitle'), $(this).siblings('#yttitlevalue'), $(this).siblings('#spinner'));
-                }
-                else {
-                    $(this).siblings('#successlabel').text("Invalid. Value not changed!");
-                }
-            });
+    $(function () {
+        $('#addNewTrackBtn').on('click', function () {
+            $.ajax({
+                url: '@Url.Action("Track")',
+                    cache: false,
+                    success: function (html) { $("#editorRowsTracks").append(html); }
+                });
+                return false;
         });
+
+        $('#editorRowsTracks').on('click', '.deleteRow', function () {
+            $(this).closest('.editorRow').remove();
+        });
+
+        $('#editorRowsTracks').on('click', '.moveUp', function () {
+            $(this).closest('.editorRow').insertBefore($(this).closest('.editorRow').prev());
+        });
+
+        $('#editorRowsTracks').on('click', '.moveDown', function () {
+            $(this).closest('.editorRow').insertAfter($(this).closest('.editorRow').next());
+        });
+
+        $('#editorRowsTracks').on('blur', '#yturl', function (text) {
+            ytid = getYoutubeIdFromUrl($(this).val());
+            if (ytid != null) {
+                $(this).siblings('#ytid').text(ytid);
+                $(this).siblings('#ytidvalue').val(ytid); // Need this one to actually ensure my value goes over
+                $(this).siblings('#successlabel').text("Modified!");
+
+                yttitle = loadYtTitleIntoElements(ytid, $(this).siblings('#yttitle'), $(this).siblings('#yttitlevalue'), $(this).siblings('#spinner'));
+            }
+            else {
+                $(this).siblings('#successlabel').text("Invalid. Value not changed!");
+            }
+        });
+    });
 
     function loadYtTitleIntoElements(id, tar, tarval, spinner) {
         // https://stackoverflow.com/a/39174584/5774018

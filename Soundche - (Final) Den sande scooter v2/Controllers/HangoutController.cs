@@ -172,7 +172,12 @@ namespace Soundche.Web.Controllers
             // Canot do that. But we can instead just have the client be the controlling part. Where it calls this function, and then 
             // waits for the result. https://stackoverflow.com/questions/2709978/call-javascript-from-mvc-controller-action
             // redirect
-            return Redirect("index"); // TODO remove the index redir? to just /?
+
+            // Make onclick event on hangout index page in JS
+            // Replace contents of a div with id=playlisteditor with the partialView result of either "AddPlaylist" or "EditPlaylist"
+            // And make a similar click event that replaces the contents of that div with the empty string when an http OK is returned
+            //return Redirect("index"); // TODO remove the index redir? to just /?
+            return Ok(); // TODO remove the index redir? to just /?
         }
 
         public PartialViewResult Track()

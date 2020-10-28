@@ -64,7 +64,17 @@
         $('#partial').load('@Url.Action("EditPlaylist", "Hangout", new { selected = "Penis" })'); // TODO MAKE SELECTED PLAYLIST A JS VAR. Just make the entire dropdown in pure js, or at least ensure I can get the contents
     }); // CLEAN UP. Add the selected name in here properly
 
+    //$('#playlistsubmitter').on('click', function () {
+    //    // CAN I SOMEHOW GET THE RESULT OF THE POSTBACK (SUBMIT) IN HERE?
+    //    $('#partial').html("");
+    //});
 
+    //$('#playlistsubmitter').on('submit', function (e) { //TODO Sadly this doesn't seem to work, but may be worth investigating
+    //    console.log(e);
+    //    e.preventDefault(); // Stop the submitter from submitting like normal, therefore preventing the page refresh
+    //    $('#partial').html(""); // Then we just close the edit page silently
+    //});
+    // I dont think this would work. Because I still want to perform the postback, I just don't want the page refresh.
 
     ////////////////////////////////
     var youtubeInterface = {
