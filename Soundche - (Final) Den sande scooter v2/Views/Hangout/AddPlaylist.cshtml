@@ -3,32 +3,25 @@
     ViewBag.Title = "AddPlaylist";
 }
 
-<head>
-    <!-- Include Ajax -->
-    <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
-    <!--Alternatively, if I want to use my local copy. I probably should do same for JQuery? <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>-->
-</head>
-
-<link rel="stylesheet" href="~/css/custom.css" type="text/css"/>
-
-<div>
-    <h2>
-        Add New Playlist
-    </h2>
-</div>
-
 <div>
     <!-- This div is essential. Otherwise it doesn't work lmao-->
     <!-- This did it. Now it can silently submit/postback without refreshing the page. The problem is that it's not a very modular
         partial view now (because it references the controller and action directly), but oh well, who cares
         Sources: https://forums.asp.net/t/2148353.aspx, https://stackoverflow.com/questions/53229656/how-to-create-ajax-form-in-asp-net-core,
-        https://www.c-sharpcorner.com/UploadFile/0c1bb2/post-data-without-whole-postback/, 
+        https://www.c-sharpcorner.com/UploadFile/0c1bb2/post-data-without-whole-postback/,
         https://stackoverflow.com/questions/53319914/asp-net-mvc-post-data-to-controller-without-refreshing-page-->
     <form asp-controller="Hangout" asp-action="AddPlaylist" id="mainForm" data-ajax="true" data-ajax-method="POST"
           data-ajax-mode="replace" data-ajax-update="#mainForm">
         <!--data-ajax-success="success"-->
+        <!-- CAN I MOVE THIS FORM TO Index.html? SO ITS PLACED OUTSIDE THIS PARTIAL CLASS, BUT STILL CAPTURES ALL ITS VALUES?
+            Then I could have one that posts to addPlaylist and one for editPlaylist? -->
+
+        <div>
+            <h2>
+                Add New Playlist
+            </h2>
+        </div>
+
 
         @Html.ValidationSummary()
         @Html.TextBoxFor(model => Model.Name, new { @class = "form-control", placeholder = " Playlist name" })
@@ -65,7 +58,6 @@
 <!-- READ THE SECOND ONE TO BE SURE https://blog.stevensanderson.com/2010/01/28/validating-a-variable-length-list-aspnet-mvc-2-style/ -->
 <!-- Try just adding required to track and having that be shown -->
 <!-- TODO ADD THIS, AND THEN MAKE SURE VIDEOS CAN STILL BE PLAYED-->
-
 <!-- All made courtesy to this genius https://stackoverflow.com/questions/29700557/mvc-5-dynamic-rows-with-begincollectionitem -->
 
 <script type="text/javascript">
@@ -109,7 +101,7 @@
     function loadYtTitleIntoElements(id, tar, tarval, spinner) {
         // https://stackoverflow.com/a/39174584/5774018
         var url = 'https://www.youtube.com/watch?v=' + id;
-        
+
         showSpinner(spinner);
 
         $.getJSON('https://noembed.com/embed',
