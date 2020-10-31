@@ -3,7 +3,8 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 
-<style> /*GET INTO RIGHT STYLING SHEET*/
+<style>
+    /*GET INTO RIGHT STYLING SHEET*/
     .video-wrapper {
         position: relative;
         padding-bottom: 56.25%; /* 16:9 */
@@ -23,6 +24,9 @@
     <!-- Include Ajax -->
     <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
+    <link rel="stylesheet" href="~/css/custom.css" type="text/css" />
+    <!--Alternatively, if I want to use my local copy. I probably should do same for JQuery? <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>-->
 </head>
 
 <body>
@@ -63,6 +67,11 @@
     $('#openplaylistedit').on('click', function () {
         $('#partial').load('@Url.Action("EditPlaylist", "Hangout", new { selected = "Penis" })'); // TODO MAKE SELECTED PLAYLIST A JS VAR. Just make the entire dropdown in pure js, or at least ensure I can get the contents
     }); // CLEAN UP. Add the selected name in here properly
+
+    // TODO There's an interesting error here. If you validate wrongly once, it works fine. But if you do it a second time, then 
+    // you are redirected to to the partial class on a new page - one which is missing all its CSS styling and other JS from main page.
+
+
 
     //$('#playlistsubmitter').on('click', function () {
     //    // CAN I SOMEHOW GET THE RESULT OF THE POSTBACK (SUBMIT) IN HERE?

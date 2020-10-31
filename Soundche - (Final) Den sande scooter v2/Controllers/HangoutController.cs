@@ -159,7 +159,7 @@ namespace Soundche.Web.Controllers
         public ActionResult AddPlaylist(Playlist playlist)
         {
             // do validation
-            if (!ModelState.IsValid) return View(playlist);
+            if (!ModelState.IsValid) return PartialView("AddPlaylist", playlist);
 
             // save playlist
             User usr = _room.GetUser(User.Identity.Name);
@@ -176,8 +176,8 @@ namespace Soundche.Web.Controllers
             // Make onclick event on hangout index page in JS
             // Replace contents of a div with id=playlisteditor with the partialView result of either "AddPlaylist" or "EditPlaylist"
             // And make a similar click event that replaces the contents of that div with the empty string when an http OK is returned
-            //return Redirect("index"); // TODO remove the index redir? to just /?
-            return Ok(); // TODO remove the index redir? to just /?
+            // return Ok();
+            return new EmptyResult(); 
         }
 
         public PartialViewResult Track()
