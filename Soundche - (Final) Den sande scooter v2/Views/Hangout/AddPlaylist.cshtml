@@ -3,25 +3,24 @@
     ViewBag.Title = "AddPlaylist";
 }
 
-<div>
+<div id="mainForm">
     <!-- This div is essential. Otherwise it doesn't work lmao-->
     <!-- This did it. Now it can silently submit/postback without refreshing the page. The problem is that it's not a very modular
         partial view now (because it references the controller and action directly), but oh well, who cares
         Sources: https://forums.asp.net/t/2148353.aspx, https://stackoverflow.com/questions/53229656/how-to-create-ajax-form-in-asp-net-core,
         https://www.c-sharpcorner.com/UploadFile/0c1bb2/post-data-without-whole-postback/,
         https://stackoverflow.com/questions/53319914/asp-net-mvc-post-data-to-controller-without-refreshing-page-->
-    <form asp-controller="Hangout" asp-action="AddPlaylist" id="mainForm" data-ajax="true" data-ajax-method="POST"
-          data-ajax-mode="replace" data-ajax-update="#mainForm">
+    <form asp-controller="Hangout" asp-action="AddPlaylist" data-ajax="true" data-ajax-method="POST" data-ajax-mode="replace" data-ajax-update="#mainForm">
+        <!--asp-controller="Hangout"-->
         <!--data-ajax-success="success"-->
         <!-- CAN I MOVE THIS FORM TO Index.html? SO ITS PLACED OUTSIDE THIS PARTIAL CLASS, BUT STILL CAPTURES ALL ITS VALUES?
-            Then I could have one that posts to addPlaylist and one for editPlaylist? -->
+        Then I could have one that posts to addPlaylist and one for editPlaylist? -->
 
         <div>
             <h2>
                 Add New Playlist
             </h2>
         </div>
-
 
         @Html.ValidationSummary()
         @Html.TextBoxFor(model => Model.Name, new { @class = "form-control", placeholder = " Playlist name" })
@@ -35,67 +34,46 @@
             </div>
             <button id="addNewTrackBtn" type="button">Add New Row</button>
         }
-
     </form>
 
-    @*@using (Html.BeginForm())
-        {
-            @Html.ValidationSummary();
-            @Html.TextBoxFor(model => Model.Name, new { @class = "form-control", placeholder = " Playlist name" });
-            <button id="playlistsubmitter" class="btn btn-success" type="submit">Create Playlist</button>
+    <!--TODO Add Required to all the things that need it-->
+    <!-- All made courtesy to this genius https://stackoverflow.com/questions/29700557/mvc-5-dynamic-rows-with-begincollectionitem -->
 
-            @using (Html.BeginForm())
-            {
-                <div id="editorRowsTracks">
-                    @foreach (var item in Model.Tracks ?? new List<Soundche.Core.Domain.Track>())
-                        @Html.Partial("Track", item)
-                </div>
-                <button id="addNewTrackBtn" type="button">Add New Row</button>
-            }
-        }*@
-</div>
+    <script type="text/javascript">
+    // ADD PLAYLIST SCRIPTS START
+    $('#addNewTrackBtn').on('click', function () {
+        $.ajax({
+            url: '@Url.Action("Track")',
+                cache: false,
+                success: function (html) { $("#editorRowsTracks").append(html); }
+            });
+            return false;
+    });
 
-<!-- READ THE SECOND ONE TO BE SURE https://blog.stevensanderson.com/2010/01/28/validating-a-variable-length-list-aspnet-mvc-2-style/ -->
-<!-- Try just adding required to track and having that be shown -->
-<!-- TODO ADD THIS, AND THEN MAKE SURE VIDEOS CAN STILL BE PLAYED-->
-<!-- All made courtesy to this genius https://stackoverflow.com/questions/29700557/mvc-5-dynamic-rows-with-begincollectionitem -->
+    $('#editorRowsTracks').on('click', '.deleteRow', function () {
+        $(this).closest('.editorRow').remove();
+    });
 
-<script type="text/javascript">
-    $(function () {
-        $('#addNewTrackBtn').on('click', function () {
-            $.ajax({
-                url: '@Url.Action("Track")',
-                    cache: false,
-                    success: function (html) { $("#editorRowsTracks").append(html); }
-                });
-                return false;
-        });
+    $('#editorRowsTracks').on('click', '.moveUp', function () {
+        $(this).closest('.editorRow').insertBefore($(this).closest('.editorRow').prev());
+    });
 
-        $('#editorRowsTracks').on('click', '.deleteRow', function () {
-            $(this).closest('.editorRow').remove();
-        });
+    $('#editorRowsTracks').on('click', '.moveDown', function () {
+        $(this).closest('.editorRow').insertAfter($(this).closest('.editorRow').next());
+    });
 
-        $('#editorRowsTracks').on('click', '.moveUp', function () {
-            $(this).closest('.editorRow').insertBefore($(this).closest('.editorRow').prev());
-        });
+    $('#editorRowsTracks').on('blur', '#yturl', function (text) {
+        ytid = getYoutubeIdFromUrl($(this).val());
+        if (ytid != null) {
+            $(this).siblings('#ytid').text(ytid);
+            $(this).siblings('#ytidvalue').val(ytid); // Need this one to actually ensure my value goes over
+            $(this).siblings('#successlabel').text("Modified!");
 
-        $('#editorRowsTracks').on('click', '.moveDown', function () {
-            $(this).closest('.editorRow').insertAfter($(this).closest('.editorRow').next());
-        });
-
-        $('#editorRowsTracks').on('blur', '#yturl', function (text) {
-            ytid = getYoutubeIdFromUrl($(this).val());
-            if (ytid != null) {
-                $(this).siblings('#ytid').text(ytid);
-                $(this).siblings('#ytidvalue').val(ytid); // Need this one to actually ensure my value goes over
-                $(this).siblings('#successlabel').text("Modified!");
-
-                yttitle = loadYtTitleIntoElements(ytid, $(this).siblings('#yttitle'), $(this).siblings('#yttitlevalue'), $(this).siblings('#spinner'));
-            }
-            else {
-                $(this).siblings('#successlabel').text("Invalid. Value not changed!");
-            }
-        });
+            yttitle = loadYtTitleIntoElements(ytid, $(this).siblings('#yttitle'), $(this).siblings('#yttitlevalue'), $(this).siblings('#spinner'));
+        }
+        else {
+            $(this).siblings('#successlabel').text("Invalid. Value not changed!");
+        }
     });
 
     function loadYtTitleIntoElements(id, tar, tarval, spinner) {
@@ -127,4 +105,6 @@
         // Source: https://stackoverflow.com/a/51870158/5774018
         // Regex to get the youtube id from most kinds of youtube links
     }
-</script>
+    // ADD PLAYLIST SCRIPTS END
+    </script>
+</div>

@@ -20,15 +20,6 @@
         }
 </style>
 
-<head>
-    <!-- Include Ajax -->
-    <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
-    <link rel="stylesheet" href="~/css/custom.css" type="text/css" />
-    <!--Alternatively, if I want to use my local copy. I probably should do same for JQuery? <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>-->
-</head>
-
 <body>
     <div class="video-wrapper">
         <div id="player"></div>
@@ -60,30 +51,10 @@
     <div id="partial"></div>
 </body>
 
-
 <script type="text/javascript">
-    //var playlists = Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.SelectedPlaylist .Playlists)); // Serialized playlists
-
     $('#openplaylistedit').on('click', function () {
         $('#partial').load('@Url.Action("EditPlaylist", "Hangout", new { selected = "Penis" })'); // TODO MAKE SELECTED PLAYLIST A JS VAR. Just make the entire dropdown in pure js, or at least ensure I can get the contents
     }); // CLEAN UP. Add the selected name in here properly
-
-    // TODO There's an interesting error here. If you validate wrongly once, it works fine. But if you do it a second time, then 
-    // you are redirected to to the partial class on a new page - one which is missing all its CSS styling and other JS from main page.
-
-
-
-    //$('#playlistsubmitter').on('click', function () {
-    //    // CAN I SOMEHOW GET THE RESULT OF THE POSTBACK (SUBMIT) IN HERE?
-    //    $('#partial').html("");
-    //});
-
-    //$('#playlistsubmitter').on('submit', function (e) { //TODO Sadly this doesn't seem to work, but may be worth investigating
-    //    console.log(e);
-    //    e.preventDefault(); // Stop the submitter from submitting like normal, therefore preventing the page refresh
-    //    $('#partial').html(""); // Then we just close the edit page silently
-    //});
-    // I dont think this would work. Because I still want to perform the postback, I just don't want the page refresh.
 
     ////////////////////////////////
     var youtubeInterface = {
@@ -169,7 +140,7 @@
         },
 
         updateActiveSong(sessionData) {
-            // Check if there is an active song and if its a different song since last time we checked
+        // Check if there is an active song and if its a different song since last time we checked
             if (sessionData.isActive && (sessionData.switchedSongTime != sessionStore.lastTimeSwitchedSong)) {
                 sessionStore.songName = sessionData.songName;
                 sessionStore.startTime = sessionData.startTime;
