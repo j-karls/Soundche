@@ -8,20 +8,26 @@
 
         @Html.LabelFor(track => track.Name, Model.Name, new { id = "yttitle" }) <!-- TODO Maybe replace Model.Name with "" ?-->
         @Html.HiddenFor(track => track.Name, new { id = "yttitlevalue" })
+        <!-- labels don't appear to two-way bind, so we also need a hiddenFor helper bound to the same value-->
 
-        <div id="spinner">Loading...</div>
+        <!-- TODO Create a grid layout in here or something. 2 rows with a few of these textboxes per item-->
+
+        <div id="spinner" class="hidden">Loading...</div>
 
         @Html.CheckBoxFor(track => track.Exclude)
         <!--Excludes the song from being played, useful fx. when a song has been removed from YT, but you dont want it erased from the playlist-->
 
-        <!-- TODO Add edit page -->
-        <!-- TODO Prettify the view and make partial -->
-        <!-- TODO Add error validation with [Required] and such -->
-        <!-- TODO LOAD VIDEO NAME IN WITH YT CALL (EMILS CODE) JQUERY -->
-        <!-- TODO ENSURE I HAVE HIDDEN FIELDS FOR ALL MY VALUES -->
+        @Html.TextBoxFor(track => track.StartTime, new { type = "number", min = "0", step = "1" }) <!--todo add class here, or modify somehow for integer input-->
+        <!-- Equivalent to HTML5 <input type="number" min="0" step="1" />-->
+        @Html.TextBoxFor(track => track.EndTime, new { type = "number", min = "0", step = "1" }) <!--todo add class here, or modify somehow for integer input-->
+        <!-- TODO End time needs to load video duration from yt api -->
 
-        @Html.HiddenFor(track => track.YoutubeId, new { id = "ytidvalue" }) <!-- need this to ensure my value actually posts properly, even though it ought to be bound in the line below, but whatever -->
-        @Html.LabelFor(track => track.YoutubeId, Model.YoutubeId, new { id = "ytid" })        
+        @Html.HiddenFor(track => track.Author, new { id = "ytauthorvalue" })
+        @Html.LabelFor(track => track.Author, Model.Author, new { id = "ytauthor" })
+
+        @Html.HiddenFor(track => track.YoutubeId, new { id = "ytidvalue" })
+        @Html.LabelFor(track => track.YoutubeId, Model.YoutubeId, new { id = "ytid" })
+
         <div>
             <span>
                 <span class="smolBtn">

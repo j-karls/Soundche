@@ -32,7 +32,7 @@ namespace Soundche.Web.Controllers
             User user = _room.GetUser(User.Identity.Name);
             if (user is null)
             {
-                _room.AddUser(new Core.Domain.User(User.Identity.Name));
+                _room.AddUser(new User(User.Identity.Name));
                 user = _room.GetUser(User.Identity.Name);
             }
             var ups = new SelectList(user.Playlists.Select(x => x.Name));
@@ -53,9 +53,10 @@ namespace Soundche.Web.Controllers
             {
                 isActive = true,
                 songName = lastEvent.NewTrack.Name,
+                author = lastEvent.NewTrack.Author,
                 startTime = lastEvent.NewTrack.StartTime,
                 endTime = lastEvent.NewTrack.EndTime,
-                youtubeUrl = lastEvent.NewTrack.YoutubeUrl,
+                youtubeId = lastEvent.NewTrack.YoutubeId,
                 switchedSongTime = lastEvent.SwitchedSongTimeTicks
             });
         }
@@ -167,16 +168,6 @@ namespace Soundche.Web.Controllers
             _room.UpdateUser(usr);
 
 
-            // TODO INSTEAD OF REDIRECTING, FIND A WAY TO UNLOAD THE PARTIALVIEW INSTEAD.
-            // Maybe somehow call a client-side function that removes the HTML? $('#partial').html("");
-            // Canot do that. But we can instead just have the client be the controlling part. Where it calls this function, and then 
-            // waits for the result. https://stackoverflow.com/questions/2709978/call-javascript-from-mvc-controller-action
-            // redirect
-
-            // Make onclick event on hangout index page in JS
-            // Replace contents of a div with id=playlisteditor with the partialView result of either "AddPlaylist" or "EditPlaylist"
-            // And make a similar click event that replaces the contents of that div with the empty string when an http OK is returned
-            // return Ok();
             return new EmptyResult(); 
         }
 
