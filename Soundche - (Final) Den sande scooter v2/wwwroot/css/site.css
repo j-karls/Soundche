@@ -55,8 +55,6 @@ button.accept-policy {
   line-height: inherit;
 }
 
-/* Sticky footer styles
--------------------------------------------------- */
 html {
     position: relative;
     min-height: 100%;
@@ -65,33 +63,15 @@ html {
 }
 
 body {
-    /* Margin bottom by footer height */
-    margin-bottom: 60px;
     background-color: #006633;
     color: #ffff00;
-    font-family: 'Varela Round', sans-serif;
-    margin: 0;
-}
-.footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    white-space: nowrap;
-    line-height: 60px; /* Vertically center the text there */
     font-family: 'Varela Round', sans-serif;
 }
 
 .text-muted {
     color: #999966 !important;
-    /*color: #6c757d !important;*/
 }
 
-.container {
-    width: 100%;
-    padding-left: 0;
-    padding-right: 0;
-    margin-left: 0;
-    margin-right: 0;
-    width: 100%;
-    max-width: 100%;
+.container-fluid {
+    padding-top: 15px;
 }

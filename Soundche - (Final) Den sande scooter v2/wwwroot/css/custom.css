@@ -61,6 +61,27 @@
 }
 
 /* MY SHIT */
+
+.hangout-player-grid-main {
+    width: 80%; /* This is the same as adjusting height to 80%, because of the padding it does below */
+    margin: auto; /* Centers the content */
+}
+
+.video-container {
+    overflow: hidden;
+    position: relative;
+    padding-top: 56.25%;
+    height: inherit;
+}
+
+    .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: inherit;
+    }
+
 .hidden {
     display: none;
 }
@@ -73,10 +94,44 @@
     left: 50%;
     overflow-y: auto;
     overflow-x: hidden;
-    height: 80%; /*TODO This should probably be replaced by a grid layout, so that I can ensure that my overlay's open/close buttons are always visible, etc.*/
+    height: 80%; 
     background-color: rgba(0,0,0,0.5);
 }
 
-html, body {
-    height: 100%
+.hangout-btn-grid-main {
+    display: grid;
+    height: 20%;
+
+    grid-template-areas:
+        "pic    pic     info    info    info    info    play        play        all         all         remove      remove"
+        "pic    pic     prev    vol     volume  next    playlist    playlist    playlist    playlist    playlist    playlist"
+        "sort   sort	sort	sort	sort	apply	create	    create      edit        edit        delete      delete"
 }
+
+.hangout-pic         { grid-area: pic }
+
+.hangout-info        { grid-area: info }
+
+.hangout-prev        { grid-area: prev }
+
+.hangout-vol         { grid-area: vol }
+
+.hangout-next        { grid-area: next }
+
+.hangout-sort        { grid-area: sort }
+
+.hangout-apply       { grid-area: apply }
+
+.hangout-play        { grid-area: play }
+
+.hangout-all         { grid-area: all }
+
+.hangout-remove      { grid-area: remove }
+
+.hangout-playlist    { grid-area: playlist }
+
+.hangout-create      { grid-area: create }
+
+.hangout-edit        { grid-area: edit }
+
+.hangout-delete      { grid-area: delete }
