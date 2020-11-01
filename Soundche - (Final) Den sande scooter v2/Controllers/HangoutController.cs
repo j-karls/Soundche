@@ -19,6 +19,11 @@ namespace Soundche.Web.Controllers
     [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
     public class HangoutController : Controller
     {
+        // todo
+        //figure out how to get dropddownvalues inside JS, for when I do my calls	
+        //make a cronjob for the server to backup our db every day
+        // fix grid inside track
+
         private readonly RoomManager _room;
 
         public HangoutController(RoomManager room) // TODO: Should get something higher level (backend manager or smt), one that creates multiple rooms

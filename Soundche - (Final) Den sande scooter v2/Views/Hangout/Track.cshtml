@@ -4,46 +4,53 @@
 <div class="editorRow">
     @using (Html.BeginCollectionItem("tracks"))
     {
-        @Html.TextArea("", "", new { id = "yturl" })
-
-        @Html.LabelFor(track => track.Name, Model.Name, new { id = "yttitle" }) <!-- TODO Maybe replace Model.Name with "" ?-->
-        @Html.HiddenFor(track => track.Name, new { id = "yttitlevalue" })
-        <!-- labels don't appear to two-way bind, so we also need a hiddenFor helper bound to the same value-->
-
-        <!-- TODO Create a grid layout in here or something. 2 rows with a few of these textboxes per item-->
-
-        <div id="spinner" class="hidden">Loading...</div>
-
-        @Html.CheckBoxFor(track => track.Exclude)
-        <!--Excludes the song from being played, useful fx. when a song has been removed from YT, but you dont want it erased from the playlist-->
-
-        @Html.TextBoxFor(track => track.StartTime, new { type = "number", min = "0", step = "1" }) <!--todo add class here, or modify somehow for integer input-->
-        <!-- Equivalent to HTML5 <input type="number" min="0" step="1" />-->
-        @Html.TextBoxFor(track => track.EndTime, new { type = "number", min = "0", step = "1" }) <!--todo add class here, or modify somehow for integer input-->
-        <!-- TODO End time needs to load video duration from yt api -->
-
-        @Html.HiddenFor(track => track.Author, new { id = "ytauthorvalue" })
-        @Html.LabelFor(track => track.Author, Model.Author, new { id = "ytauthor" })
-
-        @Html.HiddenFor(track => track.YoutubeId, new { id = "ytidvalue" })
-        @Html.LabelFor(track => track.YoutubeId, Model.YoutubeId, new { id = "ytid" })
-
-        <div>
-            <span>
-                <span class="smolBtn">
-                    <a href="#" class="deleteRow">X</a>
-                </span>
-
-                <span class="smolBtn">
-                    <a href="#" class="moveUp">UP</a>
-                </span>
-
-                <span class="smolBtn">
-                    <a href="#" class="moveDown">DOWN</a>
-                </span>
-            </span>
+        <div class="track-grid-main">
+            <div class="url-track">
+                @Html.TextBox("", "", new { id = "yturl", @class = "stretch" })
+            </div>
+            <div class="exclude-track">
+                <!--TODO ADD A LABEL HERE? MAKE IT STRETCH-->
+                @Html.CheckBoxFor(track => track.Exclude)
+                <!--Excludes the song from being played, useful fx. when a song has been removed from YT, but you dont want it erased from the playlist-->
+            </div>
+            <div class="start-time-track">
+                @Html.TextBoxFor(track => track.StartTime, new { type = "number", min = "0", step = "1", @class = "stretch" })
+                <!-- Equivalent to HTML5 <input type="number" min="0" step="1" />-->
+            </div>
+            <div class="end-time-track">
+                @Html.TextBoxFor(track => track.EndTime, new { type = "number", min = "0", step = "1", @class = "stretch" })
+                <!-- TODO End time needs to load video duration from yt api -->
+            </div>
+            <div class="author-track">
+                <div id="spinner" class="hidden">Loading...</div>
+                @Html.LabelFor(track => track.Author, Model.Author, new { id = "ytauthor", @class = "stretch" })
+                @Html.HiddenFor(track => track.Author, new { id = "ytauthorvalue" }) <!-- todo if stretch doesnt work proper, move this outside of the grid-->
+            </div>
+            <div class="name-track">
+                @Html.LabelFor(track => track.Name, Model.Name, new { id = "yttitle", @class = "stretch" }) <!-- TODO Maybe replace Model.Name with "" ?-->
+                @Html.HiddenFor(track => track.Name, new { id = "yttitlevalue" })
+                <!-- labels don't appear to two-way bind, so we also need a hiddenFor helper bound to the same value-->
+            </div>
+            <div class="ytid-track">
+                <div class="stretch">
+                    @Html.Label("", "", new { id = "successlabel" })
+                    @Html.HiddenFor(track => track.YoutubeId, new { id = "ytidvalue" })
+                    @Html.LabelFor(track => track.YoutubeId, Model.YoutubeId, new { id = "ytid", @class = "stretch" })
+                </div>
+            </div>
+            <div class="up-track">
+                <input type="button" class="btn btn-secondary stretch moveUp" value="Up" /> <!--Todo replace with icons at some point-->
+            </div>
+            <div class="down-track">
+                <input type="button" class="btn btn-secondary stretch moveDown" value="Down" />
+            </div>
+            <div class="delete-track">
+                <input type="button" class="btn btn-danger stretch deleteRow" value="Delete" />
+            </div>
         </div>
 
-        @Html.Label("", "", new { id = "successlabel" })
+        <!-- TODO All my .sibling js will have broken. Make fix plz -->
+        <!-- TODO Change max-height of my textboxes -->
+        <!-- TODO make noticable gap or difference or whatever between my different tracks -->
     }
 </div>

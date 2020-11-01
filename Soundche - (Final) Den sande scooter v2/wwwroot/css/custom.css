@@ -123,33 +123,20 @@ body, html {
     justify-content: stretch;
 }
 
-.hangout-pic         { grid-area: pic }
-
-.hangout-info        { grid-area: info }
-
-.hangout-prev        { grid-area: prev }
-
-.hangout-vol         { grid-area: vol }
-
-.hangout-next        { grid-area: next }
-
-.hangout-sort        { grid-area: sort }
-
-.hangout-apply       { grid-area: apply }
-
-.hangout-play        { grid-area: play }
-
-.hangout-all         { grid-area: all }
-
-.hangout-remove      { grid-area: remove }
-
-.hangout-playlist    { grid-area: playlist }
-
-.hangout-create      { grid-area: create }
-
-.hangout-edit        { grid-area: edit }
-
-.hangout-delete      { grid-area: delete }
+.hangout-pic        { grid-area: pic }
+.hangout-info       { grid-area: info }
+.hangout-prev       { grid-area: prev }
+.hangout-vol        { grid-area: vol }
+.hangout-next       { grid-area: next }
+.hangout-sort       { grid-area: sort }
+.hangout-apply      { grid-area: apply }
+.hangout-play       { grid-area: play }
+.hangout-all        { grid-area: all }
+.hangout-remove     { grid-area: remove }
+.hangout-playlist   { grid-area: playlist }
+.hangout-create     { grid-area: create }
+.hangout-edit       { grid-area: edit }
+.hangout-delete     { grid-area: delete }
 
 .stretch {
     width: 100%;
@@ -188,3 +175,32 @@ button[disabled] {
     background-color: #cccccc;
     color: #666666;
 }
+
+.track-grid-main {
+    display: grid;
+    height: 10%;
+
+    grid-template-areas:
+        "url-track      url-track       exclude-track   start-time-track    end-time-track"
+        "author-track   author-track    name-track      name-track          name-track"
+        "ytid-track     ytid-track      up-track        down-track          delete-track";
+
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    grid-row-gap: 2px;
+    grid-column-gap: 2px;
+    align-items: stretch;
+    justify-items: stretch;
+    justify-content: stretch;
+}
+
+.url-track          { grid-area: url-track }
+.exclude-track      { grid-area: exclude-track }
+.start-time-track   { grid-area: start-time-track }
+.end-time-track     { grid-area: end-time-track }
+.author-track       { grid-area: author-track }
+.name-track         { grid-area: name-track }
+.ytid-track         { grid-area: ytid-track }
+.up-track           { grid-area: up-track }
+.down-track         { grid-area: down-track }
+.delete-track       { grid-area: delete-track }
