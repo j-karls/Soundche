@@ -3,51 +3,71 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 
-<style>
-    /*GET INTO RIGHT STYLING SHEET*/
-    .video-wrapper {
-        position: relative;
-        padding-bottom: 56.25%; /* 16:9 */
-        padding-top: 25px;
-    }
+<!--
+// TODO: Make audioplayer partial view work with my id text replacement in performSongSwitch()
+// TODO: Make sure the getActiveSong interval is only enabled if we have first called the Play IActionResult (such that the page has /Play in the querystring).
+// NOTE: I might also just setTimeout on the getActiveSong function, a timeout that fits with the amount of time it should play the song.
+// NOTE: But that wouldn't work well if we skip something server-side, etc. etc. Better if the server handles it all'
+-->
+<!--
+        <partial name="_AudioPlayer" />
 
-        .video-wrapper iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-</style>
+-->
 
 <body>
-    <div class="video-wrapper">
-        <div id="player"></div>
+    <div class="hangout-player-grid-main">
+        <div class="embed-responsive embed-responsive-16by9">
+            <!--or use class="video-container"-->
+            <div id="player"></div>
+        </div>
     </div>
 
-    <!--<input type="button" value="@Model.SelectedPlaylist" onclick="@("location.href='"+ Url.Action("Play", "Hangout", new { playlistNr = Model.SelectedPlaylist })+ "'")" />-->
-    <!--
-    // TODO: Make audioplayer partial view work with my id text replacement in performSongSwitch()
-    // TODO: Make sure the getActiveSong interval is only enabled if we have first called the Play IActionResult (such that the page has /Play in the querystring).
-
-    // NOTE: I might also just setTimeout on the getActiveSong function, a timeout that fits with the amount of time it should play the song.
-    // NOTE: But that wouldn't work well if we skip something server-side, etc. etc. Better if the server handles it all'
-    -->
-
-
-    @using (Html.BeginForm("Play", "Hangout"))
-    {
-        //Courtesy of the living legend from: https://stackoverflow.com/questions/50191984/how-to-get-dropdownlist-selected-value-in-mvc
-        @Html.DropDownListFor(m => m.SelectedPlaylist, Model.UserPlaylists, "Select");
-        <button type="submit" class="btn btn-danger">Submit</button>
-    }
-
-    <partial name="_AudioPlayer" />
-
-    <div>
-        <button id="openplaylistedit">Edit Selected Playlist</button>
+    <div class="hangout-btn-grid-main">
+        <div class="hangout-pic"></div>
+        <div class="hangout-info">
+            <label></label>
+        </div>
+        <div class="hangout-play">
+            <input type="button" />
+        </div>
+        <div class="hangout-all">
+            <input type="button" />
+        </div>
+        <div class="hangout-remove">
+            <input type="button" />
+        </div>
+        <div class="hangout-prev">
+            <input type="button" />
+        </div>
+        <div class="hangout-vol">
+            <input type="button" />
+        </div>
+        <div class="hangout-next">
+            <input type="button" />
+        </div>
+        <div class="hangout-playlist">
+            @using (Html.BeginForm("Play", "Hangout"))
+            {
+                //Courtesy of the living legend from: https://stackoverflow.com/questions/50191984/how-to-get-dropdownlist-selected-value-in-mvc
+                @Html.DropDownListFor(m => m.SelectedPlaylist, Model.UserPlaylists, "Select");
+                <button type="submit" class="btn btn-danger">Submit</button>
+            }
+        </div>
+        <div class="hangout-sort"></div>
+        <div class="hangout-apply">
+            <input type="button" />
+        </div>
+        <div class="hangout-create">
+            <input type="button" />
+        </div>
+        <div class="hangout-edit">
+            <button id="openplaylistedit">Edit Selected Playlist</button>
+        </div>
+        <div class="hangout-delete">
+            <input type="button" />
+        </div>
     </div>
-
+    
     <div id="partial" class="overlay"></div>
 </body>
 
