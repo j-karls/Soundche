@@ -9,26 +9,19 @@ namespace Soundche.Web.Models
 {
     public class HangoutViewModel
     {
-        public string CurrentSong { get; set; } = "https://www.youtube.com/embed/CgxqXXgc_LM";
-        public bool AutoPlay { get; set; } = true;
-        public Track RealCurrentSong { get; set; } = new Track("♂ Leave the Gachimuchi on ♂", "XD", "https://www.youtube.com/watch?v=BH726JXRok0", 0, 5);
-        //RealCurrentSong = new Track("♂️ AssClap ♂️ (Right version) REUPLOAD", "https://www.youtube.com/watch?v=NdqbI0_0GsM", 4, 11);
+        // Contains all relevant user and room settings necessary to render this particular hangout room
 
-        public (bool, string) PlaylistOnQueue { get; set; } = (false, "");
-
-        public HangoutViewModel()
-        {
-            //UserPlaylists = userPlaylist.Select(x => x.Name).ToList();
-
-            //asdfghjkl = new SelectList(UserPlaylists, "PlaylistId", "PlaylistName", SelectedPlaylistId);
-            //var userPlaylistDropDownListOptions = userPlaylist.Select(x => x.Name);
-            //UserPlaylistDropDownListOptions = UserPlaylists.Select(x => new SelectListItem(x, x));
-            //UserPlaylistDropDownListOptions[0].Selected = true;
-            //SelectedPlaylistId = 1;
-        }
-
+        // User settings
+        public bool AutoPlay { get; set; }
         public List<Playlist> Playlists { get; set; }
+        public IEnumerable<SelectListItem> PlaylistsDropdown { get; set; }
         public string SelectedPlaylist { get; set; }
-        public IEnumerable<SelectListItem> UserPlaylists { get; set; }
+
+        // Room configurations
+        public IEnumerable<SelectListItem> QueueMethodDropdown { get; set; }
+        public string SelectedQueueMethod { get; set; }
+        // TODO More, probably something like room codes
+
+        public HangoutViewModel() { }
     }
 }

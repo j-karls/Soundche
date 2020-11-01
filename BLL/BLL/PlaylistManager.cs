@@ -9,15 +9,11 @@ namespace Soundche.Core.BLL
 {
     public class PlaylistManager
     {
-        public SongQueueMethodEnum SongQueueType { get; private set; }
+        public SongQueueMethodEnum SongQueueType { get; private set; } = SongQueueMethodEnum.Randomize;
         private IQueueMethod _queueFunc;
-        public List<Playlist> ActivePlaylists { get; private set; }
+        public List<Playlist> ActivePlaylists { get; private set; } = new List<Playlist>();
 
-        public PlaylistManager(SongQueueMethodEnum queueType = SongQueueMethodEnum.Randomize /*TODO WeightedRoundRobin should be default*/)
-        {
-            ActivePlaylists = new List<Playlist>();
-            SwitchSongQueueMethod(queueType);
-        }
+        public PlaylistManager() { }
 
         public void SwitchSongQueueMethod(SongQueueMethodEnum queueType)
         {

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Soundche.Core.BLL;
 using Soundche.Core.Domain;
+using Soundche.Core.Domain.SongQueueMethod;
 using Soundche.Web.Models;
 
 namespace Soundche.Web.Controllers
@@ -35,8 +36,15 @@ namespace Soundche.Web.Controllers
                 _room.AddUser(new User(User.Identity.Name));
                 user = _room.GetUser(User.Identity.Name);
             }
-            var ups = new SelectList(user.Playlists.Select(x => x.Name));
-            return View(new HangoutViewModel { UserPlaylists = ups, SelectedPlaylist = user.Playlists.IsNullOrEmpty() ? null : user.Playlists[0].Name, Playlists = _room.GetUser(User.Identity.Name).Playlists });
+            return View(new HangoutViewModel { 
+                AutoPlay = true,
+                Playlists = _room.GetUser(User.Identity.Name).Playlists,
+                PlaylistsDropdown = new SelectList(user.Playlists.Select(x => x.Name)),
+                SelectedPlaylist = user.Playlists.IsNullOrEmpty() ? null : user.Playlists[0].Name,
+
+                QueueMethodDropdown = new SelectList(Enum.GetNames(typeof(SongQueueMethodEnum))),
+                SelectedQueueMethod = SongQueueMethodEnum.Randomize.ToString()
+            });
         }
 
         public IActionResult GetActiveSong()
@@ -61,95 +69,58 @@ namespace Soundche.Web.Controllers
             });
         }
 
-        public IActionResult Play(HangoutViewModel vm)
+        public IActionResult Play(string selectedPlaylistName)
         {
-            // Add the user's playlist to the playback
-            // Send a js query to the embeded video
-            // And if nothing is currently playing, then start the playback
-            // ?????????????????????
-
-            if (vm.SelectedPlaylist is null) throw new DataMisalignedException("No playlist selected");
-            Playlist playlist = _room.GetUser(User.Identity.Name).Playlists.Find(x => x.Name == vm.SelectedPlaylist);
+            Playlist playlist = _room.GetUser(User.Identity.Name).Playlists.Find(x => x.Name == selectedPlaylistName);
             if (playlist is null) throw new DataMisalignedException("A playlist of that name does not exist");
             _room.ConnectPlaylist(playlist);
 
-            vm.PlaylistOnQueue = (true, vm.SelectedPlaylist);
-            vm.UserPlaylists = new SelectList(_room.GetUser(User.Identity.Name).Playlists.Select(x => x.Name));
-            return View("index", vm);
-
-            // TODO: Remove this hangouts controller, probably put it in a partialview or something. No need to refresh or change the URL just because we joined the waitlist
-            // Yup just make it return an OK? 
-        }
-
-        public IActionResult StopPlay(int playlistNr) //TODO DO THIS.
-        {
-            _room.DisconnectPlaylist(_room.GetUser(User.Identity.Name).Playlists[playlistNr]);
-            return View("index", new HangoutViewModel { PlaylistOnQueue = (false, "") });
-        }
-
-        public IActionResult NextSong() //TODO DO THIS.
-        {
-            _room.SkipSong();
-            HttpContext.Response.StatusCode = 200;
             return Ok();
         }
 
-        public IActionResult yt() //TODO REMOVE!
+        public IActionResult StopPlay(string selectedPlaylistName) 
         {
-            var playlist = new Playlist();
-            playlist.Name = "test";
-            playlist.Tracks = new List<Track>();
-            playlist.AddTrack(
-                new Track
-                {
-                    Name = "Rasmus Klumper",
-                    StartTime = 0,
-                    EndTime = 71,
-                    YoutubeId = "dedo1vQHhgI"
-                });
-            playlist.AddTrack(
-                new Track
-                {
-                    Name = "Lord of the rigns",
-                    StartTime = 5460,
-                    EndTime = 5560,
-                    YoutubeId = "OJk_1C7oRZg"
-                });
-            playlist.AddTrack(
-                new Track
-                {
-                    Name = "Right Vesion?",
-                    StartTime = 0,
-                    EndTime = 263,
-                    YoutubeId = "JPxfAYYo7NA"
-                });
+            _room.DisconnectPlaylist(_room.GetUser(User.Identity.Name).Playlists.Find(x => x.Name == selectedPlaylistName));
+            // TODO Currently you cant remove a playlist whose name you have altered after you added it to the queue
+            return Ok();
+        }
 
-            User usr = _room.GetUser(User.Identity.Name);
-            usr.Playlists.Add(playlist);
-            _room.UpdateUser(usr);
+        public IActionResult NextSong() 
+        {
+            _room.SkipSong();
+            return Ok();
+        }
 
-            // redirect
-            return Redirect("index");
+        public IActionResult PrevSong()
+        {
+            throw new NotImplementedException();
+            //_room.PrevSong();
+            //return Ok();
+        }
 
-            //return View("yt");
+        public IActionResult ApplyNewQueueMethod()
+        {
+            throw new NotImplementedException();
+            //return Ok();
+        }
+
+        public IActionResult DeletePlaylist()
+        {
+            throw new NotImplementedException();
+            //return Ok();
         }
 
         [HttpGet]
         public ActionResult AddPlaylist()
         {
-            //Playlist lst = _room.GetUser(User.Identity.Name).GetPlaylist(vm.SelectedPlaylist);
-
-            // TODO If there's a currently selected playlist, then we edit it? Or something similar - vm.SelectedPlaylist
-
             // Automatically finds and returns the cshtml file corresponding to the function name "AddPlaylist"
-            return View(new Playlist() { Tracks = new List<Track>() } );
-
-            // If none is selected, we create new??
+            return PartialView("AddPlaylist", new Playlist() { Tracks = new List<Track>() { new Track() } } );
         }
 
-        public ActionResult EditPlaylist(string selected) //TODO User should probably be part of the hangoutviewmodel as well
+        //[HttpGet]
+        public ActionResult EditPlaylist(string selected)
         {
-            if (String.IsNullOrEmpty(selected)) throw new NotImplementedException(); // TODO BUTTON SHOULD BE GREYED OUT
+            if (String.IsNullOrEmpty(selected)) throw new NotImplementedException(); 
             return PartialView("AddPlaylist", _room.GetUser(User.Identity.Name).GetPlaylist(selected) );
         }
 
