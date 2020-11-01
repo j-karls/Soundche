@@ -62,9 +62,16 @@
 
 /* MY SHIT */
 
+body, html {
+    margin: 0;
+    padding: 0;
+}
+
 .hangout-player-grid-main {
-    width: 80%; /* This is the same as adjusting height to 80%, because of the padding it does below */
+    width: 76%; /* This is the same as adjusting height to 80%, because of the padding it does below */
     margin: auto; /* Centers the content */
+    padding-top: 15px;
+    padding-bottom: 15px;
 }
 
 .video-container {
@@ -105,7 +112,14 @@
     grid-template-areas:
         "pic    pic     info    info    info    info    play        play        all         all         remove      remove"
         "pic    pic     prev    vol     volume  next    playlist    playlist    playlist    playlist    playlist    playlist"
-        "sort   sort	sort	sort	sort	apply	create	    create      edit        edit        delete      delete"
+        "pic    pic     sort	sort	sort	apply	create	    create      edit        edit        delete      delete";
+
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    grid-gap: 2px, 2px;
+    align-items: stretch;
+    justify-items: stretch;
+    justify-content: stretch;
 }
 
 .hangout-pic         { grid-area: pic }
@@ -135,3 +149,34 @@
 .hangout-edit        { grid-area: edit }
 
 .hangout-delete      { grid-area: delete }
+
+.stretch {
+    width: 100%;
+    height: 100%;
+}
+
+.fill-max-screen-size {
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Frame and img courtesy of https://stackoverflow.com/a/18869078/5774018*/
+
+.frame {
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+img {
+    max-height: 100%;
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}

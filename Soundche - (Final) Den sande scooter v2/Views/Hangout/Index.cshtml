@@ -23,48 +23,47 @@
     </div>
 
     <div class="hangout-btn-grid-main">
-        <div class="hangout-pic"></div>
+        <div class="hangout-pic frame">
+            <img src="https://www.meme-arsenal.com/memes/611c8f9484a86b43bfa811ea87a11bc0.jpg" />
+        </div>
         <div class="hangout-info">
             <label></label>
         </div>
         <div class="hangout-play">
-            <input type="button" />
+            <input type="button" class="btn btn-success stretch" value="Play" />
         </div>
         <div class="hangout-all">
-            <input type="button" />
+            <input type="button" class="btn btn-secondary stretch" value="View All" />
         </div>
         <div class="hangout-remove">
-            <input type="button" />
+            <input type="button" class="btn btn-danger stretch" value="Remove" />
         </div>
         <div class="hangout-prev">
-            <input type="button" />
+            <input type="button" class="btn btn-primary stretch" value="Previous Song" />
         </div>
         <div class="hangout-vol">
-            <input type="button" />
+            <input type="button" class="btn btn-primary stretch" value="Volume" />
         </div>
         <div class="hangout-next">
-            <input type="button" />
+            <input type="button" class="btn btn-primary stretch" value="Next Song" />
         </div>
         <div class="hangout-playlist">
-            @using (Html.BeginForm("Play", "Hangout"))
-            {
-                //Courtesy of the living legend from: https://stackoverflow.com/questions/50191984/how-to-get-dropdownlist-selected-value-in-mvc
-                @Html.DropDownListFor(m => m.SelectedPlaylist, Model.UserPlaylists, "Select");
-                <button type="submit" class="btn btn-danger">Submit</button>
-            }
+            <!--Courtesy of the living legend from: https://stackoverflow.com/questions/50191984/how-to-get-dropdownlist-selected-value-in-mvc-->
+            @Html.DropDownListFor(m => m.SelectedPlaylist, Model.UserPlaylists, "Select", new { @class = "stretch" })
         </div>
-        <div class="hangout-sort"></div>
+        <div class="hangout-sort">
+        </div>
         <div class="hangout-apply">
-            <input type="button" />
+            <input type="button" class="btn btn-danger stretch" value="Apply" />
         </div>
         <div class="hangout-create">
-            <input type="button" />
+            <input type="button" class="btn btn-secondary stretch" value="Create" />
         </div>
         <div class="hangout-edit">
-            <button id="openplaylistedit">Edit Selected Playlist</button>
+            <input type="button" class="btn btn-secondary stretch" value="Edit" />
         </div>
         <div class="hangout-delete">
-            <input type="button" />
+            <input type="button" class="btn btn-secondary stretch" value="Delete" />
         </div>
     </div>
     
