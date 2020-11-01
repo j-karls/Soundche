@@ -27,43 +27,44 @@
             <img src="https://www.meme-arsenal.com/memes/611c8f9484a86b43bfa811ea87a11bc0.jpg" />
         </div>
         <div class="hangout-info">
-            <label></label>
+            <label class="stretch">INFO ABOUT THE CURRENT SONG</label>
         </div>
         <div class="hangout-play">
-            <input type="button" class="btn btn-success stretch" value="Play" />
+            <input id="btn-play" type="button" class="btn btn-success stretch" value="Play" />
         </div>
         <div class="hangout-all">
-            <input type="button" class="btn btn-secondary stretch" value="View All" />
+            <input id="btn-all" type="button" class="btn btn-secondary stretch" value="View All" />
         </div>
         <div class="hangout-remove">
-            <input type="button" class="btn btn-danger stretch" value="Remove" />
+            <input id="btn-remove" type="button" class="btn btn-danger stretch" value="Remove" />
         </div>
         <div class="hangout-prev">
-            <input type="button" class="btn btn-primary stretch" value="Previous Song" />
+            <input id="btn-prev" type="button" class="btn btn-primary stretch" value="Previous Song" />
         </div>
         <div class="hangout-vol">
-            <input type="button" class="btn btn-primary stretch" value="Volume" />
+            <input id="btn-vol" type="button" class="btn btn-primary stretch" value="Volume" />
         </div>
         <div class="hangout-next">
-            <input type="button" class="btn btn-primary stretch" value="Next Song" />
+            <input id="btn-next" type="button" class="btn btn-primary stretch" value="Next Song" />
         </div>
         <div class="hangout-playlist">
             <!--Courtesy of the living legend from: https://stackoverflow.com/questions/50191984/how-to-get-dropdownlist-selected-value-in-mvc-->
-            @Html.DropDownListFor(m => m.SelectedPlaylist, Model.UserPlaylists, "Select", new { @class = "stretch" })
+            @Html.DropDownListFor(m => m.SelectedPlaylist, Model.PlaylistsDropdown, new { @class = "stretch" })
         </div>
         <div class="hangout-sort">
+            @Html.DropDownListFor(m => m.SelectedQueueMethod, Model.QueueMethodDropdown, new { @class = "stretch" })
         </div>
         <div class="hangout-apply">
-            <input type="button" class="btn btn-danger stretch" value="Apply" />
+            <input id="btn-apply" type="button" class="btn btn-danger stretch" value="Apply" />
         </div>
         <div class="hangout-create">
-            <input type="button" class="btn btn-secondary stretch" value="Create" />
+            <input id="btn-create" type="button" class="btn btn-secondary stretch" value="Create" />
         </div>
         <div class="hangout-edit">
-            <input type="button" class="btn btn-secondary stretch" value="Edit" />
+            <input id="btn-edit" type="button" class="btn btn-secondary stretch" value="Edit" />
         </div>
         <div class="hangout-delete">
-            <input type="button" class="btn btn-secondary stretch" value="Delete" />
+            <input id="btn-delete" type="button" class="btn btn-secondary stretch" value="Delete" />
         </div>
     </div>
     
@@ -71,12 +72,63 @@
 </body>
 
 <script type="text/javascript">
-    $('#openplaylistedit').on('click', function () {
+    function disableElements(arguments) {
+        var argsArr = arguments.split(' ');
+        for (var i = 0; i < argsArr.length; i++) {
+            $('#' + argsArr[i]).prop("disabled", true);
+        }
+    }
+
+    function enableElements(arguments) {
+        var argsArr = arguments.split(' ');
+        for (var i = 0; i < argsArr.length; i++) {
+            $('#' + argsArr[i]).prop("disabled", false);
+        }
+    }
+
+    var overlayOpen = false;
+    function toggleOverlay() {
+        if (!overlayOpen) {
+            overlayOpen = true;
+            disableElements("btn-create btn-edit btn-delete btn-play btn-remove");
+        }
+        else {
+            overlayOpen = false;
+            enableElements("btn-create btn-edit btn-delete btn-play btn-remove");
+        }
+    }
+
+    /////////////////// BUTTON BINDS
+
+    $('#btn-play').on('click', function () {
+        soundcheInterface.addPlaylistToQueue(); //TODO GET THE ACTUAL PLAYLIST HERE
+    });
+
+    $('#btn-create').on('click', function () {
+        toggleOverlay(); // THIS SHOULD SHOW UP, ON SUCCESS TODO
+        $('#partial').load('@Url.Action("AddPlaylist", "Hangout")'); // I SHOULD TRY TO MOVE THIS TO SOUNDCHEINTERFACE
+    });
+
+    $('#btn-edit').on('click', function () {
+        toggleOverlay(); // THIS SHOULD SHOW UP, ON SUCCESS TODO
         $('#partial').load('@Url.Action("EditPlaylist", "Hangout", new { selected = "Penis" })');
         // TODO MAKE SELECTED PLAYLIST A JS VAR. Just make the entire dropdown in pure js, or at least ensure I can get the contents
         // CLEAN UP. Add the selected name in here properly
 
         //$('#partial').addClass("overlay");
+    });
+
+
+
+
+    $('#btn-vol').on('click', function () {
+        // TODO Maybe I can just replace the button with a volume slider? And then have something that calls functions on the active yt player?
+    });
+
+    $('#btn-apply').on('click', function () {
+    });
+
+    $('#btn-delete').on('click', function () {
     });
 
     ////////////////////////////////
@@ -176,12 +228,20 @@
         skipSong() {
             $.ajax({
                 url: '@Url.Action("NextSong", "Hangout")',
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
                 success: soundcheInterface.getActiveSong,
-                error: function () { alert('Fuck You'); },
+                error: function () { alert('Failed to skip song'); },
             });
         },
+
+        addPlaylistToQueue() {
+            $.ajax({
+                url: '@Url.Action("AddPlaylistToQueue", "Hangout")',
+                success: soundcheInterface.updateActiveSong,
+                error: function () { alert('Failed to add playlist'); },
+            });
+        },
+
+        // TODO THE REST
     }
 
     //SOUNCHE INITIATION
