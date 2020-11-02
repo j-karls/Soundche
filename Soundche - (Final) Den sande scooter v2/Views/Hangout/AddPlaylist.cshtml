@@ -61,14 +61,20 @@
         $('#editorRowsTracks').on('blur', '#yturl', function (text) {
             ytid = getYoutubeIdFromUrl($(this).val());
             if (ytid != null) {
-                $(this).siblings('#ytid').text(ytid);
-                $(this).siblings('#ytidvalue').val(ytid); // Need this one to actually ensure my value goes over
-                $(this).siblings('#successlabel').text("Modified!");
+                $(this).parentsUntil('#editorRowsTracks').find('#ytid').text(ytid);
+                $(this).parentsUntil('#editorRowsTracks').find('#ytidvalue').val(ytid); // Need this one to actually ensure my value goes over
+                $(this).parentsUntil('#editorRowsTracks').find('#successlabel').text("Modified!");
 
-                yttitle = loadYtTitleIntoElements(ytid, $(this).siblings('#yttitle'), $(this).siblings('#yttitlevalue'), $(this).siblings('#ytauthor'), $(this).siblings('#ytauthorvalue'), $(this).siblings('#spinner'));
+                yttitle = loadYtTitleIntoElements(
+                    ytid,
+                    $(this).parentsUntil('#editorRowsTracks').find('#yttitle'),
+                    $(this).parentsUntil('#editorRowsTracks').find('#yttitlevalue'),
+                    $(this).parentsUntil('#editorRowsTracks').find('#ytauthor'),
+                    $(this).parentsUntil('#editorRowsTracks').find('#ytauthorvalue'),
+                    $(this).parentsUntil('#editorRowsTracks').find('#spinner'));
             }
             else {
-                $(this).siblings('#successlabel').text("Invalid. Value not changed!");
+                $(this).parentsUntil('#editorRowsTracks').find('#successlabel').text("Invalid. Value not changed!");
             }
         });
 
