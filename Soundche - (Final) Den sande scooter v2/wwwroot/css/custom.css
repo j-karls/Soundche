@@ -204,3 +204,8 @@ button[disabled] {
 .up-track           { grid-area: up-track }
 .down-track         { grid-area: down-track }
 .delete-track       { grid-area: delete-track }
+
+.editorRow {
+    margin-bottom: 10px;
+    background-color: rgba(66,135,245,0.5);
+}
