@@ -115,6 +115,11 @@ namespace Soundche.Web.Controllers
             //return Ok();
         }
 
+        public IActionResult CloseAddPlaylist()
+        {
+            return Ok();
+        }
+
         [HttpGet]
         public ActionResult AddPlaylist()
         {

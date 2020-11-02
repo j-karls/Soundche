@@ -33,7 +33,7 @@
             </div>
             <div class="ytid-track">
                 <div class="stretch">
-                    @Html.Label("", "", new { id = "successlabel" })
+                    @Html.Label("", "", new { id = "successlabel" }) <!-- TODO Make this into some sort of red popup that shows up for a short time or something -->
                     @Html.HiddenFor(track => track.YoutubeId, new { id = "ytidvalue" })
                     @Html.LabelFor(track => track.YoutubeId, Model.YoutubeId, new { id = "ytid", @class = "stretch" })
                 </div>
@@ -50,6 +50,5 @@
         </div>
 
         <!-- TODO Change max-height of my textboxes -->
-        <!-- TODO make noticable gap or difference or whatever between my different tracks -->
     }
 </div>

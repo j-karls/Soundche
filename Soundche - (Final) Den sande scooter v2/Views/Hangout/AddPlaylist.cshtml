@@ -14,10 +14,10 @@
     <form asp-controller="Hangout" asp-action="AddPlaylist" data-ajax="true" data-ajax-method="POST" data-ajax-mode="replace" data-ajax-update="#mainForm">
         <!--data-ajax-success="success"-->
 
-        <div>
-            <h2>
-                Add New Playlist
-            </h2>
+        <a href="#" id="btn-close-overlay" class="close-icon top-left"></a>
+
+        <div class="text-center">
+            <h2>Add New Playlist</h2>
         </div>
 
         @Html.ValidationSummary()
@@ -37,6 +37,11 @@
 
     <script type="text/javascript">
         // ADD PLAYLIST SCRIPTS START
+        $('#btn-close-overlay').on('click', function () {
+            toggleOverlay(); // THIS SHOULD ONLY BE TRIGGERED ON SUCCESS TODO
+            $('#partial').load('@Url.Action("CloseAddPlaylist")');
+        });
+
         $('#addNewTrackBtn').on('click', function () {
             $.ajax({
                 url: '@Url.Action("Track")',

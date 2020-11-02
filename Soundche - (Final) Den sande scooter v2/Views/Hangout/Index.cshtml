@@ -105,21 +105,18 @@
     });
 
     $('#btn-create').on('click', function () {
-        toggleOverlay(); // THIS SHOULD SHOW UP, ON SUCCESS TODO
+        toggleOverlay(); // THIS SHOULD ONLY BE TRIGGERED ON SUCCESS TODO
         $('#partial').load('@Url.Action("AddPlaylist", "Hangout")'); // I SHOULD TRY TO MOVE THIS TO SOUNDCHEINTERFACE
     });
 
     $('#btn-edit').on('click', function () {
-        toggleOverlay(); // THIS SHOULD SHOW UP, ON SUCCESS TODO
+        toggleOverlay(); // THIS SHOULD ONLY BE TRIGGERED ON SUCCESS TODO
         $('#partial').load('@Url.Action("EditPlaylist", "Hangout", new { selected = "Penis" })');
         // TODO MAKE SELECTED PLAYLIST A JS VAR. Just make the entire dropdown in pure js, or at least ensure I can get the contents
         // CLEAN UP. Add the selected name in here properly
 
         //$('#partial').addClass("overlay");
     });
-
-
-
 
     $('#btn-vol').on('click', function () {
         // TODO Maybe I can just replace the button with a volume slider? And then have something that calls functions on the active yt player?
