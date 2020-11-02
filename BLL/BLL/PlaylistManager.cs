@@ -26,9 +26,14 @@ namespace Soundche.Core.BLL
             };
         }
 
-        public Track GetNextTrack()
+        public Track GetNextTrack() // TODO Brug til forhåndsvisning af næste sang
         {
             return ActivePlaylists.IsNullOrEmpty() ? null : _queueFunc.Next();
+        }
+
+        public Track GetPreviousTrack() 
+        {
+            throw new NotImplementedException();
         }
 
         public void AddPlaylist(Playlist playlist)

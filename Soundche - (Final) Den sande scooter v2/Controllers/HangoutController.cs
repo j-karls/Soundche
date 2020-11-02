@@ -41,6 +41,7 @@ namespace Soundche.Web.Controllers
                 _room.AddUser(new User(User.Identity.Name));
                 user = _room.GetUser(User.Identity.Name);
             }
+
             return View(new HangoutViewModel { 
                 AutoPlay = true,
                 Playlists = _room.GetUser(User.Identity.Name).Playlists,
@@ -74,7 +75,7 @@ namespace Soundche.Web.Controllers
             });
         }
 
-        public IActionResult Play(string selectedPlaylistName)
+        public IActionResult AddPlaylistToQueue(string selectedPlaylistName)
         {
             Playlist playlist = _room.GetUser(User.Identity.Name).Playlists.Find(x => x.Name == selectedPlaylistName);
             if (playlist is null) throw new DataMisalignedException("A playlist of that name does not exist");
@@ -83,36 +84,43 @@ namespace Soundche.Web.Controllers
             return Ok();
         }
 
-        public IActionResult StopPlay(string selectedPlaylistName) 
+        public IActionResult RemovePlaylistFromQueue(string selectedPlaylistName) 
         {
             _room.DisconnectPlaylist(_room.GetUser(User.Identity.Name).Playlists.Find(x => x.Name == selectedPlaylistName));
-            // TODO Currently you cant remove a playlist whose name you have altered after you added it to the queue
+            // TODO Currently you cant remove a playlist whose name you have altered after you added it to the queue, 
+            // I should probably use some sort of other identifier? Is there something inherent?
             return Ok();
         }
 
         public IActionResult NextSong() 
         {
-            _room.SkipSong();
+            _room.StartNextSong();
             return Ok();
         }
 
         public IActionResult PrevSong()
         {
-            throw new NotImplementedException();
-            //_room.PrevSong();
-            //return Ok();
+            _room.StartPreviousSong();
+            return Ok();
         }
 
-        public IActionResult ApplyNewQueueMethod()
+        public IActionResult ApplyNewQueueMethod(string queueMethod)
         {
-            throw new NotImplementedException();
-            //return Ok();
+            var newQueueMethod = Enum.Parse<SongQueueMethodEnum>(queueMethod);
+            _room.SwitchQueueMethod(newQueueMethod);
+            return Ok();
         }
 
-        public IActionResult DeletePlaylist()
+        public IActionResult DeletePlaylist(string playlistName)
         {
-            throw new NotImplementedException();
-            //return Ok();
+            User usr = _room.GetUser(User.Identity.Name);
+            var playlists = usr.Playlists.FindAll(p => p.Name == playlistName);
+            if (playlists.IsNullOrEmpty()) throw new DataMisalignedException("No playlist of that name exists");
+            else if (playlists.Count != 1) throw new DataMisalignedException("Too many playlists share that name");
+
+            usr.Playlists.Remove(playlists.First()); 
+            _room.UpdateUser(usr); // TODO I SHOULD ABSTRACT AWAY THESE UPDATE FUNCTIONS, instead in room have a addplaylist and deleteplaylist methods
+            return Ok();
         }
 
         public IActionResult CloseAddPlaylist()
@@ -146,10 +154,9 @@ namespace Soundche.Web.Controllers
             // save playlist
             User usr = _room.GetUser(User.Identity.Name);
             usr.Playlists.Add(playlist); // TODO Make a check and edit playlist if it's not a new one
-            _room.UpdateUser(usr);
+            _room.UpdateUser(usr); // TODO I SHOULD ABSTRACT AWAY THESE UPDATE FUNCTIONS, instead in room have a addplaylist and deleteplaylist methods
 
-
-            return new EmptyResult(); 
+            return Ok(); 
         }
 
         public PartialViewResult Track()

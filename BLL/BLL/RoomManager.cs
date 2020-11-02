@@ -1,4 +1,6 @@
-﻿using Soundche.Core.Domain;
+﻿using MongoDB.Driver;
+using Soundche.Core.Domain;
+using Soundche.Core.Domain.SongQueueMethod;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -35,7 +37,7 @@ namespace Soundche.Core.BLL
             _lastSwitchedSongEvent = e;
         }
 
-        private void OnTimerElapsed(object sender, ElapsedEventArgs e) => StartNewSong();
+        private void OnTimerElapsed(object sender, ElapsedEventArgs e) => StartNextSong();
 
         private void StartTimer(double interval)
         {
@@ -45,17 +47,16 @@ namespace Soundche.Core.BLL
             PlaybackTimer.Start();
         }
 
-        private void StartNewSong()
-        {
-            Track newTrack = PlaylistController.GetNextTrack();
-            if (newTrack == null) return; 
+        public void StartNextSong() => StartTrack(PlaylistController.GetNextTrack());
+        public void StartPreviousSong() => StartTrack(PlaylistController.GetPreviousTrack());
 
+        private void StartTrack(Track newTrack)
+        {
+            if (newTrack == null) return;
             CurrentTrack = newTrack;
             StartTimer((newTrack.EndTime * 1000) - (newTrack.StartTime * 1000)); // Convert ms to s
             SwitchedSongEvent(this, new SwitchedSongEventArgs(newTrack, DateTime.Now));
         }
-
-        public void SkipSong() => StartNewSong();
 
         public void ConnectPlaylist(Playlist playlist)
         {
@@ -63,7 +64,7 @@ namespace Soundche.Core.BLL
             // Note that adding one playlist multiple times is allowed and should not cause any issues
 
             PlaylistController.AddPlaylist(playlist);
-            if (CurrentTrack == null) StartNewSong();
+            if (CurrentTrack == null) StartNextSong();
         }
 
         public void DisconnectPlaylist(Playlist playlist)
@@ -75,5 +76,10 @@ namespace Soundche.Core.BLL
         public User GetUser(string username) => DatabaseController.GetUser(username);
         public void AddUser(User user) => DatabaseController.AddUser(user);
         public void UpdateUser(User user) => DatabaseController.UpdateUser(user);
+
+        public void SwitchQueueMethod(SongQueueMethodEnum newType) => PlaylistController.SwitchSongQueueMethod(newType);
+        public Track GetNextSong() => PlaylistController.GetNextTrack();
+        public Track GetPreviousSong() => PlaylistController.GetPreviousTrack();
+        // TODO Brug til forhåndsvisning af forrige og næste sang
     }
 }
