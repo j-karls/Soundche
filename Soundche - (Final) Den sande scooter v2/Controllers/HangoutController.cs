@@ -20,9 +20,7 @@ namespace Soundche.Web.Controllers
     public class HangoutController : Controller
     {
         // todo
-        //figure out how to get dropddownvalues inside JS, for when I do my calls	
-        //make a cronjob for the server to backup our db every day
-        // fix grid inside track
+        // make a cronjob for the server to backup our db every day
 
         private readonly RoomManager _room;
 
@@ -142,8 +140,11 @@ namespace Soundche.Web.Controllers
             return PartialView("AddPlaylist", _room.GetUser(User.Identity.Name).GetPlaylist(selected) );
         }
 
-        [HttpPost]
-        public ActionResult EditPlaylist(Playlist playlist) => AddPlaylist(playlist);
+        //[HttpPost]
+        //public ActionResult EditPlaylist(Playlist playlist) => AddPlaylist(playlist);
+        // TODO REMOVE THIS EDIT POST
+        // Then do a check in addplaylist based upon the playlist name
+        // if it already exists, we just replace
 
         [HttpPost]
         public ActionResult AddPlaylist(Playlist playlist)

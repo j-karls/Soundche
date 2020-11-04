@@ -48,13 +48,11 @@
             <input id="btn-next" type="button" class="btn btn-primary stretch" value="Next Song" />
         </div>
         <div class="hangout-playlist">
-            <!-- TODO -->
             <!--Courtesy of the living legend from: https://stackoverflow.com/questions/50191984/how-to-get-dropdownlist-selected-value-in-mvc-->
-            @Html.DropDownListFor(m => m.SelectedPlaylist, Model.PlaylistsDropdown, new { @class = "stretch" })
+            @Html.DropDownListFor(m => m.SelectedPlaylist, Model.PlaylistsDropdown, new { @class = "stretch", id = "playlistDropdown" })
         </div>
         <div class="hangout-sort">
-            <!-- TODO -->
-            @Html.DropDownListFor(m => m.SelectedQueueMethod, Model.QueueMethodDropdown, new { @class = "stretch" })
+            @Html.DropDownListFor(m => m.SelectedQueueMethod, Model.QueueMethodDropdown, new { @class = "stretch", id = "sortingMethodDropdown" })
         </div>
         <div class="hangout-apply">
             <!-- TODO -->
@@ -71,7 +69,7 @@
         </div>
     </div>
     
-    <div id="partial" class="overlay"></div>
+    <div id="partial" class="overlay display-hide"></div>
 </body>
 
 <script type="text/javascript">
@@ -92,13 +90,19 @@
     var overlayOpen = false;
     function toggleOverlay() {
         if (!overlayOpen) {
+            $('#partial').removeClass("display-hide");
             overlayOpen = true;
             disableElements("btn-create btn-edit btn-delete btn-play btn-remove");
         }
         else {
+            $('#partial').addClass("display-hide");
             overlayOpen = false;
             enableElements("btn-create btn-edit btn-delete btn-play btn-remove");
         }
+    }
+
+    function getDropdownSelectedItemText(playlistId) {
+        return $(playlistId + " option:selected").text();
     }
 
     /////////////////// BUTTON BINDS
@@ -122,9 +126,9 @@
 
     $('#btn-edit').on('click', function () {
         toggleOverlay(); // THIS SHOULD ONLY BE TRIGGERED ON SUCCESS TODO
-        $('#partial').load('@Url.Action("EditPlaylist", "Hangout", new { selected = "Penis" })');
-        // TODO MAKE SELECTED PLAYLIST A JS VAR. Just make the entire dropdown in pure js, or at least ensure I can get the contents
-        // CLEAN UP. Add the selected name in here properly
+        $('#partial').load('/Hangout/EditPlaylist?selected=' + getDropdownSelectedItemText("#playlistDropdown"));
+        // Corresponds with the following code
+        // $('#partial').load('@@Url.Action("EditPlaylist", "Hangout", new { selected = "selectedPlaylistString" })');
     });
 
     $('#btn-vol').on('click', function () {
@@ -132,6 +136,8 @@
     });
 
     $('#btn-apply').on('click', function () {
+        //TODO Use getDropdownSelectedItemText("#sortingMethodDropdown"));
+        console.log('@Url.Action("ApplyNewQueueMethod", "Hangout", new { selected = "selectedPlaylistString" })');
     });
 
     $('#btn-delete').on('click', function () {
