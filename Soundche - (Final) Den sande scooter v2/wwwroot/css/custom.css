@@ -229,3 +229,15 @@ button[disabled] {
     top: 0%;
     left: 0%;
 }
+
+.two-split-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 2px;
+}
+
+.grid-centering {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

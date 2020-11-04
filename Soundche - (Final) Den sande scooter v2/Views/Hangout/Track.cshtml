@@ -8,9 +8,10 @@
             <div class="url-track">
                 @Html.TextBox("", "", new { id = "yturl", @class = "stretch" })
             </div>
-            <div class="exclude-track">
+            <div class="exclude-track stretch my-center">
                 <!--TODO ADD A LABEL HERE? MAKE IT STRETCH-->
                 @Html.CheckBoxFor(track => track.Exclude)
+                @Html.Label("Exclude")
                 <!--Excludes the song from being played, useful fx. when a song has been removed from YT, but you dont want it erased from the playlist-->
             </div>
             <div class="start-time-track">
@@ -32,10 +33,12 @@
                 <!-- labels don't appear to two-way bind, so we also need a hiddenFor helper bound to the same value-->
             </div>
             <div class="ytid-track">
-                <div class="stretch">
-                    @Html.Label("", "", new { id = "successlabel" }) <!-- TODO Make this into some sort of red popup that shows up for a short time or something -->
-                    @Html.HiddenFor(track => track.YoutubeId, new { id = "ytidvalue" })
+                <div class="two-split-grid stretch">
                     @Html.LabelFor(track => track.YoutubeId, Model.YoutubeId, new { id = "ytid", @class = "stretch" })
+                    <div>
+                        @Html.Label("", "", new { id = "successlabel" }) <!-- TODO Make this into some sort of red popup that shows up for a short time or something -->
+                        @Html.HiddenFor(track => track.YoutubeId, new { id = "ytidvalue" })
+                    </div>
                 </div>
             </div>
             <div class="up-track">
@@ -48,7 +51,5 @@
                 <input type="button" class="btn btn-danger stretch deleteRow" value="Delete" />
             </div>
         </div>
-
-        <!-- TODO Change max-height of my textboxes -->
     }
 </div>
