@@ -24,8 +24,9 @@
             </div>
             <div class="author-track">
                 <div id="spinner" class="hidden">Loading...</div>
+                <!--TODO fix spinnerboi. It should probably have some max size and should be sharing its horizontal space with author-->
                 @Html.LabelFor(track => track.Author, Model.Author, new { id = "ytauthor", @class = "stretch" })
-                @Html.HiddenFor(track => track.Author, new { id = "ytauthorvalue" }) <!-- todo if stretch doesnt work proper, move this outside of the grid-->
+                @Html.HiddenFor(track => track.Author, new { id = "ytauthorvalue" })
             </div>
             <div class="name-track">
                 @Html.LabelFor(track => track.Name, Model.Name, new { id = "yttitle", @class = "stretch" }) <!-- TODO Maybe replace Model.Name with "" ?-->

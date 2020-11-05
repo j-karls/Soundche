@@ -78,7 +78,6 @@ namespace Soundche.Web.Controllers
             Playlist playlist = _room.GetUser(User.Identity.Name).Playlists.Find(x => x.Name == selectedPlaylistName);
             if (playlist is null) throw new DataMisalignedException("A playlist of that name does not exist");
             _room.ConnectPlaylist(playlist);
-
             return Ok();
         }
 

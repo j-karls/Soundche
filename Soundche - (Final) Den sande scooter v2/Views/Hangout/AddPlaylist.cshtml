@@ -47,8 +47,8 @@
                 url: '@Url.Action("Track")',
                     cache: false,
                     success: function (html) { $("#editorRowsTracks").append(html); }
-                });
-                return false;
+            });
+            return false;
         });
 
         $('#editorRowsTracks').on('click', '.deleteRow', function () {

@@ -41,8 +41,8 @@
         <div class="hangout-prev">
             <input id="btn-prev" type="button" class="btn btn-primary stretch" value="Previous Song" />
         </div>
-        <div class="hangout-vol"> <!-- TODO -->
-            <input id="btn-vol" type="button" class="btn btn-primary stretch" value="Volume" />
+        <div class="hangout-vol">
+            <input id="vol-control" type="range" min="0" max="100" step="1" class="stretch"></input>
         </div>
         <div class="hangout-next">
             <input id="btn-next" type="button" class="btn btn-primary stretch" value="Next Song" />
@@ -55,7 +55,6 @@
             @Html.DropDownListFor(m => m.SelectedQueueMethod, Model.QueueMethodDropdown, new { @class = "stretch", id = "sortingMethodDropdown" })
         </div>
         <div class="hangout-apply">
-            <!-- TODO -->
             <input id="btn-apply" type="button" class="btn btn-danger stretch" value="Apply" />
         </div>
         <div class="hangout-create">
@@ -108,7 +107,7 @@
     /////////////////// BUTTON BINDS
 
     $('#btn-play').on('click', function () {
-        soundcheInterface.addPlaylistToQueue(); //TODO GET THE ACTUAL PLAYLIST HERE
+        soundcheInterface.addPlaylistToQueue(getDropdownSelectedItemText("#playlistDropdown"));
     });
 
     $('#btn-next').on('click', function () { // TODO Grey out next and prev if nothing is playing
@@ -123,24 +122,44 @@
         toggleOverlay(); // THIS SHOULD ONLY BE TRIGGERED ON SUCCESS TODO
         $('#partial').load('@Url.Action("AddPlaylist", "Hangout")'); // I SHOULD TRY TO MOVE THIS TO SOUNDCHEINTERFACE
     });
+    // TODO Need to trigger toggleOverlay whenever I close the playlist editor after having used create/edit as well
+    // TODO And also need to update the values within my dropdown lists to include the new one (and same for deletion)
 
     $('#btn-edit').on('click', function () {
         toggleOverlay(); // THIS SHOULD ONLY BE TRIGGERED ON SUCCESS TODO
         $('#partial').load('/Hangout/EditPlaylist?selected=' + getDropdownSelectedItemText("#playlistDropdown"));
-        // Corresponds with the following code
+        // Corresponds with the following code, except now it is able to get dynamic values from JS
         // $('#partial').load('@@Url.Action("EditPlaylist", "Hangout", new { selected = "selectedPlaylistString" })');
     });
 
-    $('#btn-vol').on('click', function () {
-        // TODO Maybe I can just replace the button with a volume slider? And then have something that calls functions on the active yt player?
+    $('#vol-control').on('input', function () {
+        // This one is for updating while dragging the volume slider
+        youtubeInterface.setVolume(this.value / 100);
+    });
+
+    $('#vol-control').on('change', function () {
+        // This one catches when you release the slider
+        youtubeInterface.setVolume(this.value / 100);
     });
 
     $('#btn-apply').on('click', function () {
-        //TODO Use getDropdownSelectedItemText("#sortingMethodDropdown"));
-        console.log('@Url.Action("ApplyNewQueueMethod", "Hangout", new { selected = "selectedPlaylistString" })');
+        $.ajax({
+            url: '/Hangout/ApplyNewQueueMethod?queueMethod=' + getDropdownSelectedItemText("#sortingMethodDropdown"),
+            success: function () { console.log("Changed queueMethod successfully to " + getDropdownSelectedItemText("#sortingMethodDropdown")) },
+            error: function () { alert("Could not change queue method") }
+        });
     });
 
+    // TODO I should probably move the delete button into the AddPlaylist overlay somehow, to ensure you dont do it by mistake
+    // Or add a confirmation modal box
     $('#btn-delete').on('click', function () {
+        $.ajax({
+            url: '/Hangout/DeletePlaylist?playlistName=' + getDropdownSelectedItemText("#playlistDropdown"),
+            success: function () { console.log("Deleted playlist " + getDropdownSelectedItemText("#playlistDropdown")) },
+            // Todo on success I should add something that removes the playlist from the dropdown menu. Or maybe I just trigger a page reload
+            // Like this? Html.Action(Hangout, Index) ???
+            error: function () { alert("Could not delete playlist") }
+        });
     });
 
     ////////////////////////////////
@@ -253,10 +272,10 @@
             });
         },
 
-        addPlaylistToQueue() {
+        addPlaylistToQueue(playlistName) {
             $.ajax({
-                url: '@Url.Action("AddPlaylistToQueue", "Hangout", new { })', // TODO PLAYLIST IN HERE
-                success: soundcheInterface.updateActiveSong,
+                url: '/Hangout/AddPlaylistToQueue?selectedPlaylistName=' + playlistName,
+                // success: give immediate feedback :)
                 error: function () { alert('Failed to add playlist'); },
             });
         },
