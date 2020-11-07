@@ -94,6 +94,16 @@
         }
     }
 
+    function performActionAndToggleOverlay(actionToLoad) {
+        $('#partial').load(actionToLoad, function () {
+            toggleOverlay();
+        });
+    }
+
+    function closeOverlay() {
+        performActionAndToggleOverlay('@Url.Action("CloseAddPlaylist", "Hangout")');
+    }
+
     function getDropdownSelectedItemText(playlistId) {
         return $(playlistId + " option:selected").text().replace(/\s/g, '+'); // Replace with space for use in urls
     }
@@ -113,15 +123,13 @@
     });
 
     $('#btn-create').on('click', function () {
-        toggleOverlay(); // THIS SHOULD ONLY BE TRIGGERED ON SUCCESS TODO
-        $('#partial').load('@Url.Action("AddPlaylist", "Hangout")'); // I SHOULD TRY TO MOVE THIS TO SOUNDCHEINTERFACE
+        performActionAndToggleOverlay('@Url.Action("AddPlaylist", "Hangout")');
     });
     // TODO Need to trigger toggleOverlay whenever I close the playlist editor after having used create/edit as well
     // TODO And also need to update the values within my dropdown lists to include the new one (and same for deletion)
 
     $('#btn-edit').on('click', function () {
-        toggleOverlay(); // THIS SHOULD ONLY BE TRIGGERED ON SUCCESS TODO
-        $('#partial').load('/Hangout/EditPlaylist?selected=' + getDropdownSelectedItemText("#playlistDropdown"));
+        performActionAndToggleOverlay('/Hangout/EditPlaylist?selected=' + getDropdownSelectedItemText("#playlistDropdown"));
         // Corresponds with the following code, except now it is able to get dynamic values from JS
         // $('#partial').load('@@Url.Action("EditPlaylist", "Hangout", new { selected = "selectedPlaylistString" })');
     });
@@ -164,7 +172,7 @@
             // TODO Start playing video if something is already chosen by the room?
             // So getactivesong, then loadvideo
             // Or is it even needed, if it updates every 5 sec?
-            
+
             setInterval(soundcheInterface.getActiveSong, 5000)
 
             event.target.playVideo(); // TODO WHAT ABOUT THIS LINE?
@@ -226,6 +234,14 @@
                 startSeconds: startSeconds
             })
         },
+
+        loadVideoInfo(videoId, successfunc, errorfunc) {
+            $.ajax({
+                url: `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=contentDetails&key=AIzaSyBU-HwQlSuYkw5OeRlvISVTpNdzn0cZvlM`,
+                success: successfunc,
+                error: errorfunc,
+            });
+        }
     }
 
     var sessionStore = {

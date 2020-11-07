@@ -3,16 +3,14 @@
     ViewBag.Title = "AddPlaylist";
 }
 
-<!-- TODO Add a red cross for CANCEL -->
-
 <div id="mainForm">
     <!-- This did it. Now it can silently submit/postback without refreshing the page. The problem is that it's not a very modular
         partial view now (because it references the controller and action directly), but oh well, who cares
         Sources: https://forums.asp.net/t/2148353.aspx, https://stackoverflow.com/questions/53229656/how-to-create-ajax-form-in-asp-net-core,
         https://www.c-sharpcorner.com/UploadFile/0c1bb2/post-data-without-whole-postback/,
         https://stackoverflow.com/questions/53319914/asp-net-mvc-post-data-to-controller-without-refreshing-page-->
-    <form asp-controller="Hangout" asp-action="AddPlaylist" data-ajax="true" data-ajax-method="POST" data-ajax-mode="replace" data-ajax-update="#mainForm">
-        <!--data-ajax-success="success"-->
+    <form asp-controller="Hangout" asp-action="AddPlaylist" data-ajax="true" data-ajax-method="POST" data-ajax-mode="replace" 
+          data-ajax-update="#mainForm" data-ajax-success="closeOverlay">
 
         <a href="#" id="btn-close-overlay" class="close-icon top-left"></a>
 
@@ -37,10 +35,7 @@
 
     <script type="text/javascript">
         // ADD PLAYLIST SCRIPTS START
-        $('#btn-close-overlay').on('click', function () {
-            toggleOverlay(); // THIS SHOULD ONLY BE TRIGGERED ON SUCCESS TODO
-            $('#partial').load('@Url.Action("CloseAddPlaylist")');
-        });
+        $('#btn-close-overlay').on('click', closeOverlay);
 
         $('#addNewTrackBtn').on('click', function () {
             $.ajax({
@@ -64,24 +59,39 @@
         });
 
         $('#editorRowsTracks').on('blur', '#yturl', function (text) {
-            ytid = getYoutubeIdFromUrl($(this).val());
+            var self = $(this);
+            ytid = getYoutubeIdFromUrl(self.val()); // TODO change this to be a callback function instead
+
             if (ytid != null) {
-                $(this).parentsUntil('#editorRowsTracks').find('#ytid').text(ytid);
-                $(this).parentsUntil('#editorRowsTracks').find('#ytidvalue').val(ytid); // Need this one to actually ensure my value goes over
-                $(this).parentsUntil('#editorRowsTracks').find('#successlabel').text("Modified!");
+                youtubeInterface.loadVideoInfo(ytid, function (data) {
+                    self.parentsUntil('#editorRowsTracks').find('#ytendtime').val(convertISO8501ToDuration(data.items[0].contentDetails.duration));
+                });
+
+                self.parentsUntil('#editorRowsTracks').find('#ytid').text(ytid);
+                self.parentsUntil('#editorRowsTracks').find('#ytidvalue').val(ytid); // Need this one to actually ensure my value goes over
+                self.parentsUntil('#editorRowsTracks').find('#successlabel').text("Modified!");
 
                 yttitle = loadYtTitleIntoElements(
                     ytid,
-                    $(this).parentsUntil('#editorRowsTracks').find('#yttitle'),
-                    $(this).parentsUntil('#editorRowsTracks').find('#yttitlevalue'),
-                    $(this).parentsUntil('#editorRowsTracks').find('#ytauthor'),
-                    $(this).parentsUntil('#editorRowsTracks').find('#ytauthorvalue'),
-                    $(this).parentsUntil('#editorRowsTracks').find('#spinner'));
+                    self.parentsUntil('#editorRowsTracks').find('#yttitle'),
+                    self.parentsUntil('#editorRowsTracks').find('#yttitlevalue'),
+                    self.parentsUntil('#editorRowsTracks').find('#ytauthor'),
+                    self.parentsUntil('#editorRowsTracks').find('#ytauthorvalue'),
+                    self.parentsUntil('#editorRowsTracks').find('#spinner'));
             }
             else {
-                $(this).parentsUntil('#editorRowsTracks').find('#successlabel').text("Invalid. Value not changed!");
+                self.parentsUntil('#editorRowsTracks').find('#successlabel').text("Invalid. Value not changed!");
             }
         });
+
+        function convertISO8501ToDuration(datestring) {
+            //var duration = datestring.split(/[ms]/)
+                // "PT13M45S".split(/PT(.)/)
+                // CAPTURE each part of the string
+        //.replace(/(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)Z/, "$3/$2/$1 $4:$5:$6")
+            //return duration;
+            return 0; // TODO
+        }
 
         function loadYtTitleIntoElements(id, tar, tarval, author, authorval, spinner) {
             // https://stackoverflow.com/a/39174584/5774018

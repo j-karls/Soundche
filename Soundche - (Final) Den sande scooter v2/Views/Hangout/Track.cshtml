@@ -15,11 +15,11 @@
                 <!--Excludes the song from being played, useful fx. when a song has been removed from YT, but you dont want it erased from the playlist-->
             </div>
             <div class="start-time-track">
-                @Html.TextBoxFor(track => track.StartTime, new { type = "number", min = "0", step = "1", @class = "stretch" })
+                @Html.TextBoxFor(track => track.StartTime, new { id = "ytstarttime", type = "number", min = "0", step = "1", @class = "stretch" })
                 <!-- Equivalent to HTML5 <input type="number" min="0" step="1" />-->
             </div>
             <div class="end-time-track">
-                @Html.TextBoxFor(track => track.EndTime, new { type = "number", min = "0", step = "1", @class = "stretch" })
+                @Html.TextBoxFor(track => track.EndTime, new { id = "ytendtime", type = "number", min = "0", step = "1", @class = "stretch" })
                 <!-- TODO End time needs to load video duration from yt api -->
             </div>
             <div class="author-track">
