@@ -9,7 +9,7 @@ namespace Soundche.Core.Domain
 {
     public class Playlist
     {
-        [Required]
+        [Required] [BsonId]
         public string Name { get; set; }
         public List<Track> Tracks { get; set; }
 

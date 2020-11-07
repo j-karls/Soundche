@@ -21,13 +21,15 @@ namespace Soundche.Core.BLL
             InitializeDb();
         }
 
-        private void InitializeDb() 
+        private void InitializeDb()
         {
             // Open database (or create if doesn't exist)
             _db = new LiteDatabase(DbPath);
             // Get a collection (or create, if doesn't exist) 
             _users = _db.GetCollection<User>("users");
         }
+
+        // public void UpdateUser(User user) => _users.Update(user);
 
         public void UpdateUser(User user) => _users.Update(user);
 
@@ -37,35 +39,11 @@ namespace Soundche.Core.BLL
             return _users.FindOne(x => x.Name == username); 
         }
 
-        public void AddUser(User user)
-        {
-            _users.Insert(user);
-        }
-
-        //public void InsertShitHardcodedUserBoi()
-        //{
-            //.Insert(new User("Emilen Stabilen", new List<Playlist> { new Playlist("cancerlisten", new List<Track> {
-            //    new Track("♂ Leave the Gachimuchi on ♂", "https://www.youtube.com/watch?v=BH726JXRok0", 0, 5),
-            //    new Track("♂️ AssClap ♂️ (Right version) REUPLOAD", "https://www.youtube.com/watch?v=NdqbI0_0GsM", 4, 11)
-            //})}));
-
-            //_users.Insert(new User("Emilen Stabilen", new List<Playlist> { new Playlist("cancerlisten", new List<Track> {
-            //    new Track("Think About Things - Daði Freyr (Cover)", "Anne Reburn", "QESmN9-S0UY", 0, 5),
-            //    new Track("May the Angels (DARK)", "Music TheMost", "n5FG3iRVkWQ", 4, 11)
-            //})}));
-        //}
+        public void AddUser(User user) => _users.Insert(user);
 
         public void Dispose() => _db.Dispose();
 
         /*
-        public User GetShitHardcodedUserBoi()
-        {
-            return User.CreateUser("Emilen Stabilen", new List<Playlist> { new Playlist("cancerlisten", new List<Track> { 
-                new Track("♂ Leave the Gachimuchi on ♂", "https://www.youtube.com/watch?v=BH726JXRok0", 0, 300),
-                new Track("♂️ AssClap ♂️ (Right version) REUPLOAD", "https://www.youtube.com/watch?v=NdqbI0_0GsM", 15, 100)
-            })});
-        }
-
         public List<User> QueryUsersTemp()
         {
             // Use LINQ to query documents with more complex search queries

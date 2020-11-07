@@ -116,7 +116,7 @@ body, html {
 
     grid-template-areas:
         "pic    pic     info    info    info    info    play        play        all         all         remove      remove"
-        "pic    pic     prev    vol     volume  next    playlist    playlist    playlist    playlist    playlist    playlist"
+        "pic    pic     prev    vol     vol     next    playlist    playlist    playlist    playlist    playlist    playlist"
         "pic    pic     sort	sort	sort	apply	create	    create      edit        edit        delete      delete";
 
     grid-template-columns: repeat(12, 1fr);

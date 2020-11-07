@@ -4,12 +4,6 @@
 *@
 
 <!--
-// TODO: Make audioplayer partial view work with my id text replacement in performSongSwitch()
-// TODO: Make sure the getActiveSong interval is only enabled if we have first called the Play IActionResult (such that the page has /Play in the querystring).
-// NOTE: I might also just setTimeout on the getActiveSong function, a timeout that fits with the amount of time it should play the song.
-// NOTE: But that wouldn't work well if we skip something server-side, etc. etc. Better if the server handles it all'
--->
-<!--
         <partial name="_AudioPlayer" />
 
 -->
@@ -42,7 +36,7 @@
             <input id="btn-prev" type="button" class="btn btn-primary stretch" value="Previous Song" />
         </div>
         <div class="hangout-vol">
-            <input id="vol-control" type="range" min="0" max="100" step="1" class="stretch"></input>
+            <input id="vol-control" type="range" min="0" max="100" value="50" step="1" class="stretch"></input>
         </div>
         <div class="hangout-next">
             <input id="btn-next" type="button" class="btn btn-primary stretch" value="Next Song" />
@@ -101,7 +95,7 @@
     }
 
     function getDropdownSelectedItemText(playlistId) {
-        return $(playlistId + " option:selected").text();
+        return $(playlistId + " option:selected").text().replace(/\s/g, '+'); // Replace with space for use in urls
     }
 
     /////////////////// BUTTON BINDS
@@ -165,7 +159,18 @@
     ////////////////////////////////
     var youtubeInterface = {
         onPlayerReady(event) {
-            event.target.playVideo();
+            // Set volume to default value
+
+            // TODO Start playing video if something is already chosen by the room?
+            // So getactivesong, then loadvideo
+            // Or is it even needed, if it updates every 5 sec?
+            
+            setInterval(soundcheInterface.getActiveSong, 5000)
+
+            event.target.playVideo(); // TODO WHAT ABOUT THIS LINE?
+            youtubeInterface.setVolume(0.5);
+
+            // TODO Set the js repeat call getactivesong function
         },
 
         //MBY HAVE A STATE CHANGE TO MAKE SURE PEOPLE ARE ON THE SAME STATE?
@@ -228,8 +233,7 @@
         startTime: 0,
         endTime: 0,
         youtubeUrl: "",
-        lastTimeSwitchedSong: 0,
-        resyncInterval: 0,
+        lastTimeSwitchedSong: 0
     }
 
     var soundcheInterface = {
@@ -280,9 +284,6 @@
             });
         },
     }
-
-    //SOUNCHE INITIATION
-    soundcheInterface.getActiveSong();
 
     //YOUTUBE API INSTANTIATION START
     var tag = document.createElement('script');

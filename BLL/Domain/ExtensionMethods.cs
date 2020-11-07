@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Soundche.Core.Domain
@@ -24,6 +25,11 @@ namespace Soundche.Core.Domain
         public static IEnumerable<T> OrEmptyIfNull<T>(this IEnumerable<T> source)
         {
             return source ?? System.Linq.Enumerable.Empty<T>();
+        }
+
+        public static void ReplaceFirst<T>(this List<T> lst, Predicate<T> predicate, T newItem)
+        {
+            lst[lst.FindIndex(predicate)] = newItem;
         }
     }
 }

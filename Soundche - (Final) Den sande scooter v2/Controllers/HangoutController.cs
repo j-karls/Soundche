@@ -139,23 +139,17 @@ namespace Soundche.Web.Controllers
             return PartialView("AddPlaylist", _room.GetUser(User.Identity.Name).GetPlaylist(selected) );
         }
 
-        //[HttpPost]
-        //public ActionResult EditPlaylist(Playlist playlist) => AddPlaylist(playlist);
-        // TODO REMOVE THIS EDIT POST
-        // Then do a check in addplaylist based upon the playlist name
-        // if it already exists, we just replace
-
         [HttpPost]
         public ActionResult AddPlaylist(Playlist playlist)
         {
-            // do validation
             if (!ModelState.IsValid) return PartialView("AddPlaylist", playlist);
 
-            // save playlist
             User usr = _room.GetUser(User.Identity.Name);
-            usr.Playlists.Add(playlist); // TODO Make a check and edit playlist if it's not a new one
-            _room.UpdateUser(usr); // TODO I SHOULD ABSTRACT AWAY THESE UPDATE FUNCTIONS, instead in room have a addplaylist and deleteplaylist methods
+            var existing = usr.Playlists.Find(x => x.Name == playlist.Name);
+            if (existing is null) usr.Playlists.Add(playlist);
+            else usr.Playlists.ReplaceFirst(x => x == existing, playlist); // Replace existing playlist with the newly updated one
 
+            _room.UpdateUser(usr); // TODO I SHOULD ABSTRACT AWAY THESE UPDATE FUNCTIONS, instead in room have a addplaylist and deleteplaylist methods
             return Ok(); 
         }
 
