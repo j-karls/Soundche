@@ -64,7 +64,7 @@
 
             if (ytid != null) {
                 youtubeInterface.loadVideoInfo(ytid, function (data) {
-                    self.parentsUntil('#editorRowsTracks').find('#ytendtime').val(convertISO8501ToDuration(data.items[0].contentDetails.duration));
+                    self.parentsUntil('#editorRowsTracks').find('#ytendtime').val(convertISO8601ToDuration(data.items[0].contentDetails.duration));
                 });
 
                 self.parentsUntil('#editorRowsTracks').find('#ytid').text(ytid);
@@ -84,13 +84,18 @@
             }
         });
 
-        function convertISO8501ToDuration(datestring) {
-            //var duration = datestring.split(/[ms]/)
-                // "PT13M45S".split(/PT(.)/)
-                // CAPTURE each part of the string
-        //.replace(/(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)Z/, "$3/$2/$1 $4:$5:$6")
-            //return duration;
-            return 0; // TODO
+        function convertISO8601ToDuration(datestring) {
+            datestring = matchNext(/PT/, datestring); // Cut first two chars
+            var hrs = matchNext(/H/, datestring["remainder"]);
+            var min = matchNext(/M/, hrs["remainder"]);
+            var sec = matchNext(/S/, min["remainder"]);
+            return (parseInt(hrs["match"]) * 60 * 60) + (parseInt(min["match"]) * 60) + (parseInt(sec["match"]));
+        }
+
+        function matchNext(regex, str) {
+            var result = str.split(regex);
+            if (result.length == 1) return { "match": "0", "remainder": str }
+            return { "match": result[0], "remainder": result[1]}
         }
 
         function loadYtTitleIntoElements(id, tar, tarval, author, authorval, spinner) {
