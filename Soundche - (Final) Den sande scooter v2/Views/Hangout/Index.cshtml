@@ -13,8 +13,10 @@
         <div class="embed-responsive embed-responsive-16by9">
             <div id="player"></div>
         </div>
-        <div class="stretch">
-            <progress id="progressbar" max="100" value="0"></progress>
+
+        <div class="progress stretch">
+            <div id="progress-color-bar" class="progress-color-bar"></div>
+            <div id="progress-text" class="progress-percent">0%</div>
         </div>
 
     </div>
@@ -113,8 +115,15 @@
     }
 
     function updateCurrentProgress() {
-        console.log(((youtubeInterface.getCurrentTime() - sessionStore.startTime) / sessionStore.endTime) * 100);
-        if (sessionStore.isActive) $('#progressbar').val(((youtubeInterface.getCurrentTime() - sessionStore.startTime) / sessionStore.endTime) * 100);
+        if (!sessionStore.isActive) return;
+        var currentTime = youtubeInterface.getCurrentTime() - sessionStore.startTime;
+        var endTime = sessionStore.endTime - sessionStore.startTime;
+        var progress = Math.round((currentTime / endTime) * 100);
+        if (isNaN(progress)) return;
+
+        console.log(progress);
+        $("#progress-text").text(progress);
+        $("#progress-color-bar").width(progress + "%");
     }
 
     /////////////////// BUTTON BINDS
@@ -152,12 +161,12 @@
 
     $('#vol-control').on('input', function () {
         // This one is for updating while dragging the volume slider
-        youtubeInterface.setVolume(this.value / 100);
+        youtubeInterface.setVolume(this.value);
     });
 
-    $('#vol-control').on('change', function () {
+    $('#vol-control').on('change', function () {0
         // This one catches when you release the slider
-        youtubeInterface.setVolume(this.value / 100);
+        youtubeInterface.setVolume(this.value);
     });
 
     $('#btn-apply').on('click', function () {
@@ -185,7 +194,7 @@
 
         onPlayerReady(event) {
             // Set volume to default value
-            youtubeInterface.setVolume(0.5);
+            youtubeInterface.setVolume(50);
             // Get active song and start playing immediately if there is anything
             soundcheInterface.getActiveSong();
             // Check if there's a new song periodically
@@ -219,7 +228,10 @@
         },
 
         setVolume(volume) {
-            player.setVolume(volume)
+            console.log("set volume to " + volume);
+
+            player.unMute();
+            player.setVolume(volume);
         },
 
         getVolume() {

@@ -54,7 +54,7 @@ namespace Soundche.Core.BLL
         {
             if (newTrack == null) return;
             CurrentTrack = newTrack;
-            StartTimer((newTrack.EndTime * 1000) - (newTrack.StartTime * 1000)); // Convert ms to s
+            StartTimer((newTrack.EndTime * 1000) - (newTrack.StartTime * 1000)); // Convert s to ms
             SwitchedSongEvent(this, new SwitchedSongEventArgs(newTrack, DateTime.Now));
         }
 
