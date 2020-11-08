@@ -58,7 +58,7 @@ namespace Soundche.Web.Controllers
             // We can only try to call client->server with JavaScript, to then see if we should update the current song
 
             var lastEvent = _room._lastSwitchedSongEvent;
-            if (lastEvent is null) return Json(new { active = false });
+            if (lastEvent is null) return Json(new { isActive = false });
 
             //sends the activeSong as Json, showing info about what song is currently playing and when it was started
             else return Json(new

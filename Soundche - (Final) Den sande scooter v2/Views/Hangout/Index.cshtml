@@ -9,14 +9,18 @@
 -->
 
 <body>
-    <div class="hangout-player-grid-main">
+    <div class="hangout-player-main">
         <div class="embed-responsive embed-responsive-16by9">
-            <!--or use class="video-container"-->
             <div id="player"></div>
         </div>
+        <div class="stretch">
+            <progress id="progressbar" max="100" value="0"></progress>
+        </div>
+
     </div>
 
     <div class="hangout-btn-grid-main">
+        <div class="hangout-empty"></div>
         <div class="hangout-pic frame"> <!-- TODO -->
             <img src="https://www.meme-arsenal.com/memes/611c8f9484a86b43bfa811ea87a11bc0.jpg" />
         </div>
@@ -108,10 +112,22 @@
         return $(playlistId + " option:selected").text().replace(/\s/g, '+'); // Replace with space for use in urls
     }
 
+    function updateCurrentProgress() {
+        console.log(((youtubeInterface.getCurrentTime() - sessionStore.startTime) / sessionStore.endTime) * 100);
+        if (sessionStore.isActive) $('#progressbar').val(((youtubeInterface.getCurrentTime() - sessionStore.startTime) / sessionStore.endTime) * 100);
+    }
+
     /////////////////// BUTTON BINDS
 
     $('#btn-play').on('click', function () {
         soundcheInterface.addPlaylistToQueue(getDropdownSelectedItemText("#playlistDropdown"));
+        sessionStore.isActive = true;
+    });
+
+    $('#btn-remove').on('click', function () {
+        //soundcheInterface.REMOVE(getDropdownSelectedItemText("#playlistDropdown"));
+        // If all are removed, then sessionStore.isActive = false;
+        // Stop playing video as well
     });
 
     $('#btn-next').on('click', function () { // TODO Grey out next and prev if nothing is playing
@@ -166,25 +182,19 @@
 
     ////////////////////////////////
     var youtubeInterface = {
+
         onPlayerReady(event) {
             // Set volume to default value
-
-            // TODO Start playing video if something is already chosen by the room?
-            // So getactivesong, then loadvideo
-            // Or is it even needed, if it updates every 5 sec?
-
-            setInterval(soundcheInterface.getActiveSong, 5000)
-
-            event.target.playVideo(); // TODO WHAT ABOUT THIS LINE?
             youtubeInterface.setVolume(0.5);
-
-            // TODO Set the js repeat call getactivesong function
+            // Get active song and start playing immediately if there is anything
+            soundcheInterface.getActiveSong();
+            // Check if there's a new song periodically
+            setInterval(soundcheInterface.getActiveSong, 5000);
+            // Update our own progress tracker periodically
+            setInterval(updateCurrentProgress, 1000);
         },
 
-        //MBY HAVE A STATE CHANGE TO MAKE SURE PEOPLE ARE ON THE SAME STATE?
-        onPlayerStateChange(event) {
-
-        },
+        onPlayerStateChange(event) { },
 
         playVideo() {
             player.playVideo();
@@ -194,7 +204,7 @@
             player.stopVideo();
         },
 
-        pausePlay() {
+        togglePausePlay() {
             if (player.getPlayerState() == 1) {
                 player.pauseVideo();
             }
@@ -203,13 +213,9 @@
             }
         },
 
-        muteUnmute() {
-            if (player.isMuted() == 1) {
-                player.unMute();
-            }
-            else {
-                player.mute();
-            }
+        toggleMuteUnmute() {
+            if (player.isMuted() == 1) player.unMute();
+            else player.mute();
         },
 
         setVolume(volume) {
@@ -229,10 +235,7 @@
         },
 
         loadVideo(videoId, startSeconds) {
-            player.loadVideoById({
-                videoId: videoId,
-                startSeconds: startSeconds
-            })
+            player.loadVideoById({ videoId: videoId, startSeconds: startSeconds })
         },
 
         loadVideoInfo(videoId, successfunc, errorfunc) {
@@ -245,11 +248,13 @@
     }
 
     var sessionStore = {
+        isActive: false,
         songName: "",
+        author: "",
         startTime: 0,
         endTime: 0,
-        youtubeUrl: "",
-        lastTimeSwitchedSong: 0
+        youtubeId: "",
+        switchedSongTime: 0
     }
 
     var soundcheInterface = {
@@ -264,15 +269,15 @@
         },
 
         updateActiveSong(sessionData) {
-        // Check if there is an active song and if its a different song since last time we checked
-            if (sessionData.isActive && (sessionData.switchedSongTime != sessionStore.lastTimeSwitchedSong)) {
+            // Check if there is an active song and if its a different song since last time we checked
+            if (sessionData.isActive && (sessionData.switchedSongTime != sessionStore.switchedSongTime)) {
                 sessionStore.songName = sessionData.songName;
                 sessionStore.startTime = sessionData.startTime;
                 sessionStore.endTime = sessionData.endTime;
-                sessionStore.youtubeUrl = sessionData.youtubeUrl;
-                sessionStore.lastTimeSwitchedSong = sessionData.switchedSongTime;
+                sessionStore.youtubeId = sessionData.youtubeId;
+                sessionStore.switchedSongTime = sessionData.switchedSongTime;
 
-                youtubeInterface.playVideo(sessionData.youtubeUrl, sessionData.startTime);
+                youtubeInterface.loadVideo(sessionStore.youtubeId, sessionStore.startTime);
             }
         },
 
@@ -295,29 +300,28 @@
         addPlaylistToQueue(playlistName) {
             $.ajax({
                 url: '/Hangout/AddPlaylistToQueue?selectedPlaylistName=' + playlistName,
-                // success: give immediate feedback :)
+                success: console.log("Added new playlist " + playlistName), //todo give more immediate feedback :)
                 error: function () { alert('Failed to add playlist'); },
             });
         },
     }
 
-    //YOUTUBE API INSTANTIATION START
-    var tag = document.createElement('script');
+    // YOUTUBE API INSTANTIATION START
 
-    tag.src = "https://www.youtube.com/iframe_api";
+    // Load the IFrame Player API code asynchronously.
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/player_api";
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
     var player;
-
     function onYouTubeIframeAPIReady() {
         player = new YT.Player('player', {
             height: '390',
             width: '640',
-            videoId: sessionStore.youtubeUrl,
+            videoId: "",
             playerVars: {
                 autoplay: 1,
-                rel: 0,
                 modestbranding: 1,
                 disablekb: 1,
                 controls: 0,
@@ -329,5 +333,6 @@
             }
         })
     };
+
     //YOUTUBE API INSTANTIATION END
 </script>

@@ -67,7 +67,7 @@ body, html {
     padding: 0;
 }
 
-.hangout-player-grid-main {
+.hangout-player-main {
     width: 76%; /* This is the same as adjusting height to 80%, because of the padding it does below */
     margin: auto; /* Centers the content */
     padding-top: 15px;
