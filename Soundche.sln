@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "BLL\Core.csproj", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{68E4E6A6-616A-4DB9-98AB-84924F755107}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoundcheFinal", "Soundche - (Final) Den sande scooter v2\SoundcheFinal.csproj", "{E6073A34-438E-4E0C-9D6C-5DCE2FF0B6D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoundcheFinal", "SoundcheFinal\SoundcheFinal.csproj", "{E6073A34-438E-4E0C-9D6C-5DCE2FF0B6D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
