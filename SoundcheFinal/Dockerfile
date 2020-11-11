@@ -1,25 +1,23 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-#Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
-#For more information, please see https://aka.ms/containercompat
-
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-nanoserver-1803 AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-nanoserver-1803 AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["Soundche - (Final) Den sande scooter v2/Soundche - (Final) Den sande scooter v2.csproj", "Soundche - (Final) Den sande scooter v2/"]
-RUN dotnet restore "Soundche - (Final) Den sande scooter v2/Soundche - (Final) Den sande scooter v2.csproj"
+COPY ["SoundcheFinal/SoundcheFinal.csproj", "SoundcheFinal/"]
+COPY ["BLL/Core.csproj", "BLL/"]
+RUN dotnet restore "SoundcheFinal/SoundcheFinal.csproj"
 COPY . .
-WORKDIR "/src/Soundche - (Final) Den sande scooter v2"
-RUN dotnet build "Soundche - (Final) Den sande scooter v2.csproj" -c Release -o /app/build
+WORKDIR "/src/SoundcheFinal"
+RUN dotnet build "SoundcheFinal.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Soundche - (Final) Den sande scooter v2.csproj" -c Release -o /app/publish
+RUN dotnet publish "SoundcheFinal.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Soundche - (Final) Den sande scooter v2.dll"]
+ENTRYPOINT ["dotnet", "SoundcheFinal.dll"]
