@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/css/custom.css" type="text/css" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
 
     <!-- Include Ajax -->
     <!--<script src="https://code.jquery.com/jquery-1.9.1.js"></script>-->
@@ -15,14 +18,9 @@
     <!--Alternatively, if I want to use my local copy. I probably should do same for JQuery? <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>-->
 
 </head>
-<body class="fill-max-screen-size">
-    <div>
-        @RenderBody()
-    </div>
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @RenderSection("Scripts", required: false)
-</body>
+    <body class="fill-max-screen-size">
+        <div>
+            @RenderBody()
+        </div>
+    </body>
 </html>
