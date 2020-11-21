@@ -100,7 +100,8 @@
 
         function loadYtTitleIntoElements(id, tar, tarval, author, authorval, spinner) {
             // https://stackoverflow.com/a/39174584/5774018
-            var url = 'https://www.youtube.com/embed/' + id;
+            // var url = 'https://www.youtube.com/embed/' + id; Embeds don't alter your youtube browsing recommendation, but not all videos are able to be played as embeds
+            var url = 'https://www.youtube.com/watch?v=' + id;
 
             showSpinner(spinner);
 

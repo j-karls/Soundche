@@ -130,8 +130,7 @@
 
     $('#btn-play').on('click', function () {
         soundcheInterface.addPlaylistToQueue(getDropdownSelectedItemText("#playlistDropdown"));
-        sessionStore.isActive = true;
-    });
+0    });
 
     $('#btn-remove').on('click', function () {
         //soundcheInterface.REMOVE(getDropdownSelectedItemText("#playlistDropdown"));
@@ -283,7 +282,9 @@
         updateActiveSong(sessionData) {
             // Check if there is an active song and if its a different song since last time we checked
             if (sessionData.isActive && (sessionData.switchedSongTime != sessionStore.switchedSongTime)) {
+                sessionStore.isActive = sessionData.isActive;
                 sessionStore.songName = sessionData.songName;
+                sessionStore.author = sessionData.author;
                 sessionStore.startTime = sessionData.startTime;
                 sessionStore.endTime = sessionData.endTime;
                 sessionStore.youtubeId = sessionData.youtubeId;
