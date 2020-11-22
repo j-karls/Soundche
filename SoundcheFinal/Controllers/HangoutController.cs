@@ -67,9 +67,10 @@ namespace Soundche.Web.Controllers
                 songName = lastEvent.NewTrack.Name,
                 author = lastEvent.NewTrack.Author,
                 startTime = lastEvent.NewTrack.StartTime,
+                elapsedTime = (DateTime.Now - lastEvent.SwitchedSongTime).TotalSeconds,
                 endTime = lastEvent.NewTrack.EndTime,
                 youtubeId = lastEvent.NewTrack.YoutubeId,
-                switchedSongTime = lastEvent.SwitchedSongTimeTicks
+                switchedSongTimeTicks = lastEvent.SwitchedSongTime.Ticks
             });
         }
 

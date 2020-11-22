@@ -9,7 +9,7 @@ namespace Soundche.Core.BLL
     {
         public SwitchedSongEventArgs _lastSwitchedSongEvent { get; private set; } = null; 
 
-        public Timer PlaybackTimer = null;
+        public Timer PlaybackTimer { get; set; }
         public Track CurrentTrack = null;
 
         private PlaylistManager PlaylistController { get; set; }
@@ -23,7 +23,9 @@ namespace Soundche.Core.BLL
         {
             DatabaseController = new LiteDbManager();
             PlaylistController = new PlaylistManager();
-            SwitchedSongEvent += OnSwitchSong; // Set the lastSwitchedSongEvent every time the song is switched
+            SwitchedSongEvent += OnSwitchSong; // Raise the lastSwitchedSongEvent every time the song is switched
+            PlaybackTimer = new Timer { AutoReset = false };
+            PlaybackTimer.Elapsed += OnTimerElapsed;
         }
 
         public event EventHandler<SwitchedSongEventArgs> SwitchedSongEvent;
@@ -33,13 +35,12 @@ namespace Soundche.Core.BLL
             _lastSwitchedSongEvent = e;
         }
 
-        private void OnTimerElapsed(object sender, ElapsedEventArgs e) => StartNextSong();
+        private void OnTimerElapsed(object sender, ElapsedEventArgs e) => StartNextSong(); 
 
         private void StartTimer(double interval)
         {
-            PlaybackTimer = new Timer(interval);
-            PlaybackTimer.Elapsed += OnTimerElapsed;
-            PlaybackTimer.AutoReset = false;
+            PlaybackTimer.Stop();
+            PlaybackTimer.Interval = interval;
             PlaybackTimer.Start();
         }
 

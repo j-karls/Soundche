@@ -133,9 +133,7 @@
 0    });
 
     $('#btn-remove').on('click', function () {
-        //soundcheInterface.REMOVE(getDropdownSelectedItemText("#playlistDropdown"));
-        // If all are removed, then sessionStore.isActive = false;
-        // Stop playing video as well
+        // soundcheInterface.REMOVE(getDropdownSelectedItemText("#playlistDropdown"));
     });
 
     $('#btn-next').on('click', function () { // TODO Grey out next and prev if nothing is playing
@@ -189,17 +187,22 @@
     });
 
     ////////////////////////////////
+    var defaultVolume = 50;
+    var updateActiveSongIntervalMs = 1000;
+    var progressBarUpdateIntervalMs = 1000;
+    var allowedOutOfSyncSeconds = 5;
+
     var youtubeInterface = {
 
         onPlayerReady(event) {
             // Set volume to default value
-            youtubeInterface.setVolume(50);
+            youtubeInterface.setVolume(defaultVolume);
             // Get active song and start playing immediately if there is anything
             soundcheInterface.getActiveSong();
             // Check if there's a new song periodically
-            setInterval(soundcheInterface.getActiveSong, 5000);
+            setInterval(soundcheInterface.getActiveSong, updateActiveSongIntervalMs);
             // Update our own progress tracker periodically
-            setInterval(updateCurrentProgress, 1000);
+            setInterval(updateCurrentProgress, progressBarUpdateIntervalMs);
         },
 
         onPlayerStateChange(event) { },
@@ -263,9 +266,10 @@
         songName: "",
         author: "",
         startTime: 0,
+        elapsedTime: 0,
         endTime: 0,
         youtubeId: "",
-        switchedSongTime: 0
+        switchedSongTimeTicks: 0
     }
 
     var soundcheInterface = {
@@ -280,17 +284,29 @@
         },
 
         updateActiveSong(sessionData) {
-            // Check if there is an active song and if its a different song since last time we checked
-            if (sessionData.isActive && (sessionData.switchedSongTime != sessionStore.switchedSongTime)) {
-                sessionStore.isActive = sessionData.isActive;
-                sessionStore.songName = sessionData.songName;
-                sessionStore.author = sessionData.author;
-                sessionStore.startTime = sessionData.startTime;
-                sessionStore.endTime = sessionData.endTime;
-                sessionStore.youtubeId = sessionData.youtubeId;
-                sessionStore.switchedSongTime = sessionData.switchedSongTime;
+            sessionStore.isActive = sessionData.isActive;
 
-                youtubeInterface.loadVideo(sessionStore.youtubeId, sessionStore.startTime);
+            if (sessionStore.isActive) { // is there an active song?
+                sessionStore.elapsedTime = sessionData.elapsedTime;
+
+                if (sessionStore.switchedSongTimeTicks != sessionData.switchedSongTimeTicks) { // is it a new song?
+                    sessionStore.songName = sessionData.songName;
+                    sessionStore.author = sessionData.author;
+                    sessionStore.startTime = sessionData.startTime;
+                    sessionStore.endTime = sessionData.endTime;
+                    sessionStore.youtubeId = sessionData.youtubeId;
+                    sessionStore.switchedSongTimeTicks = sessionData.switchedSongTimeTicks;
+
+                    youtubeInterface.loadVideo(sessionStore.youtubeId, sessionStore.elapsedTime);
+                }
+                else soundcheInterface.synchronizePlaytime();
+            }
+        },
+
+        synchronizePlaytime() {
+            if (sessionStore.isActive) {
+                if (Math.abs(sessionStore.elapsedTime - youtubeInterface.getCurrentTime()) > allowedOutOfSyncSeconds)
+                    youtubeInterface.loadVideo(sessionStore.youtubeId, sessionStore.elapsedTime);
             }
         },
 
