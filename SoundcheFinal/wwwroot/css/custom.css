@@ -68,7 +68,7 @@ body, html {
 }
 
 .hangout-player-main {
-    width: 72%; /* This is the same as adjusting height % - because of the padding it does below */
+    width: 62%; /* This is the same as adjusting height % - because of the padding it does below */
     margin: auto; /* Centers the content */
     padding-top: 15px;
     padding-bottom: 15px;
@@ -108,6 +108,31 @@ body, html {
 
 .display-hide {
     visibility: hidden;
+}
+
+.hangout-header-main {
+    display: grid;
+    height: 10%;
+
+    grid-template-areas:
+        "logo   logo   title    byline";
+
+    grid-row-gap: 2px;
+    grid-column-gap: 2px;
+    align-items: stretch;
+    justify-items: stretch;
+    justify-content: stretch;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+.header-logo       { grid-area: logo } 
+.header-title      { grid-area: title }
+.header-byline     { grid-area: byline }
+
+.max-size-logo { /* TODO FIX THIS, Cant use a plain pixel value*/
+    height: 100px;
+    width: auto;
 }
 
 .hangout-btn-grid-main {
@@ -151,6 +176,11 @@ body, html {
     height: 100%;
 }
 
+.stretch-width {
+    width: 100%;
+    height: auto;
+}
+
 .fill-max-screen-size {
     height: 100vh;
     width: 100vw;
@@ -164,7 +194,7 @@ body, html {
     position: relative;
 }
 
-img {
+.maxwidth-maxheight {
     max-height: 100%;
     max-width: 100%;
     width: auto;
