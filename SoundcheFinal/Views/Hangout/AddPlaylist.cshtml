@@ -38,11 +38,7 @@
         $('#btn-close-overlay').on('click', closeOverlay);
 
         $('#addNewTrackBtn').on('click', function () {
-            $.ajax({
-                url: '@Url.Action("Track")',
-                    cache: false,
-                    success: function (html) { $("#editorRowsTracks").append(html); }
-            });
+            addNewTrackEditorRow(false);
             return false;
         });
 
@@ -60,29 +56,23 @@
 
         $('#editorRowsTracks').on('blur', '#yturl', function (text) {
             var self = $(this);
-            ytid = getYoutubeIdFromUrl(self.val()); // TODO change this to be a callback function instead
-
-            if (ytid != null) {
-                youtubeInterface.loadVideoInfo(ytid, function (data) {
-                    self.parentsUntil('#editorRowsTracks').find('#ytendtime').val(convertISO8601ToDuration(data.items[0].contentDetails.duration));
-                });
-
-                self.parentsUntil('#editorRowsTracks').find('#ytid').text(ytid);
-                self.parentsUntil('#editorRowsTracks').find('#ytidvalue').val(ytid); // Need this one to actually ensure my value goes over
-                self.parentsUntil('#editorRowsTracks').find('#successlabel').text("Modified!");
-
-                yttitle = loadYtTitleIntoElements(
-                    ytid,
-                    self.parentsUntil('#editorRowsTracks').find('#yttitle'),
-                    self.parentsUntil('#editorRowsTracks').find('#yttitlevalue'),
-                    self.parentsUntil('#editorRowsTracks').find('#ytauthor'),
-                    self.parentsUntil('#editorRowsTracks').find('#ytauthorvalue'),
-                    self.parentsUntil('#editorRowsTracks').find('#spinner'));
-            }
-            else {
-                self.parentsUntil('#editorRowsTracks').find('#successlabel').text("Invalid. Value not changed!");
-            }
+            //console.log("PAR", self.parent().parent().parent());
+            // console.log("PAR ER", self.parentsUntil('#editorRow')); Doesnt work for some reason
+            loadUrlIntoEditorRow(self.parent().parent().parent(), self.val())
         });
+
+        function addNewTrackEditorRow(isPerformAction, doToEditorRow) {
+            $.ajax({
+                url: '@Url.Action("Track")',
+                    cache: false,
+                    success: function (html) {
+                        $("#editorRowsTracks").append(html);
+                        if (!isPerformAction) return;
+                        er = $("#editorRowsTracks").children().last();
+                        doToEditorRow(er);
+                    }
+            });
+        }
 
         function convertISO8601ToDuration(datestring) {
             datestring = matchNext(/PT/, datestring); // Cut first two chars
@@ -96,6 +86,31 @@
             var result = str.split(regex);
             if (result.length == 1) return { "match": "0", "remainder": str }
             return { "match": result[0], "remainder": result[1]}
+        }
+
+        function loadUrlIntoEditorRow(editorRow, url) {
+            ytid = getYoutubeIdFromUrl(url);
+
+            if (ytid != null) {
+                youtubeInterface.loadVideoInfo(ytid, function (data) {
+                    editorRow.find('#ytendtime').val(convertISO8601ToDuration(data.items[0].contentDetails.duration));
+                });
+
+                editorRow.find('#ytid').text(ytid);
+                editorRow.find('#ytidvalue').val(ytid); // Need this one to actually ensure my value goes over
+                editorRow.find('#successlabel').text("Modified!");
+
+                yttitle = loadYtTitleIntoElements(
+                    ytid,
+                    editorRow.find('#yttitle'),
+                    editorRow.find('#yttitlevalue'),
+                    editorRow.find('#ytauthor'),
+                    editorRow.find('#ytauthorvalue'),
+                    editorRow.find('#spinner'));
+            }
+            else {
+                editorRow.find('#successlabel').text("Invalid. Value not changed!");
+            }
         }
 
         function loadYtTitleIntoElements(id, tar, tarval, author, authorval, spinner) {
@@ -131,6 +146,25 @@
             return (match == null) ? null : match[7];
             // Source: https://stackoverflow.com/a/51870158/5774018
             // Regex to get the youtube id from most kinds of youtube links
+        }
+
+        var urlArrayGlobal; // This, along with the "let" instead of a "var" below, fixes closure/scoping issues because functions cannot usually access each others' scopes
+
+        function insertMultipleVideos(urlArray) {
+            urlArrayGlobal = urlArray;
+            for (let i = 0; i < urlArray.length; i++) {
+
+                addNewTrackEditorRow(true, function (targetElement) {
+                    loadUrlIntoEditorRow(targetElement, urlArrayGlobal[i]);
+                    console.log(i, " added song ", urlArrayGlobal[i]);
+                });
+
+                /*setTimeout(100, function () {
+                    addNewTrackEditorRow(true, function (targetElement) {
+                        loadUrlIntoEditorRow(targetElement, urlArray[i]);
+                    });
+                })*/
+            }
         }
         // ADD PLAYLIST SCRIPTS END
     </script>
