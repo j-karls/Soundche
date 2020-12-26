@@ -76,15 +76,17 @@ namespace Soundche.Web.Controllers
 
         public IActionResult AddPlaylistToQueue(string selectedPlaylistName)
         {
-            Playlist playlist = _room.GetUser(User.Identity.Name).Playlists.Find(x => x.Name == selectedPlaylistName);
+            User user = _room.GetUser(User.Identity.Name);
+            Playlist playlist = user.Playlists.Find(x => x.Name == selectedPlaylistName);
             if (playlist is null) throw new DataMisalignedException("A playlist of that name does not exist");
-            _room.ConnectPlaylist(playlist);
+            _room.ConnectPlaylist(playlist, user);
             return Ok();
         }
 
         public IActionResult RemovePlaylistFromQueue(string selectedPlaylistName) 
         {
-            _room.DisconnectPlaylist(_room.GetUser(User.Identity.Name).Playlists.Find(x => x.Name == selectedPlaylistName));
+            User user = _room.GetUser(User.Identity.Name);
+            _room.DisconnectPlaylist(user.Playlists.Find(x => x.Name == selectedPlaylistName), user);
             // TODO Currently you cant remove a playlist whose name you have altered after you added it to the queue, 
             // I should probably use some sort of other identifier? Is there something inherent?
             return Ok();
@@ -125,6 +127,27 @@ namespace Soundche.Web.Controllers
         {
             return Ok();
         }
+
+        public IActionResult ViewConnectedPlaylists()
+        {
+            return Json(_room.GetConnectedPlaylists());
+            // TODO Return a partial view with playlists and which user added the playlists and marking the song that is currently playing
+        }
+
+        public IActionResult StopPlayingAll()
+        {
+            _room.DisconnectAllPlaylists();
+            _room.StopPlaying();
+            return Ok();
+        }
+
+        public IActionResult CloseRoom()
+        {
+            return Ok();
+            //TODO Call backendController, get it to close the current room? 
+            // I could use this function as a sort of "reset". Or maybe I dont need it at all. 
+        }
+
 
         [HttpGet]
         public ActionResult AddPlaylist()

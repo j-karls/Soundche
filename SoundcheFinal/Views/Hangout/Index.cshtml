@@ -144,7 +144,7 @@
     });
 
     $('#btn-remove').on('click', function () {
-        // soundcheInterface.REMOVE(getDropdownSelectedItemText("#playlistDropdown"));
+        soundcheInterface.removePlaylistFromQueue(getDropdownSelectedItemText("#playlistDropdown"));
     });
 
     $('#btn-next').on('click', function () { // TODO Grey out next and prev if nothing is playing
@@ -344,6 +344,31 @@
                 error: function () { alert('Failed to add playlist'); },
             });
         },
+
+        removePlaylistFromQueue(playlistName) {
+            $.ajax({
+                url: '/Hangout/RemovePlaylistFromQueue?selectedPlaylistName=' + playlistName,
+                success: console.log("Removed playlist " + playlistName), //todo give more immediate feedback :)
+                error: function () { alert('Failed to remove playlist, has the name changed?'); },
+            });
+        },
+
+        viewConnectedPlaylists() {
+            $.ajax({
+                url: '@Url.Action("ViewConnectedPlaylists", "Hangout")',
+                success: function (jsondata) { console.log(jsondata); },
+                error: function () { alert('Failed to view connected playlists'); },
+            });
+        },
+
+        resetPlayback() {
+            $.ajax({
+                url: '@Url.Action("StopPlayingAll", "Hangout")',
+                success: youtubeInterface.getActiveSong, //todo måske bare stopplaying i stedet hvis ikke det virker til at stoppe videoen med det samme? 
+                error: function () { alert('Failed to reset playback'); },
+            });
+        },
+
     }
 
     // YOUTUBE API INSTANTIATION START

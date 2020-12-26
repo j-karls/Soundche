@@ -11,7 +11,7 @@ namespace Soundche.Core.BLL
     {
         public SongQueueMethodEnum SongQueueType { get; private set; } = SongQueueMethodEnum.Randomize;
         private IQueueMethod _queueFunc;
-        public List<Playlist> ActivePlaylists { get; private set; } = new List<Playlist>();
+        public (List<User> usr, List<Playlist> pl) ActivePlaylists { get; private set; } = (new List<User>(), new List<Playlist>());
         public List<Track> PreviousSongs { get; private set; } = new List<Track>();
         public Track CurrentSong = null;
 
@@ -21,9 +21,9 @@ namespace Soundche.Core.BLL
         {
             _queueFunc = queueType switch
             {
-                SongQueueMethodEnum.Randomize => new QueueRandomize(ActivePlaylists),
-                SongQueueMethodEnum.RoundRobin => new QueueRoundRobin(ActivePlaylists),
-                SongQueueMethodEnum.WeightedRoundRobin => new QueueWeightedRoundRobin(ActivePlaylists),
+                SongQueueMethodEnum.Randomize => new QueueRandomize(ActivePlaylists.pl),
+                SongQueueMethodEnum.RoundRobin => new QueueRoundRobin(ActivePlaylists.pl),
+                SongQueueMethodEnum.WeightedRoundRobin => new QueueWeightedRoundRobin(ActivePlaylists.pl),
                 _ => throw new NotImplementedException(),
             };
         }
@@ -32,7 +32,7 @@ namespace Soundche.Core.BLL
         {
             if(CurrentSong != null) PreviousSongs.Add(CurrentSong);
             if (PreviousSongs.Count > 10) PreviousSongs.RemoveAt(0);
-            CurrentSong = ActivePlaylists.IsNullOrEmpty() ? null : _queueFunc.Next();
+            CurrentSong = ActivePlaylists.pl.IsNullOrEmpty() ? null : _queueFunc.Next();
             return CurrentSong;
         }
 
@@ -44,10 +44,11 @@ namespace Soundche.Core.BLL
             return last;
         }
 
-        public void AddPlaylist(Playlist playlist)
+        public void AddPlaylist(Playlist playlist, User user)
         {
             // Add a playlist to the total playback and reload our queue method
-            ActivePlaylists.Add(playlist);
+            ActivePlaylists.pl.Add(playlist);
+            ActivePlaylists.usr.Add(user);
             SwitchSongQueueMethod(SongQueueType);
 
             // TODO: This likely has some problems regarding which song we got to. So we should probably like 
@@ -55,10 +56,26 @@ namespace Soundche.Core.BLL
             // "AddPlaylist" to the IQueueMethod interface 
         }
 
-        public void RemovePlaylist(Playlist playlist)
+        public void RemovePlaylist(Playlist playlist, User user)
         {
-            bool success = ActivePlaylists.Remove(playlist);
+            bool success = false;
+
+            for (int i = 0; i < ActivePlaylists.pl.Count; i++)
+            {
+                if(ActivePlaylists.usr[i].Name == user.Name && ActivePlaylists.pl[i].Name == playlist.Name)
+                {
+                    ActivePlaylists.pl.RemoveAt(i);
+                    ActivePlaylists.usr.RemoveAt(i);
+                    success = true;
+                }
+            }
+
             if (!success) throw new DataMisalignedException("Playlist could not be removed");
+        }
+
+        public void RemoveAllPlaylists()
+        {
+            ActivePlaylists = (new List<User>(), new List<Playlist>());
         }
     }
 }

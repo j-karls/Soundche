@@ -56,24 +56,31 @@ namespace Soundche.Core.BLL
             SwitchedSongEvent(this, new SwitchedSongEventArgs(newTrack, DateTime.Now));
         }
 
-        public void ConnectPlaylist(Playlist playlist)
+        public void StopPlaying()
+        {
+            PlaybackTimer.Stop();
+            CurrentTrack = null;
+            _lastSwitchedSongEvent = null;
+        }
+
+        public void ConnectPlaylist(Playlist playlist, User user)
         {
             // Adds the playlist to the playback and starts the playback (if it isn't already started)
             // Note that adding one playlist multiple times is allowed and should not cause any issues
 
-            PlaylistController.AddPlaylist(playlist);
+            PlaylistController.AddPlaylist(playlist, user);
             if (CurrentTrack == null) StartNextSong();
         }
 
         public List<Playlist> GetConnectedPlaylists()
         {
-            return PlaylistController.ActivePlaylists;
+            return PlaylistController.ActivePlaylists.pl;
         }
 
-        public void DisconnectPlaylist(Playlist playlist)
+        public void DisconnectPlaylist(Playlist playlist, User user)
         {
             // Removes playlist - playback will stop after the end of the current song
-            PlaylistController.RemovePlaylist(playlist);
+            PlaylistController.RemovePlaylist(playlist, user);
         }
 
         public User GetUser(string username) => DatabaseController.GetUser(username);
@@ -84,5 +91,6 @@ namespace Soundche.Core.BLL
         public Track GetNextSong() => PlaylistController.GetNextTrack();
         public Track GetPreviousSong() => PlaylistController.GetPreviousTrack();
         // TODO Brug til forhåndsvisning af forrige og næste sang
+        public void DisconnectAllPlaylists() => PlaylistController.RemoveAllPlaylists();
     }
 }
