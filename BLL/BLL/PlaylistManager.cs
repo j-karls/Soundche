@@ -12,6 +12,8 @@ namespace Soundche.Core.BLL
         public SongQueueMethodEnum SongQueueType { get; private set; } = SongQueueMethodEnum.Randomize;
         private IQueueMethod _queueFunc;
         public List<Playlist> ActivePlaylists { get; private set; } = new List<Playlist>();
+        public List<Track> PreviousSongs { get; private set; } = new List<Track>();
+        public Track CurrentSong = null;
 
         public PlaylistManager() { }
 
@@ -26,14 +28,20 @@ namespace Soundche.Core.BLL
             };
         }
 
-        public Track GetNextTrack() // TODO Brug til forhåndsvisning af næste sang
+        public Track GetNextTrack() // TODO Brug til forhåndsvisning af næste sang. Det er ikke helt så simpelt. Men jeg bør nok reworke mine songqueuefuncs alligevel
         {
-            return ActivePlaylists.IsNullOrEmpty() ? null : _queueFunc.Next();
+            if(CurrentSong != null) PreviousSongs.Add(CurrentSong);
+            if (PreviousSongs.Count > 10) PreviousSongs.RemoveAt(0);
+            CurrentSong = ActivePlaylists.IsNullOrEmpty() ? null : _queueFunc.Next();
+            return CurrentSong;
         }
 
         public Track GetPreviousTrack() 
         {
-            throw new NotImplementedException();
+            if (PreviousSongs.IsNullOrEmpty()) return null;
+            Track last =  PreviousSongs.Last();
+            PreviousSongs.RemoveAt(PreviousSongs.Count - 1);
+            return last;
         }
 
         public void AddPlaylist(Playlist playlist)

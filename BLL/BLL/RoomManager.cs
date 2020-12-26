@@ -1,6 +1,7 @@
 ﻿using Soundche.Core.Domain;
 using Soundche.Core.Domain.SongQueueMethod;
 using System;
+using System.Collections.Generic;
 using System.Timers;
 
 namespace Soundche.Core.BLL
@@ -62,6 +63,11 @@ namespace Soundche.Core.BLL
 
             PlaylistController.AddPlaylist(playlist);
             if (CurrentTrack == null) StartNextSong();
+        }
+
+        public List<Playlist> GetConnectedPlaylists()
+        {
+            return PlaylistController.ActivePlaylists;
         }
 
         public void DisconnectPlaylist(Playlist playlist)
