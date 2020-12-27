@@ -130,8 +130,11 @@ namespace Soundche.Web.Controllers
 
         public IActionResult ViewConnectedPlaylists()
         {
-            return Json(_room.GetConnectedPlaylists());
-            // TODO Return a partial view with playlists and which user added the playlists and marking the song that is currently playing
+            var active = _room.GetConnectedPlaylists();
+            return Json( new  { playlistAuthors = active.usr.Select(x => x.Name),
+                                playlistNames = active.pl.Select(x => x.Name), 
+                                playlistSongs = active.pl.Select(x => x.Tracks),
+                                activeSongId = _room._lastSwitchedSongEvent?.NewTrack?.YoutubeId }); 
         }
 
         public IActionResult StopPlayingAll()

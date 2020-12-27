@@ -72,9 +72,9 @@ namespace Soundche.Core.BLL
             if (CurrentTrack == null) StartNextSong();
         }
 
-        public List<Playlist> GetConnectedPlaylists()
+        public (List<User> usr, List<Playlist> pl) GetConnectedPlaylists()
         {
-            return PlaylistController.ActivePlaylists.pl;
+            return PlaylistController.ActivePlaylists;
         }
 
         public void DisconnectPlaylist(Playlist playlist, User user)

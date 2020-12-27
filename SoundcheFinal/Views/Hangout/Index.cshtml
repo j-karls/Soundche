@@ -356,7 +356,25 @@
         viewConnectedPlaylists() {
             $.ajax({
                 url: '@Url.Action("ViewConnectedPlaylists", "Hangout")',
-                success: function (jsondata) { console.log(jsondata); },
+                success: function (jsondata) {
+                    console.log(jsondata);
+
+                    console.log(jsondata.playlistAuthors);
+                    console.log(jsondata.playlistNames);
+                    console.log(jsondata.playlistSongs);
+                    if (jsondata.activeSongId != null) {
+                        for (var i = 0; i < jsondata.playlistSongs.length; i++) {
+                            for (var j = 0; j < jsondata.playlistSongs[i].length; j++) {
+                                if (jsondata.playlistSongs[i][j].youtubeId == jsondata.activeSongId) {
+                                    console.log("XXX " + jsondata.playlistSongs[i][j].name);
+                                }
+                                else {
+                                    console.log("--- " + jsondata.playlistSongs[i][j].name);
+                                }
+                            }
+                        }
+                    }
+                },
                 error: function () { alert('Failed to view connected playlists'); },
             });
         },
@@ -364,7 +382,7 @@
         resetPlayback() {
             $.ajax({
                 url: '@Url.Action("StopPlayingAll", "Hangout")',
-                success: youtubeInterface.getActiveSong, //todo måske bare stopplaying i stedet hvis ikke det virker til at stoppe videoen med det samme? 
+                success: youtubeInterface.getActiveSong, //todo måske bare stopplaying i stedet hvis ikke det virker til at stoppe videoen med det samme?
                 error: function () { alert('Failed to reset playback'); },
             });
         },
