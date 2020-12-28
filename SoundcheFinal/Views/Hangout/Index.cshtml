@@ -357,22 +357,23 @@
             $.ajax({
                 url: '@Url.Action("ViewConnectedPlaylists", "Hangout")',
                 success: function (jsondata) {
-                    console.log(jsondata);
+                    var str = "-- VIEW CONNECTED PLAYLISTS --\n"
 
-                    console.log(jsondata.playlistAuthors);
-                    console.log(jsondata.playlistNames);
-                    console.log(jsondata.playlistSongs);
                     if (jsondata.activeSongId != null) {
                         for (var i = 0; i < jsondata.playlistSongs.length; i++) {
+                            str += "\nPLAYLIST " + jsondata.playlistNames[i] + " by " + jsondata.playlistAuthors[i] + "\n";
+
                             for (var j = 0; j < jsondata.playlistSongs[i].length; j++) {
                                 if (jsondata.playlistSongs[i][j].youtubeId == jsondata.activeSongId) {
-                                    console.log("XXX " + jsondata.playlistSongs[i][j].name);
+                                    str += "XXX " + jsondata.playlistSongs[i][j].name + "\n";
                                 }
                                 else {
-                                    console.log("--- " + jsondata.playlistSongs[i][j].name);
+                                    str += "--- " + jsondata.playlistSongs[i][j].name + "\n";
                                 }
                             }
                         }
+                        console.log(str);
+                        //alert(str); // TODO FIGURE OUT GOOD WAY TO DO THIS
                     }
                 },
                 error: function () { alert('Failed to view connected playlists'); },
