@@ -34,7 +34,8 @@ namespace Soundche.Core.Domain.SongQueueMethod
 
             // Get next track
             double decimalRand = _rand.Next(100) / 100; // Values range from 0.00 to 0.99
-            var tup = _tuple.First(x => decimalRand < x.cumsumSongPercentage); 
+            int chosenIdx = _tuple.FindIndex(x => decimalRand < x.cumsumSongPercentage);
+            var tup = _tuple[chosenIdx];
             // By the nature of cumulative sums, there is always going to be one playlist with a cumsumsongpercentage of 1.00
             // meaning that we always select one playlist at random
             // the more tracks a playlist, the more likely it is to be selected
@@ -43,6 +44,7 @@ namespace Soundche.Core.Domain.SongQueueMethod
 
             // Update the track index of the corresponding playlist 
             tup.trackIdx = (tup.trackIdx + 1) % tup.playlist.Tracks.Count;
+            _tuple[chosenIdx] = tup;
 
             return nextTrack.Exclude ? Next() : nextTrack; // if the next song is excluded, then just find the next one again
         }
