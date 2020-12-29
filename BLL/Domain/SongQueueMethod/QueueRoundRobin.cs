@@ -25,10 +25,10 @@ namespace Soundche.Core.Domain.SongQueueMethod
             Track nextTrack = tup.playlist.Tracks.IsNullOrEmpty() ? null : tup.playlist.Tracks[tup.trackIdx];
 
             // Update indexes
-            _playlistIdx = (_playlistIdx + 1) % _tuple.Count;
             if (nextTrack != null) // If playlist didn't contain a track, there's no need to update inner trackIdx
                 tup.trackIdx = (tup.trackIdx + 1) % tup.playlist.Tracks.Count;
             _tuple[_playlistIdx] = tup;
+            _playlistIdx = (_playlistIdx + 1) % _tuple.Count;
 
             return (nextTrack is null || nextTrack.Exclude) ? Next() : nextTrack; // if the next song is excluded, then just find the next one again
         }
