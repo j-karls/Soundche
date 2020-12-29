@@ -15,8 +15,7 @@ namespace Soundche.Core.Domain.SongQueueMethod
 
         private void Initialize(List<Playlist> playlists, List<int> trackStartIdxs = null)
         {
-            // if (playlists.IsNullOrEmpty())
-            // TODO DO NULL CHECKS
+            if (playlists.IsNullOrEmpty()) return;
 
             trackStartIdxs = trackStartIdxs ?? playlists.Select(x => 0).ToList(); 
             double totalNumTracks = playlists.Select(x => x.Tracks.Count).Aggregate((x, y) => x + y);
