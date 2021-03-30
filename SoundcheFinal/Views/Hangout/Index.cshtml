@@ -30,7 +30,7 @@
             <img id="song-img" src="~/lib/images/ricardo.jpg" alt="" class="maxwidth-maxheight" />
         </div>
         <div class="hangout-info">
-            <label class="stretch">INFO ABOUT THE CURRENT SONG</label> <!-- TODO -->
+            <label id="song-info" class="stretch"></label> <!-- TODO -->
         </div>
         <div class="hangout-play">
             <input id="btn-play" type="button" class="btn btn-success stretch" value="Play" />
@@ -304,7 +304,12 @@
 
                     console.log(sessionStore);
                     youtubeInterface.loadVideo(sessionStore.youtubeId, sessionStore.elapsedTime);
+                    // setSongStyles(sessionData.djInfo);
                     $("#song-img").attr("src", sessionStore.thumbnailUrl);
+                    $("#song-info").html(`${sessionData.author} - ${sessionData.songName}`);
+
+                    // If the song is DJ'ed by me
+                    // $("#song-info").css("border", "solid 1px red");
                 }
                 else soundcheInterface.synchronizePlaytime();
             }
