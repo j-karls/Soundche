@@ -1,12 +1,4 @@
 ﻿@model Soundche.Web.Models.HangoutViewModel
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-
-<!--
-        <partial name="_AudioPlayer" />
-
--->
 
 <body>
     <div class="hangout-header-main">
@@ -35,7 +27,7 @@
     <div class="hangout-btn-grid-main">
         <div class="hangout-empty"></div>
         <div class="hangout-pic frame"> <!-- TODO -->
-            <img src="https://www.meme-arsenal.com/memes/611c8f9484a86b43bfa811ea87a11bc0.jpg" class="maxwidth-maxheight" />
+            <img id="song-img" src="~/lib/images/ricardo.jpg" alt="" class="maxwidth-maxheight" />
         </div>
         <div class="hangout-info">
             <label class="stretch">INFO ABOUT THE CURRENT SONG</label> <!-- TODO -->
@@ -280,7 +272,8 @@
         elapsedTime: 0,
         endTime: 0,
         youtubeId: "",
-        switchedSongTimeTicks: 0
+        switchedSongTimeTicks: 0,
+        thumbnailUrl: ""
     }
 
     var soundcheInterface = {
@@ -307,8 +300,11 @@
                     sessionStore.endTime = sessionData.endTime;
                     sessionStore.youtubeId = sessionData.youtubeId;
                     sessionStore.switchedSongTimeTicks = sessionData.switchedSongTimeTicks;
+                    sessionStore.thumbnailUrl = `https://img.youtube.com/vi/${sessionData.youtubeId}/mqdefault.jpg`
 
+                    console.log(sessionStore);
                     youtubeInterface.loadVideo(sessionStore.youtubeId, sessionStore.elapsedTime);
+                    $("#song-img").attr("src", sessionStore.thumbnailUrl);
                 }
                 else soundcheInterface.synchronizePlaytime();
             }
