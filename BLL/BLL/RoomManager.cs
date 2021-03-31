@@ -17,6 +17,10 @@ namespace Soundche.Core.BLL
         private PlaylistManager PlaylistController { get; set; }
         private IDatabaseManager DatabaseController { get; set; }
 
+        public Timer ActiveUserTimer { get; set; }
+        public List<string> ActiveUsers { get; private set; } = new List<string>();
+        private List<string> aliveUserSessionRequests = new List<string>();
+
         // This class is the singleton - as such, only one room is currently allowed in the program
         // It is the top level class that manages the database, the playlistmanager (which controlls which song to play) and
         // basically is the room (that manages the people that are inside, wanting to listen to songs together)
@@ -28,7 +32,19 @@ namespace Soundche.Core.BLL
             SwitchedSongEvent += OnSwitchSong; // Raise the lastSwitchedSongEvent every time the song is switched
             PlaybackTimer = new Timer { AutoReset = false };
             PlaybackTimer.Elapsed += OnTimerElapsed;
+
+            ActiveUserTimer = new Timer { AutoReset = true, Interval = 10000 };
+            ActiveUserTimer.Elapsed += CleanActiveUsers;
+            ActiveUserTimer.Start();
         }
+
+        public void NotifyUserSessionRequest(string username) => aliveUserSessionRequests.Add(username);
+        private void CleanActiveUsers(object sender, ElapsedEventArgs e)
+        {
+            ActiveUsers = aliveUserSessionRequests.Distinct().ToList();
+            aliveUserSessionRequests = new List<string>();
+        }
+
 
         public event EventHandler<SwitchedSongEventArgs> SwitchedSongEvent;
 

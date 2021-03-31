@@ -135,6 +135,38 @@ body, html {
     width: auto;
 }
 
+.black-background {
+    background-color: black;
+}
+
+.min-size {
+    margin: auto;
+}
+
+.hangout-status-grid {
+    display: grid;
+    height: 5%;
+
+    grid-template-areas:
+        "status-lineleft status-status status-lineright"
+        "status-user     status-empty  status-playlists";
+
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    align-items: stretch;
+    justify-items: stretch;
+    justify-content: stretch;
+    text-align: center;
+    font-size: small;
+}
+
+.hangout-status-left        { grid-area: status-lineleft }
+.hangout-status-status      { grid-area: status-status }
+.hangout-status-lineright   { grid-area: status-lineright }
+.hangout-status-user        { grid-area: status-user }
+.hangout-status-empty       { grid-area: status-empty }
+.hangout-status-playlists   { grid-area: status-playlists }
+
 .hangout-btn-grid-main {
     display: grid;
     height: 20%;
@@ -153,7 +185,6 @@ body, html {
     justify-content: stretch;
     margin-left: 15px;
     margin-right: 15px;
-
 }
 
 .hangout-pic        { grid-area: pic }

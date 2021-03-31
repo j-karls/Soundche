@@ -24,9 +24,25 @@
         </div>
     </div>
 
+    <div class="hangout-status-grid">
+        <div class="status-lineleft black-background"></div>
+        <div id="current-dj-div" class="status-status">
+            <label id="current-dj" class="min-size">No song is being played :(</label>
+        </div>
+        <div class="status-lineright black-background"></div>
+        <div class="status-user">
+            <label id="connected-users" class="min-size">X users</label>
+        </div>
+        <div class="status-empty"></div>
+        <div class="status-playlists">
+            <label id="current-playlists" class="min-size">Z playlists</label>
+        </div>
+    </div>
+
     <div class="hangout-btn-grid-main">
         <div class="hangout-empty"></div>
-        <div class="hangout-pic frame"> <!-- TODO -->
+        <div class="hangout-pic frame">
+            <!-- TODO -->
             <img id="song-img" src="~/lib/images/ricardo.jpg" alt="" class="maxwidth-maxheight" />
         </div>
         <div class="hangout-info">
@@ -35,10 +51,12 @@
         <div class="hangout-play">
             <input id="btn-play" type="button" class="btn btn-success stretch" value="Play" />
         </div>
-        <div class="hangout-all"> <!-- TODO -->
+        <div class="hangout-all">
+            <!-- TODO -->
             <input id="btn-all" type="button" class="btn btn-secondary stretch" value="View All" />
         </div>
-        <div class="hangout-remove"> <!-- TODO -->
+        <div class="hangout-remove">
+            <!-- TODO -->
             <input id="btn-remove" type="button" class="btn btn-danger stretch" value="Remove" />
         </div>
         <div class="hangout-prev">
@@ -70,7 +88,6 @@
             <input id="btn-delete" type="button" class="btn btn-secondary stretch" value="Delete" />
         </div>
     </div>
-    
     <div id="partial" class="overlay display-hide"></div>
 </body>
 
@@ -275,7 +292,9 @@
         currentDj: "",
         currentDjIsMe: false,
         switchedSongTimeTicks: 0,
-        thumbnailUrl: ""
+        thumbnailUrl: "",
+        activeUsers: [],
+        activePlaylistCount: 0
     }
 
     var soundcheInterface = {
@@ -290,6 +309,8 @@
         },
 
         updateActiveSong(sessionData) {
+            // TODO Should be renamed to something like updateUIStatus and split up a bit
+            // Some of its elements shouldnt be tied to the switching of a song
             sessionStore.isActive = sessionData.isActive;
 
             if (sessionStore.isActive) { // is there an active song?
@@ -305,18 +326,24 @@
                     sessionStore.thumbnailUrl = `https://img.youtube.com/vi/${sessionData.youtubeId}/mqdefault.jpg`;
                     sessionStore.currentDj = sessionData.currentDj;
                     sessionStore.currentDjIsMe = sessionData.currentDjIsMe;
+                    sessionStore.activeUsers = sessionData.activeUsers;
+                    sessionStore.activePlaylistCount = sessionData.activePlaylistCount;
 
                     console.log(sessionStore);
                     youtubeInterface.loadVideo(sessionStore.youtubeId, sessionStore.elapsedTime);
                     // setSongStyles(sessionData.djInfo);
                     $("#song-img").attr("src", sessionStore.thumbnailUrl);
                     $("#song-info").html(`${sessionData.author} - ${sessionData.songName}`);
+                    $("#current-dj").html(`${sessionData.currentDj} is playing`);
+                    $("#connected-users").html(`${sessionData.activeUsers.length} users`);
+                    $("#connected-users").attr("title", sessionData.activeUsers); // Adds tooltip
+                    $("#current-playlists").html(`${sessionData.activePlaylistCount} playlists`);
 
                     if (sessionStore.currentDjIsMe) {
-                        $("#song-info").css("border", "solid 1px red");
+                        $("#current-dj-div").css("border", "solid 1px red");
                     }
                     else {
-                        $("#song-info").css("border", "0px");
+                        $("#current-dj-div").css("border", "0px");
                     }
                 }
                 else soundcheInterface.synchronizePlaytime();

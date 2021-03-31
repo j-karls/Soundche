@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading;
+using System.Timers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -19,9 +19,6 @@ namespace Soundche.Web.Controllers
     [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
     public class HangoutController : Controller
     {
-        // todo
-        // make a cronjob for the server to backup our db every day
-
         private readonly RoomManager _room;
 
         public HangoutController(RoomManager room) // TODO: Should get something higher level (backend manager or smt), one that creates multiple rooms
@@ -53,9 +50,13 @@ namespace Soundche.Web.Controllers
 
         public IActionResult GetActiveSong()
         {
+            // TODO Should be renamed to something akin to GetNewPageInfo...
+
             // This is how we refresh to get new song information onto the page
             // Because once the page is rendered for the user, we can't communicate with it - it has to communicate with us.
             // We can only try to call client->server with JavaScript, to then see if we should update the current song
+
+            _room.NotifyUserSessionRequest(User.Identity.Name.ToString()); // To keep track of live connections
 
             var lastEvent = _room._lastSwitchedSongEvent;
             if (lastEvent is null) return Json(new { isActive = false });
@@ -72,7 +73,9 @@ namespace Soundche.Web.Controllers
                 youtubeId = lastEvent.NewTrackRequest.Song.YoutubeId,
                 currentDj = lastEvent.NewTrackRequest.DJ.Name,
                 currentDjIsMe = lastEvent.NewTrackRequest.DJ.Name == User.Identity.Name.ToString(),
-                switchedSongTimeTicks = lastEvent.SwitchedSongTime.Ticks
+                switchedSongTimeTicks = lastEvent.SwitchedSongTime.Ticks,
+                activeUsers = _room.ActiveUsers,
+                activePlaylistCount = _room.GetConnectedPlaylists().pl.Count
             });
         }
 

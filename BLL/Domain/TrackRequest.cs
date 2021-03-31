@@ -11,7 +11,7 @@ namespace Soundche.Core.Domain
         /// </summary>
         public Track Song { get; set; }
         public User DJ { get; set; }
-
+        //TODO public Playlist playlist { get; private set; }
         public TrackRequest(Track song, User dj)
         {
             Song = song;
