@@ -11,9 +11,9 @@ namespace Soundche.Core.BLL
     {
         public SongQueueMethodEnum SongQueueType { get; private set; } = SongQueueMethodEnum.Randomize;
         private IQueueMethod _queueFunc;
-        public (List<User> usr, List<Playlist> pl) ActivePlaylists { get; private set; } = (new List<User>(), new List<Playlist>());
-        public List<Track> PreviousSongs { get; private set; } = new List<Track>();
-        public Track CurrentSong = null;
+        public List<(Playlist pl, User usr)> ActivePlaylists { get; private set; } = new List<(Playlist pl, User usr)>();
+        public List<TrackRequest> PreviousSongs { get; private set; } = new List<TrackRequest>();
+        public TrackRequest CurrentSong = null;
 
         public PlaylistManager() { }
 
@@ -21,25 +21,25 @@ namespace Soundche.Core.BLL
         {
             _queueFunc = queueType switch
             {
-                SongQueueMethodEnum.Randomize => new QueueRandomize(ActivePlaylists.pl),
-                SongQueueMethodEnum.RoundRobin => new QueueRoundRobin(ActivePlaylists.pl),
-                SongQueueMethodEnum.WeightedRoundRobin => new QueueWeightedRoundRobin(ActivePlaylists.pl),
+                SongQueueMethodEnum.Randomize => new QueueRandomize(ActivePlaylists),
+                SongQueueMethodEnum.RoundRobin => new QueueRoundRobin(ActivePlaylists),
+                SongQueueMethodEnum.WeightedRoundRobin => new QueueWeightedRoundRobin(ActivePlaylists),
                 _ => throw new NotImplementedException(),
             };
         }
 
-        public Track GetNextTrack() // TODO Brug til forhåndsvisning af næste sang. Det er ikke helt så simpelt. Men jeg bør nok reworke mine songqueuefuncs alligevel
+        public TrackRequest GetNextTrack() // TODO Brug til forhåndsvisning af næste sang. Det er ikke helt så simpelt. Men jeg bør nok reworke mine songqueuefuncs alligevel
         {
             if(CurrentSong != null) PreviousSongs.Add(CurrentSong);
             if (PreviousSongs.Count > 10) PreviousSongs.RemoveAt(0);
-            CurrentSong = ActivePlaylists.pl.IsNullOrEmpty() ? null : _queueFunc.Next();
+            CurrentSong = ActivePlaylists.Select(x => x.pl).ToList().IsNullOrEmpty() ? null : _queueFunc.Next();
             return CurrentSong;
         }
 
-        public Track GetPreviousTrack() 
+        public TrackRequest GetPreviousTrack() 
         {
             if (PreviousSongs.IsNullOrEmpty()) return null;
-            Track last =  PreviousSongs.Last();
+            TrackRequest last =  PreviousSongs.Last();
             PreviousSongs.RemoveAt(PreviousSongs.Count - 1);
             return last;
         }
@@ -47,8 +47,7 @@ namespace Soundche.Core.BLL
         public void AddPlaylist(Playlist playlist, User user)
         {
             // Add a playlist to the total playback and reload our queue method
-            ActivePlaylists.pl.Add(playlist);
-            ActivePlaylists.usr.Add(user);
+            ActivePlaylists.Add((playlist, user));
             SwitchSongQueueMethod(SongQueueType);
 
             // TODO: This likely has some problems regarding which song we got to. So we should probably like 
@@ -60,12 +59,11 @@ namespace Soundche.Core.BLL
         {
             bool success = false;
 
-            for (int i = 0; i < ActivePlaylists.pl.Count; i++)
+            for (int i = 0; i < ActivePlaylists.Count; i++)
             {
-                if(ActivePlaylists.usr[i].Name == user.Name && ActivePlaylists.pl[i].Name == playlist.Name)
+                if(ActivePlaylists[i].usr.Name == user.Name && ActivePlaylists[i].pl.Name == playlist.Name)
                 {
-                    ActivePlaylists.pl.RemoveAt(i);
-                    ActivePlaylists.usr.RemoveAt(i);
+                    ActivePlaylists.RemoveAt(i);
                     success = true;
                 }
             }
@@ -75,7 +73,7 @@ namespace Soundche.Core.BLL
 
         public void RemoveAllPlaylists()
         {
-            ActivePlaylists = (new List<User>(), new List<Playlist>());
+            ActivePlaylists = new List<(Playlist pl, User usr)>();
         }
     }
 }

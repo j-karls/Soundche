@@ -7,33 +7,44 @@ namespace Soundche.Core.Domain.SongQueueMethod
 {
     public class QueueRandomize : IQueueMethod
     {
-        private List<Playlist> _playlists;
-        Random _rand = new Random();
+        private List<TrackRequest> _tracks = new List<TrackRequest>();
+        private List<(Playlist pl, User usr)> _playlists;
+        private Random _rand = new Random();
 
-        public QueueRandomize(List<Playlist> playlists)
+        public QueueRandomize(List<(Playlist pl, User usr)> playlists)
         {
             _playlists = playlists;
+            ReloadPlaylists();
         }
 
-        public Track Next()
+        private void ReloadPlaylists()
         {
-            var tracks = _playlists.Where(x => !x.Tracks.IsNullOrEmpty()).SelectMany(x => x.Tracks).ToList();
-            if (tracks.IsNullOrEmpty()) return null;
-
-            // Flatten list, then get random element
-            Track[] flat = _playlists.SelectMany(x => x.Tracks).Where(x => !x.Exclude).ToArray();
-            return flat[_rand.Next(flat.Length)];
+            foreach ((Playlist playlist, User user) in _playlists)
+            {
+                if (playlist.Tracks.IsNullOrEmpty()) continue;
+                foreach (Track track in playlist.Tracks)
+                {
+                    if (!track.Exclude) _tracks.Add(new TrackRequest(track, user));
+                }
+            }
         }
 
-        public void AddPlaylist(Playlist playlist)
+        public TrackRequest Next()
         {
-            _playlists.Add(playlist);
+            return _tracks[_rand.Next(_tracks.Count)];
         }
 
-        public void RemovePlaylist(Playlist playlist)
+        public void AddPlaylist(Playlist playlist, User user)
         {
-            bool res = _playlists.Remove(playlist);
-            if (res is false) throw new InvalidOperationException("No such playlist was found");
+            _playlists.Add((playlist, user));
+            ReloadPlaylists();
+        }
+
+        public void RemovePlaylist(Playlist playlist, User user)
+        {
+            int i = _playlists.IndexOf((playlist, user));
+            if (i < 0) throw new InvalidOperationException("No such playlist was found");
+            _playlists.RemoveAt(i);
         }
     }
 }

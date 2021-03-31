@@ -45,7 +45,7 @@
             <input id="btn-prev" type="button" class="btn btn-primary stretch" value="Previous Song" />
         </div>
         <div class="hangout-vol">
-            <input id="vol-control" type="range" min="0" max="100" value="50" step="1" class="stretch"></input>
+            <input id="vol-control" type="range" min="0" max="100" value="50" step="1" class="stretch" />
         </div>
         <div class="hangout-next">
             <input id="btn-next" type="button" class="btn btn-primary stretch" value="Next Song" />
@@ -272,6 +272,8 @@
         elapsedTime: 0,
         endTime: 0,
         youtubeId: "",
+        currentDj: "",
+        currentDjIsMe: false,
         switchedSongTimeTicks: 0,
         thumbnailUrl: ""
     }
@@ -300,7 +302,9 @@
                     sessionStore.endTime = sessionData.endTime;
                     sessionStore.youtubeId = sessionData.youtubeId;
                     sessionStore.switchedSongTimeTicks = sessionData.switchedSongTimeTicks;
-                    sessionStore.thumbnailUrl = `https://img.youtube.com/vi/${sessionData.youtubeId}/mqdefault.jpg`
+                    sessionStore.thumbnailUrl = `https://img.youtube.com/vi/${sessionData.youtubeId}/mqdefault.jpg`;
+                    sessionStore.currentDj = sessionData.currentDj;
+                    sessionStore.currentDjIsMe = sessionData.currentDjIsMe;
 
                     console.log(sessionStore);
                     youtubeInterface.loadVideo(sessionStore.youtubeId, sessionStore.elapsedTime);
@@ -308,8 +312,12 @@
                     $("#song-img").attr("src", sessionStore.thumbnailUrl);
                     $("#song-info").html(`${sessionData.author} - ${sessionData.songName}`);
 
-                    // If the song is DJ'ed by me
-                    // $("#song-info").css("border", "solid 1px red");
+                    if (sessionStore.currentDjIsMe) {
+                        $("#song-info").css("border", "solid 1px red");
+                    }
+                    else {
+                        $("#song-info").css("border", "0px");
+                    }
                 }
                 else soundcheInterface.synchronizePlaytime();
             }

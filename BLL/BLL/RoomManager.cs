@@ -2,6 +2,7 @@
 using Soundche.Core.Domain.SongQueueMethod;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Timers;
 
 namespace Soundche.Core.BLL
@@ -11,7 +12,7 @@ namespace Soundche.Core.BLL
         public SwitchedSongEventArgs _lastSwitchedSongEvent { get; private set; } = null; 
 
         public Timer PlaybackTimer { get; set; }
-        public Track CurrentTrack = null;
+        public TrackRequest CurrentTrack = null;
 
         private PlaylistManager PlaylistController { get; set; }
         private IDatabaseManager DatabaseController { get; set; }
@@ -48,11 +49,11 @@ namespace Soundche.Core.BLL
         public void StartNextSong() => StartTrack(PlaylistController.GetNextTrack());
         public void StartPreviousSong() => StartTrack(PlaylistController.GetPreviousTrack());
 
-        private void StartTrack(Track newTrack)
+        private void StartTrack(TrackRequest newTrack)
         {
             if (newTrack == null) return;
             CurrentTrack = newTrack;
-            StartTimer((newTrack.EndTime * 1000) - (newTrack.StartTime * 1000)); // Convert s to ms
+            StartTimer((newTrack.Song.EndTime * 1000) - (newTrack.Song.StartTime * 1000)); // Convert s to ms
             SwitchedSongEvent(this, new SwitchedSongEventArgs(newTrack, DateTime.Now));
         }
 
@@ -74,7 +75,8 @@ namespace Soundche.Core.BLL
 
         public (List<User> usr, List<Playlist> pl) GetConnectedPlaylists()
         {
-            return PlaylistController.ActivePlaylists;
+            // TODO Fix, gør simpler
+            return (PlaylistController.ActivePlaylists.Select(x => x.usr).ToList(), PlaylistController.ActivePlaylists.Select(x => x.pl).ToList());
         }
 
         public void DisconnectPlaylist(Playlist playlist, User user)
@@ -88,8 +90,8 @@ namespace Soundche.Core.BLL
         public void UpdateUser(User user) => DatabaseController.UpdateUser(user);
 
         public void SwitchQueueMethod(SongQueueMethodEnum newType) => PlaylistController.SwitchSongQueueMethod(newType);
-        public Track GetNextSong() => PlaylistController.GetNextTrack();
-        public Track GetPreviousSong() => PlaylistController.GetPreviousTrack();
+        public TrackRequest GetNextSong() => PlaylistController.GetNextTrack();
+        public TrackRequest GetPreviousSong() => PlaylistController.GetPreviousTrack();
         // TODO Brug til forhåndsvisning af forrige og næste sang
         public void DisconnectAllPlaylists() => PlaylistController.RemoveAllPlaylists();
     }

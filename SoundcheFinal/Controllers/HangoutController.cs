@@ -64,12 +64,14 @@ namespace Soundche.Web.Controllers
             else return Json(new
             {
                 isActive = true,
-                songName = lastEvent.NewTrack.Name,
-                author = lastEvent.NewTrack.Author,
-                startTime = lastEvent.NewTrack.StartTime,
+                songName = lastEvent.NewTrackRequest.Song.Name,
+                author = lastEvent.NewTrackRequest.Song.Author,
+                startTime = lastEvent.NewTrackRequest.Song.StartTime,
                 elapsedTime = (DateTime.Now - lastEvent.SwitchedSongTime).TotalSeconds,
-                endTime = lastEvent.NewTrack.EndTime,
-                youtubeId = lastEvent.NewTrack.YoutubeId,
+                endTime = lastEvent.NewTrackRequest.Song.EndTime,
+                youtubeId = lastEvent.NewTrackRequest.Song.YoutubeId,
+                currentDj = lastEvent.NewTrackRequest.DJ.Name,
+                currentDjIsMe = lastEvent.NewTrackRequest.DJ.Name == User.Identity.Name.ToString(),
                 switchedSongTimeTicks = lastEvent.SwitchedSongTime.Ticks
             });
         }
@@ -134,7 +136,7 @@ namespace Soundche.Web.Controllers
             return Json( new  { playlistAuthors = active.usr.Select(x => x.Name),
                                 playlistNames = active.pl.Select(x => x.Name), 
                                 playlistSongs = active.pl.Select(x => x.Tracks),
-                                activeSongId = _room._lastSwitchedSongEvent?.NewTrack?.YoutubeId }); 
+                                activeSongId = _room._lastSwitchedSongEvent?.NewTrackRequest?.Song?.YoutubeId }); 
         }
 
         public IActionResult StopPlayingAll()

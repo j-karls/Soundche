@@ -6,12 +6,12 @@ namespace Soundche.Core.Domain
 {
     public class SwitchedSongEventArgs : EventArgs
     {
-        public Track NewTrack { get; set; }
+        public TrackRequest NewTrackRequest { get; set; }
         public DateTime SwitchedSongTime { get; set; }
 
-        public SwitchedSongEventArgs(Track newTrack, DateTime switchedSongTime)
+        public SwitchedSongEventArgs(TrackRequest newTrackRequest, DateTime switchedSongTime)
         {
-            NewTrack = newTrack;
+            NewTrackRequest = newTrackRequest;
             SwitchedSongTime = switchedSongTime;
         }
     }

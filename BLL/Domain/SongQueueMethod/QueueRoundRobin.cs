@@ -7,22 +7,22 @@ namespace Soundche.Core.Domain.SongQueueMethod
 {
     public class QueueRoundRobin : IQueueMethod
     {
-        private List<(Playlist playlist, int trackIdx)> _tuple;
+        private List<(Playlist playlist, User user, int trackIdx)> _tuple;
         private int _playlistIdx = 0;
 
-        public QueueRoundRobin(List<Playlist> playlists)
+        public QueueRoundRobin(List<(Playlist pl, User usr)> playlists)
         {
-            _tuple = playlists.Select(x => (playlist: x, trackIdx: 0)).ToList();
+            _tuple = playlists.Select(x => (playlist: x.pl, user: x.usr, trackIdx: 0)).ToList();
         }
 
-        public Track Next()
+        public TrackRequest Next()
         {
             // Return null if all playlists are empty
             if (_tuple.All(x => x.playlist.Tracks.IsNullOrEmpty())) return null;
             
             // Get next track
             var tup = _tuple[_playlistIdx];
-            Track nextTrack = tup.playlist.Tracks.IsNullOrEmpty() ? null : tup.playlist.Tracks[tup.trackIdx];
+            TrackRequest nextTrack = tup.playlist.Tracks.IsNullOrEmpty() ? null : new TrackRequest(tup.playlist.Tracks[tup.trackIdx], tup.user);
 
             // Update indexes
             if (nextTrack != null) // If playlist didn't contain a track, there's no need to update inner trackIdx
@@ -30,17 +30,17 @@ namespace Soundche.Core.Domain.SongQueueMethod
             _tuple[_playlistIdx] = tup;
             _playlistIdx = (_playlistIdx + 1) % _tuple.Count;
 
-            return (nextTrack is null || nextTrack.Exclude) ? Next() : nextTrack; // if the next song is excluded, then just find the next one again
+            return (nextTrack is null || nextTrack.Song.Exclude) ? Next() : nextTrack; // if the next song is excluded, then just find the next one again
         }
 
-        public void AddPlaylist(Playlist playlist)
+        public void AddPlaylist(Playlist playlist, User user)
         {
-            _tuple.Add((playlist, 0));
+            _tuple.Add((playlist, user, 0));
         }
 
-        public void RemovePlaylist(Playlist playlist)
+        public void RemovePlaylist(Playlist playlist, User user)
         {
-            _tuple.RemoveAll(x => x.playlist == playlist);
+            _tuple.RemoveAll(x => x.playlist == playlist && x.user == user);
         }
     }
 }
