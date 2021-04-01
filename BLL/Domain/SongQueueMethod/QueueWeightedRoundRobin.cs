@@ -9,7 +9,7 @@ namespace Soundche.Core.Domain.SongQueueMethod
     public class QueueWeightedRoundRobin : IQueueMethod
     {
         private List<(Playlist playlist, User user, int trackIdx, double cumsumSongPercentage)> _tuple;
-        Random _rand = new Random();
+        private Random _rand = new Random();
 
         public QueueWeightedRoundRobin(List<(Playlist pl, User usr)> playlists) => Initialize(playlists.Select(x => x.pl).ToList(), playlists.Select(x => x.usr).ToList());
 
@@ -71,6 +71,18 @@ namespace Soundche.Core.Domain.SongQueueMethod
             users.RemoveAt(i);
             trackIdxs.RemoveAt(i);
             Initialize(playlists, users, trackIdxs);
+        }
+
+        public string GetProgress()
+        {
+            /*
+            Playlist:    A    B    C
+            Size:        28   98   76
+            Finished %:  20%  19%  25%
+            Songs:       X1   X2   X3
+                        -Y1   Y2   Y3
+                         Z1  -Z2  -Z3
+            */
         }
     }
 }

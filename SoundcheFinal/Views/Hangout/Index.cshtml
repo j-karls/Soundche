@@ -157,6 +157,7 @@
 
     $('#btn-play').on('click', function () {
         soundcheInterface.addPlaylistToQueue(getDropdownSelectedItemText("#playlistDropdown"));
+        logToUi("Play was clicked.");
     });
 
     $('#btn-remove').on('click', function () {
@@ -170,6 +171,7 @@
 
     $('#btn-prev').on('click', function () { // TODO Grey out next and prev if nothing is playing
         soundcheInterface.setPreviousSong();
+        logToUi("Previous song was clicked.");
     });
 
     $('#btn-create').on('click', function () {
@@ -200,6 +202,7 @@
             success: function () { console.log("Changed queueMethod successfully to " + getDropdownSelectedItemText("#sortingMethodDropdown")) },
             error: function () { alert("Could not change queue method") }
         });
+        logToUi("Apply " + getDropdownSelectedItemText("#sortingMethodDropdown") + ".");
     });
 
     // TODO I should probably move the delete button into the AddPlaylist overlay somehow, to ensure you dont do it by mistake
