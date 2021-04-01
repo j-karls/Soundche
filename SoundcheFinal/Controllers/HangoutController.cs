@@ -75,7 +75,7 @@ namespace Soundche.Web.Controllers
                 currentDjIsMe = lastEvent.NewTrackRequest.DJ.Name == User.Identity.Name.ToString(),
                 switchedSongTimeTicks = lastEvent.SwitchedSongTime.Ticks,
                 activeUsers = _room.ActiveUsers,
-                activePlaylistCount = _room.GetConnectedPlaylists().pl.Count
+                activePlaylistNames = _room.GetConnectedPlaylists().pl.Select(x => x.Name)
             });
         }
 

@@ -172,9 +172,9 @@ body, html {
     height: 20%;
 
     grid-template-areas:
-        "pic    pic     info    info    info    info    play        play        all         all         remove      remove"
-        "pic    pic     prev    vol     vol     next    playlist    playlist    playlist    playlist    playlist    playlist"
-        "pic    pic     sort	sort	sort	apply	create	    create      edit        edit        delete      delete";
+        "pic    pic     info    info    info    info    play        all         remove      cmds        cmds        cmds"
+        "pic    pic     prev    vol     vol     next    playlist    playlist    playlist    cmds        cmds        cmds"
+        "pic    pic     sort	sort	sort	apply	create	    edit        delete      cmds        cmds        cmds";
 
     grid-template-columns: repeat(12, 1fr);
     grid-template-rows: repeat(3, 1fr);
@@ -201,6 +201,13 @@ body, html {
 .hangout-create     { grid-area: create }
 .hangout-edit       { grid-area: edit }
 .hangout-delete     { grid-area: delete }
+.hangout-cmds       { grid-area: cmds }
+
+.cmds-textarea {
+    background-color: black;
+    color: forestgreen;
+    resize: none;
+}
 
 .stretch {
     width: 100%;

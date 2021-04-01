@@ -31,16 +31,15 @@
         </div>
         <div class="status-lineright black-background"></div>
         <div class="status-user">
-            <label id="connected-users" class="min-size">X users</label>
+            <label id="connected-users" class="min-size">Updating active users...</label>
         </div>
         <div class="status-empty"></div>
         <div class="status-playlists">
-            <label id="current-playlists" class="min-size">Z playlists</label>
+            <label id="current-playlists" class="min-size">No playlists currently playing</label>
         </div>
     </div>
 
     <div class="hangout-btn-grid-main">
-        <div class="hangout-empty"></div>
         <div class="hangout-pic frame">
             <!-- TODO -->
             <img id="song-img" src="~/lib/images/ricardo.jpg" alt="" class="maxwidth-maxheight" />
@@ -87,11 +86,19 @@
         <div class="hangout-delete">
             <input id="btn-delete" type="button" class="btn btn-secondary stretch" value="Delete" />
         </div>
+        <div class="hangout-cmds">
+            <textarea id="text-cmds" class="cmds-textarea stretch" readonly="readonly"></textarea>
+        </div>
     </div>
     <div id="partial" class="overlay display-hide"></div>
 </body>
 
 <script type="text/javascript">
+    function logToUi(text) {
+        var textarea = $('#text-cmds');
+        textarea.val(textarea.val() + text + '\n');
+    }
+
     function disableElements(arguments) {
         var argsArr = arguments.split(' ');
         for (var i = 0; i < argsArr.length; i++) {
@@ -158,6 +165,7 @@
 
     $('#btn-next').on('click', function () { // TODO Grey out next and prev if nothing is playing
         soundcheInterface.setNextSong();
+        logToUi("Skip song was clicked.");
     });
 
     $('#btn-prev').on('click', function () { // TODO Grey out next and prev if nothing is playing
@@ -294,7 +302,7 @@
         switchedSongTimeTicks: 0,
         thumbnailUrl: "",
         activeUsers: [],
-        activePlaylistCount: 0
+        activePlaylistNames: []
     }
 
     var soundcheInterface = {
@@ -327,7 +335,7 @@
                     sessionStore.currentDj = sessionData.currentDj;
                     sessionStore.currentDjIsMe = sessionData.currentDjIsMe;
                     sessionStore.activeUsers = sessionData.activeUsers;
-                    sessionStore.activePlaylistCount = sessionData.activePlaylistCount;
+                    sessionStore.activePlaylistNames = sessionData.activePlaylistNames;
 
                     console.log(sessionStore);
                     youtubeInterface.loadVideo(sessionStore.youtubeId, sessionStore.elapsedTime);
@@ -337,14 +345,11 @@
                     $("#current-dj").html(`${sessionData.currentDj} is playing`);
                     $("#connected-users").html(`${sessionData.activeUsers.length} users`);
                     $("#connected-users").attr("title", sessionData.activeUsers); // Adds tooltip
-                    $("#current-playlists").html(`${sessionData.activePlaylistCount} playlists`);
+                    $("#current-playlists").html(`${sessionData.activePlaylistNames.length} playlists`);
+                    $("#current-playlists").attr("title", sessionData.activePlaylistNames); // Adds tooltip
 
-                    if (sessionStore.currentDjIsMe) {
-                        $("#current-dj-div").css("border", "solid 1px red");
-                    }
-                    else {
-                        $("#current-dj-div").css("border", "0px");
-                    }
+                    if (sessionStore.currentDjIsMe) $("#current-dj-div").css("border", "solid 1px red");
+                    else $("#current-dj-div").css("border", "0px");
                 }
                 else soundcheInterface.synchronizePlaytime();
             }
