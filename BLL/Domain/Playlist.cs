@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Text;
+using System.Linq;
 
 namespace Soundche.Core.Domain
 {
@@ -12,6 +13,7 @@ namespace Soundche.Core.Domain
         [Required] [BsonId]
         public string Name { get; set; }
         public List<Track> Tracks { get; set; }
+        public int Playtime => Tracks.Select(x => x.Exclude ? 0 : x.Playtime).Aggregate((x,y) => x + y);
 
         public Playlist() { }
 

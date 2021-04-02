@@ -18,6 +18,7 @@ namespace Soundche.Core.Domain
         [Required]
         public int EndTime { get; set; }
         public bool Exclude { get; set; }
+        public int Playtime => EndTime - StartTime;
 
         public Track() { }
         public Track(string title, string author, string youtubeId, int startTime, int endTime)

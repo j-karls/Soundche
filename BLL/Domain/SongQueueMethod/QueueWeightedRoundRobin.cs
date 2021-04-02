@@ -93,9 +93,13 @@ namespace Soundche.Core.Domain.SongQueueMethod
             foreach (var ls in new [] { ls1, ls2, ls3, ls4 })
                 data += String.Format(format, ls.ToArray());
 
+            int playedTime = 0;
             var playlistStrings = new List<List<string>>();
             foreach (var (playlist, user, trackIdx, _) in _tuple)
+            {
                 playlistStrings.Add(GetPlaylistAsString(playlist, trackIdx, currentSong.DJ == user && currentSong.PlaylistName == playlist.Name));
+                playedTime += playlist.Tracks.GetRange(0, trackIdx).Select(x => x.Playtime).Aggregate((x, y) => x + y);
+            }
 
             for (int i = 0; i < _tuple.Max(x => x.playlist.Tracks.Count); i++)
             {
@@ -105,8 +109,12 @@ namespace Soundche.Core.Domain.SongQueueMethod
                 data += String.Format(format, s.ToArray());
             }
 
-            // TODO Add description
-            return "WeightedRoundRobin details:\nTODO Description\n" + "Total playlist progress " + "--------------------\n\n" + data;
+            var totalPlaytime = _tuple.Select(x => x.playlist.Playtime).Aggregate((x, y) => x + y);
+            return $"WeightedRoundRobin details:\nTODO Description\nTotal progress { playedTime }/{ totalPlaytime } \n--------------------\n\n" + data;
         }
+
+        // TODO ADD THIS AS A BUTTON IN THE UI
+        // TODO Move some of the code to a shared class
+        // TODO Fix warnings
     }
 }
