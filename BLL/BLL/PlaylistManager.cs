@@ -75,5 +75,7 @@ namespace Soundche.Core.BLL
         {
             ActivePlaylists = new List<(Playlist pl, User usr)>();
         }
+
+        public string GetProgress() => _queueFunc.GetProgress(CurrentSong);
     }
 }

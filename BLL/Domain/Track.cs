@@ -28,5 +28,10 @@ namespace Soundche.Core.Domain
             StartTime = startTime; 
             EndTime = endTime; 
         }
+
+        public string ToReadableString()
+        {
+            return Exclude ? $"({Name})" : Name;
+        }
     }
 }

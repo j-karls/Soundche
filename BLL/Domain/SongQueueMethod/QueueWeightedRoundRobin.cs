@@ -40,7 +40,7 @@ namespace Soundche.Core.Domain.SongQueueMethod
             // meaning that we always select one playlist at random
             // the more tracks a playlist, the more likely it is to be selected
 
-            TrackRequest nextTrack = new TrackRequest(tup.playlist.Tracks[tup.trackIdx], tup.user);
+            TrackRequest nextTrack = new TrackRequest(tup.playlist.Tracks[tup.trackIdx], tup.user, tup.playlist.Name);
 
             // Update the track index of the corresponding playlist 
             tup.trackIdx = (tup.trackIdx + 1) % tup.playlist.Tracks.Count;
@@ -73,15 +73,45 @@ namespace Soundche.Core.Domain.SongQueueMethod
             Initialize(playlists, users, trackIdxs);
         }
 
-        public string GetProgress()
+        private List<string> GetPlaylistAsString(Playlist pl, int plIdx, bool isCurrentSong)
         {
+            List<string> stringList = pl.Tracks.Select(z => "  " + z.ToReadableString()[0..23]).ToList();
+            stringList[plIdx] = (isCurrentSong ? ">>" : "> ") + stringList[plIdx][2..];
+            return stringList;
+        }
+
+        public string GetProgress(TrackRequest currentSong) 
+        {
+            string format = "{0,-15} " + String.Join("", Enumerable.Range(1, _tuple.Count).Select(x => $"{{{ x },-25}} ")) + "\n";
+            var ls1 = new List<string> { "Playlist: "   }; ls1.AddRange(_tuple.Select(x => x.playlist.Name));
+            var ls2 = new List<string> { "Size: "       }; ls2.AddRange(_tuple.Select(x => x.playlist.Tracks.Count.ToString()));
+            var ls3 = new List<string> { "Finished %: " }; ls3.AddRange(_tuple.Select(x => ((double) x.trackIdx / x.playlist.Tracks.Count).ToString()));
+            var ls4 = new List<string> { "Songs: "      }; ls4.AddRange(Enumerable.Range(0, _tuple.Count).Select(x => "------"));
+
+            string data = "";
+            foreach (var ls in new [] { ls1, ls2, ls3, ls4 })
+                data += String.Format(format, ls.ToArray());
+
+            var playlistStrings = new List<List<string>>();
+            foreach (var (playlist, user, trackIdx, _) in _tuple)
+                playlistStrings.Add(GetPlaylistAsString(playlist, trackIdx, currentSong.DJ == user && currentSong.PlaylistName == playlist.Name));
+
+            for (int i = 0; i < _tuple.Max(x => x.playlist.Tracks.Count); i++)
+            {
+                var s = new List<string>(_tuple.Count) { " " };
+                foreach (var playlistString in playlistStrings)
+                    s.Add(playlistString.ElementAtOrDefault(i));
+                data += String.Format(format, s.ToArray());
+            }
+
+            return data;
             /*
             Playlist:    A    B    C
             Size:        28   98   76
             Finished %:  20%  19%  25%
-            Songs:       X1   X2   X3
-                        -Y1   Y2   Y3
-                         Z1  -Z2  -Z3
+            Songs:       ---  ---  ---
+                         -Y1   Y2   Y3
+                          Z1  -Z2  -Z3
             */
         }
     }

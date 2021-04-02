@@ -424,6 +424,14 @@
             });
         },
 
+        tester() {
+            $.ajax({
+                url: '@Url.Action("Tester", "Hangout")',
+                success: function (obj) { console.log(obj.val); },
+                error: function () { alert('Failed to view playlists'); },
+            });
+        },
+
         resetPlayback() {
             $.ajax({
                 url: '@Url.Action("StopPlayingAll", "Hangout")',

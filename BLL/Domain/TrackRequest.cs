@@ -11,11 +11,12 @@ namespace Soundche.Core.Domain
         /// </summary>
         public Track Song { get; set; }
         public User DJ { get; set; }
-        //TODO public Playlist playlist { get; private set; }
-        public TrackRequest(Track song, User dj)
+        public string PlaylistName { get; set; }
+        public TrackRequest(Track song, User dj, string playlistName)
         {
             Song = song;
             DJ = dj;
+            PlaylistName = playlistName;
         }
     }
 }

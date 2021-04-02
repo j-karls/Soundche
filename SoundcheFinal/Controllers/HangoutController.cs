@@ -58,7 +58,7 @@ namespace Soundche.Web.Controllers
 
             _room.NotifyUserSessionRequest(User.Identity.Name.ToString()); // To keep track of live connections
 
-            var lastEvent = _room._lastSwitchedSongEvent;
+            var lastEvent = _room.LastSwitchedSongEvent;
             if (lastEvent is null) return Json(new { isActive = false });
 
             //sends the activeSong as Json, showing info about what song is currently playing and when it was started
@@ -139,7 +139,12 @@ namespace Soundche.Web.Controllers
             return Json( new  { playlistAuthors = active.usr.Select(x => x.Name),
                                 playlistNames = active.pl.Select(x => x.Name), 
                                 playlistSongs = active.pl.Select(x => x.Tracks),
-                                activeSongId = _room._lastSwitchedSongEvent?.NewTrackRequest?.Song?.YoutubeId }); 
+                                activeSongId = _room.LastSwitchedSongEvent?.NewTrackRequest?.Song?.YoutubeId }); 
+        }
+
+        public IActionResult Tester()
+        {
+            return Json( new { val = _room.GetProgress() });
         }
 
         public IActionResult StopPlayingAll()

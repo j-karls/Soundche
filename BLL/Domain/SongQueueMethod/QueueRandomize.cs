@@ -24,7 +24,7 @@ namespace Soundche.Core.Domain.SongQueueMethod
                 if (playlist.Tracks.IsNullOrEmpty()) continue;
                 foreach (Track track in playlist.Tracks)
                 {
-                    if (!track.Exclude) _tracks.Add(new TrackRequest(track, user));
+                    if (!track.Exclude) _tracks.Add(new TrackRequest(track, user, playlist.Name));
                 }
             }
         }
@@ -45,6 +45,12 @@ namespace Soundche.Core.Domain.SongQueueMethod
             int i = _playlists.IndexOf((playlist, user));
             if (i < 0) throw new InvalidOperationException("No such playlist was found");
             _playlists.RemoveAt(i);
+        }
+
+        public string GetProgress(TrackRequest currentSong)
+        {
+            // TODO
+            throw new NotImplementedException();
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Soundche.Core.BLL
 {
     public class RoomManager
     {
-        public SwitchedSongEventArgs _lastSwitchedSongEvent { get; private set; } = null; 
+        public SwitchedSongEventArgs LastSwitchedSongEvent { get; private set; } = null; 
 
         public Timer PlaybackTimer { get; set; }
         public TrackRequest CurrentTrack = null;
@@ -50,7 +50,7 @@ namespace Soundche.Core.BLL
 
         private void OnSwitchSong(object sender, SwitchedSongEventArgs e)
         {
-            _lastSwitchedSongEvent = e;
+            LastSwitchedSongEvent = e;
         }
 
         private void OnTimerElapsed(object sender, ElapsedEventArgs e) => StartNextSong(); 
@@ -77,7 +77,7 @@ namespace Soundche.Core.BLL
         {
             PlaybackTimer.Stop();
             CurrentTrack = null;
-            _lastSwitchedSongEvent = null;
+            LastSwitchedSongEvent = null;
         }
 
         public void ConnectPlaylist(Playlist playlist, User user)
@@ -110,5 +110,7 @@ namespace Soundche.Core.BLL
         public TrackRequest GetPreviousSong() => PlaylistController.GetPreviousTrack();
         // TODO Brug til forhåndsvisning af forrige og næste sang
         public void DisconnectAllPlaylists() => PlaylistController.RemoveAllPlaylists();
+
+        public string GetProgress() => PlaylistController.GetProgress();
     }
 }

@@ -22,7 +22,7 @@ namespace Soundche.Core.Domain.SongQueueMethod
             
             // Get next track
             var tup = _tuple[_playlistIdx];
-            TrackRequest nextTrack = tup.playlist.Tracks.IsNullOrEmpty() ? null : new TrackRequest(tup.playlist.Tracks[tup.trackIdx], tup.user);
+            TrackRequest nextTrack = tup.playlist.Tracks.IsNullOrEmpty() ? null : new TrackRequest(tup.playlist.Tracks[tup.trackIdx], tup.user, tup.playlist.Name);
 
             // Update indexes
             if (nextTrack != null) // If playlist didn't contain a track, there's no need to update inner trackIdx
@@ -41,6 +41,12 @@ namespace Soundche.Core.Domain.SongQueueMethod
         public void RemovePlaylist(Playlist playlist, User user)
         {
             _tuple.RemoveAll(x => x.playlist == playlist && x.user == user);
+        }
+
+        public string GetProgress(TrackRequest currentSong)
+        {
+            // TODO
+            throw new NotImplementedException();
         }
     }
 }
