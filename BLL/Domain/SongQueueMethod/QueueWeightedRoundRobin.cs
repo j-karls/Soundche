@@ -75,7 +75,7 @@ namespace Soundche.Core.Domain.SongQueueMethod
 
         private List<string> GetPlaylistAsString(Playlist pl, int plIdx, bool isCurrentSong)
         {
-            List<string> stringList = pl.Tracks.Select(z => "  " + z.ToReadableString()[0..23]).ToList();
+            List<string> stringList = pl.Tracks.Select(z => "  " + z.ToReadableString().Truncate(23)).ToList();
             stringList[plIdx] = (isCurrentSong ? ">>" : "> ") + stringList[plIdx][2..];
             return stringList;
         }
@@ -85,7 +85,8 @@ namespace Soundche.Core.Domain.SongQueueMethod
             string format = "{0,-15} " + String.Join("", Enumerable.Range(1, _tuple.Count).Select(x => $"{{{ x },-25}} ")) + "\n";
             var ls1 = new List<string> { "Playlist: "   }; ls1.AddRange(_tuple.Select(x => x.playlist.Name));
             var ls2 = new List<string> { "Size: "       }; ls2.AddRange(_tuple.Select(x => x.playlist.Tracks.Count.ToString()));
-            var ls3 = new List<string> { "Finished %: " }; ls3.AddRange(_tuple.Select(x => ((double) x.trackIdx / x.playlist.Tracks.Count).ToString()));
+            // CUMSUMPERCENT HERE var ls2 = new List<string> { "Size: "       }; ls2.AddRange(_tuple.Select(x => x.playlist.Tracks.Count.ToString()));
+            var ls3 = new List<string> { "Finished: "   }; ls3.AddRange(_tuple.Select(x => (100 * ((double) x.trackIdx / x.playlist.Tracks.Count)).ToString("N1") + "%"));
             var ls4 = new List<string> { "Songs: "      }; ls4.AddRange(Enumerable.Range(0, _tuple.Count).Select(x => "------"));
 
             string data = "";
@@ -104,15 +105,8 @@ namespace Soundche.Core.Domain.SongQueueMethod
                 data += String.Format(format, s.ToArray());
             }
 
-            return data;
-            /*
-            Playlist:    A    B    C
-            Size:        28   98   76
-            Finished %:  20%  19%  25%
-            Songs:       ---  ---  ---
-                         -Y1   Y2   Y3
-                          Z1  -Z2  -Z3
-            */
+            // TODO Add description
+            return "WeightedRoundRobin details:\nTODO Description\n" + "Total playlist progress " + "--------------------\n\n" + data;
         }
     }
 }

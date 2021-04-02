@@ -22,16 +22,14 @@ namespace Soundche.Core.Domain.SongQueueMethod
             foreach ((Playlist playlist, User user) in _playlists)
             {
                 if (playlist.Tracks.IsNullOrEmpty()) continue;
-                foreach (Track track in playlist.Tracks)
-                {
-                    if (!track.Exclude) _tracks.Add(new TrackRequest(track, user, playlist.Name));
-                }
+                _tracks.AddRange(playlist.Tracks.Select(x => new TrackRequest(x, user, playlist.Name)));
             }
         }
 
         public TrackRequest Next()
         {
-            return _tracks[_rand.Next(_tracks.Count)];
+            TrackRequest t = _tracks[_rand.Next(_tracks.Count)];
+            return t.Song.Exclude ? Next() : t;
         }
 
         public void AddPlaylist(Playlist playlist, User user)
@@ -49,8 +47,8 @@ namespace Soundche.Core.Domain.SongQueueMethod
 
         public string GetProgress(TrackRequest currentSong)
         {
-            // TODO
-            throw new NotImplementedException();
+            return "Randomize details:\nSelects next song randomly from the pool.\n--------------------\n\n" + 
+                String.Join("\n", _tracks.Select(x => x.Song.ToReadableString()));
         }
     }
 }

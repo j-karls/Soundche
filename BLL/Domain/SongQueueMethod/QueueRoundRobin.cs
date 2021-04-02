@@ -45,7 +45,8 @@ namespace Soundche.Core.Domain.SongQueueMethod
 
         public string GetProgress(TrackRequest currentSong)
         {
-            // TODO
+            // TODO Copy from QWRR? 
+            // Create a separate static class to allow for code-reuse in this regard + for total time calculations
             throw new NotImplementedException();
         }
     }
