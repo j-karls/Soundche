@@ -135,14 +135,14 @@ namespace Soundche.Web.Controllers
 
         public IActionResult ViewConnectedPlaylists()
         {
-            var active = _room.GetConnectedPlaylists();
-            return Json( new  { playlistAuthors = active.usr.Select(x => x.Name),
-                                playlistNames = active.pl.Select(x => x.Name), 
-                                playlistSongs = active.pl.Select(x => x.Tracks),
+            var (usr, pl) = _room.GetConnectedPlaylists();
+            return Json( new  { playlistAuthors = usr.Select(x => x.Name),
+                                playlistNames = pl.Select(x => x.Name), 
+                                playlistSongs = pl.Select(x => x.Tracks),
                                 activeSongId = _room.LastSwitchedSongEvent?.NewTrackRequest?.Song?.YoutubeId }); 
         }
 
-        public IActionResult Tester()
+        public IActionResult ViewPlaylistProgress()
         {
             return Json( new { val = _room.GetProgress() });
         }

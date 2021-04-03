@@ -9,7 +9,7 @@ namespace Soundche.Core.Domain.SongQueueMethod
     public class QueueWeightedRoundRobin : IQueueMethod
     {
         private List<(Playlist playlist, User user, int trackIdx, double cumsumSongPercentage)> _tuple;
-        private Random _rand = new Random();
+        private readonly Random _rand = new Random();
 
         public QueueWeightedRoundRobin(List<(Playlist pl, User usr)> playlists) => Initialize(playlists.Select(x => x.pl).ToList(), playlists.Select(x => x.usr).ToList());
 
@@ -17,7 +17,7 @@ namespace Soundche.Core.Domain.SongQueueMethod
         {
             if (playlists.IsNullOrEmpty()) return;
 
-            trackStartIdxs = trackStartIdxs ?? playlists.Select(x => 0).ToList(); 
+            trackStartIdxs ??= playlists.Select(x => 0).ToList(); 
             double totalNumTracks = playlists.Select(x => x.Tracks.Count).Aggregate((x, y) => x + y);
             List<double> cumsum = playlists.Select(x => x.Tracks.Count / totalNumTracks).CumulativeSum().ToList();
             _tuple = (from i 
@@ -73,26 +73,29 @@ namespace Soundche.Core.Domain.SongQueueMethod
             Initialize(playlists, users, trackIdxs);
         }
 
-        public string GetProgress(TrackRequest currentSong) 
+        public string GetProgress(TrackRequest currentSong, int currentSongProgress = 0) 
         {
+            // TODO Rewrite this such that it looks like ordinary round robin's getProgress. 
+
             // Creates an ascii matrix containing progress info from all the playlists
             string format = "{0,-15} " + String.Join("", Enumerable.Range(1, _tuple.Count).Select(x => $"{{{ x },-25}} ")) + "\n";
             var ls1 = new List<string> { "Playlist: "   }; ls1.AddRange(_tuple.Select(x => x.playlist.Name));
             var ls2 = new List<string> { "Size: "       }; ls2.AddRange(_tuple.Select(x => x.playlist.Tracks.Count.ToString()));
-            // CUMSUMPERCENT HERE var ls2 = new List<string> { "Size: "       }; ls2.AddRange(_tuple.Select(x => x.playlist.Tracks.Count.ToString()));
-            var ls3 = new List<string> { "Finished: "   }; ls3.AddRange(_tuple.Select(x => (100 * ((double) x.trackIdx / x.playlist.Tracks.Count)).ToString("N1") + "%"));
-            var ls4 = new List<string> { "Songs: "      }; ls4.AddRange(Enumerable.Range(0, _tuple.Count).Select(x => "------"));
+            var ls3 = new List<string> { "Cumsum: "     }; ls3.AddRange(_tuple.Select(x => x.cumsumSongPercentage.ToString()));
+            var ls4 = new List<string> { "Finished: "   }; ls4.AddRange(_tuple.Select(x => (100 * ((double) x.trackIdx / x.playlist.Tracks.Count)).ToString("N1") + "%"));
+            var ls5 = new List<string> { "Songs: "      }; ls5.AddRange(Enumerable.Range(0, _tuple.Count).Select(x => "------"));
 
             string data = "";
-            foreach (var ls in new [] { ls1, ls2, ls3, ls4 })
+            foreach (var ls in new [] { ls1, ls2, ls3, ls4, ls5 })
                 data += String.Format(format, ls.ToArray());
 
             int playedTime = 0;
             var playlistStrings = new List<List<string>>();
             foreach (var (playlist, user, trackIdx, _) in _tuple)
             {
-                playlistStrings.Add(QueueProgressHelper.GetPlaylistAsString(playlist, trackIdx, currentSong.DJ == user && currentSong.PlaylistName == playlist.Name));
-                playedTime += playlist.Tracks.GetRange(0, trackIdx).Select(x => x.Exclude ? 0 : x.Playtime).Aggregate((x, y) => x + y);
+                var playlistContainsCurrentSong = currentSong.DJ == user && currentSong.PlaylistName == playlist.Name;
+                playlistStrings.Add(QueueProgressHelper.RoundRobinGetPlaylistAsString(playlist, trackIdx, playlistContainsCurrentSong, 25));
+                playedTime += QueueProgressHelper.GetPlaylistPlayedTime(playlist, trackIdx, playlistContainsCurrentSong ? currentSongProgress : 0);
             }
 
             for (int i = 0; i < _tuple.Max(x => x.playlist.Tracks.Count); i++)
@@ -106,8 +109,5 @@ namespace Soundche.Core.Domain.SongQueueMethod
             var totalPlaytime = _tuple.Select(x => x.playlist.Playtime).Aggregate((x, y) => x + y);
             return $"WeightedRoundRobin details:\nTODO Description\nTotal progress { playedTime }/{ totalPlaytime } \n--------------------\n\n" + data;
         }
-
-        // TODO ADD THIS AS A BUTTON IN THE UI
-        // TODO Fix warnings
     }
 }

@@ -7,7 +7,7 @@ namespace Soundche.Core.Domain.SongQueueMethod
 {
     public class QueueRoundRobin : IQueueMethod
     {
-        private List<(Playlist playlist, User user, int trackIdx)> _tuple;
+        private readonly List<(Playlist playlist, User user, int trackIdx)> _tuple;
         private int _playlistIdx = 0;
 
         public QueueRoundRobin(List<(Playlist pl, User usr)> playlists)
@@ -22,7 +22,7 @@ namespace Soundche.Core.Domain.SongQueueMethod
             
             // Get next track
             var tup = _tuple[_playlistIdx];
-            TrackRequest nextTrack = tup.playlist.Tracks.IsNullOrEmpty() ? null : new TrackRequest(tup.playlist.Tracks[tup.trackIdx], tup.user, tup.playlist.Name);
+            TrackRequest nextTrack = new TrackRequest(tup.playlist.Tracks[tup.trackIdx], tup.user, tup.playlist.Name);
 
             // Update indexes
             if (nextTrack != null) // If playlist didn't contain a track, there's no need to update inner trackIdx
@@ -30,7 +30,7 @@ namespace Soundche.Core.Domain.SongQueueMethod
             _tuple[_playlistIdx] = tup;
             _playlistIdx = (_playlistIdx + 1) % _tuple.Count;
 
-            return (nextTrack is null || nextTrack.Song.Exclude) ? Next() : nextTrack; // if the next song is excluded, then just find the next one again
+            return nextTrack.Song.Exclude ? Next() : nextTrack; // if the next song is excluded, then just find the next one again
         }
 
         public void AddPlaylist(Playlist playlist, User user)
@@ -43,8 +43,10 @@ namespace Soundche.Core.Domain.SongQueueMethod
             _tuple.RemoveAll(x => x.playlist == playlist && x.user == user);
         }
 
-        public string GetProgress(TrackRequest currentSong)
+        public string GetProgress(TrackRequest currentSong, int currentSongProgress = 0) 
         {
+            // TODO We currently dont have a way to get the elapsed time of the current song in the backend. 
+            // I would need to use a different timer class, or get the info from the frontend (alright solution) 
             string matrix = "";
             string format = QueueProgressHelper.CreateStringMatrixFormat(15, 25, _tuple.Count);
             matrix = QueueProgressHelper.AddLineToMatrix(matrix, format, "Playlist:", _tuple.Select(x => x.playlist.Name));
@@ -55,11 +57,12 @@ namespace Soundche.Core.Domain.SongQueueMethod
             var playlistStrings = new List<List<string>>();
             foreach (var (playlist, user, trackIdx) in _tuple)
             {
-                playlistStrings.Add(QueueProgressHelper.GetPlaylistAsString(playlist, trackIdx, currentSong.DJ == user && currentSong.PlaylistName == playlist.Name));
-                playedTime += playlist.Tracks.GetRange(0, trackIdx).Select(x => x.Exclude ? 0 : x.Playtime).Aggregate((x, y) => x + y);
+                var playlistContainsCurrentSong = currentSong.DJ == user && currentSong.PlaylistName == playlist.Name;
+                playlistStrings.Add(QueueProgressHelper.RoundRobinGetPlaylistAsString(playlist, trackIdx, playlistContainsCurrentSong, 25));
+                playedTime += QueueProgressHelper.GetPlaylistPlayedTime(playlist, trackIdx, playlistContainsCurrentSong ? currentSongProgress : 0);
             }
 
-            matrix = QueueProgressHelper.AddManyLinesToMatrix(matrix, format, "Songs:", playlistStrings;
+            matrix = QueueProgressHelper.AddManyLinesToMatrix(matrix, format, "Songs:", playlistStrings);
             var totalPlaytime = _tuple.Select(x => x.playlist.Playtime).Aggregate((x, y) => x + y);
             return $"RoundRobin details:\nTODO Description\nTotal progress { playedTime }/{ totalPlaytime } \n--------------------\n\n" + matrix;
         }

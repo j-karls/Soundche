@@ -14,6 +14,13 @@
         </div>
     </div>
 
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span id="modal-close" class="close">&times;</span>
+            <p id="modal-text-content">Loading...</p>
+        </div>
+    </div>
+
     <div class="hangout-player-main">
         <div class="embed-responsive embed-responsive-16by9">
             <div id="player"></div>
@@ -42,17 +49,15 @@
 
     <div class="hangout-btn-grid-main">
         <div class="hangout-pic frame">
-            <!-- TODO -->
             <img id="song-img" src="~/lib/images/ricardo.jpg" alt="" class="maxwidth-maxheight" />
         </div>
         <div class="hangout-info">
-            <label id="song-info" class="stretch"></label> <!-- TODO -->
+            <label id="song-info" class="stretch"></label>
         </div>
         <div class="hangout-play">
             <input id="btn-play" type="button" class="btn btn-success stretch" value="Play" />
         </div>
         <div class="hangout-all">
-            <!-- TODO -->
             <input id="btn-all" type="button" class="btn btn-secondary stretch" value="View All" />
         </div>
         <div class="hangout-remove">
@@ -154,11 +159,31 @@
         $("#progress-color-bar").width(progress + "%");
     }
 
+    function openModal() {
+        console.log("open");
+        $('#modal').css('display', 'block');
+    }
+
+    function closeModal() {
+        console.log("close");
+        $('#modal').css('display', 'none');
+    }
+
     /////////////////// BUTTON BINDS
+
+    $('#modal-close').on('click', function () {
+        closeModal();
+    });
+    // TODO Clicking outsie of the modal should also close it, and same goes for my create playlist overlay window
 
     $('#btn-play').on('click', function () {
         soundcheInterface.addPlaylistToQueue(getDropdownSelectedItemText("#playlistDropdown"));
         logToUi("Play was clicked.");
+    });
+
+    $('#btn-all').on('click', function () {
+        openModal();
+        soundcheInterface.viewPlaylistProgress(function (obj) { console.log(obj.val); $('#modal-text-content').text(obj.val); });
     });
 
     $('#btn-remove').on('click', function () {
@@ -200,7 +225,11 @@
     $('#btn-apply').on('click', function () {
         $.ajax({
             url: '/Hangout/ApplyNewQueueMethod?queueMethod=' + getDropdownSelectedItemText("#sortingMethodDropdown"),
-            success: function () { console.log("Changed queueMethod successfully to " + getDropdownSelectedItemText("#sortingMethodDropdown")) },
+            success: function ()
+            {
+                console.log("Changed queueMethod successfully to " + getDropdownSelectedItemText("#sortingMethodDropdown"));
+                soundcheInterface.setNextSong();
+            },
             error: function () { alert("Could not change queue method") }
         });
         logToUi("Apply " + getDropdownSelectedItemText("#sortingMethodDropdown") + ".");
@@ -425,10 +454,10 @@
             });
         },
 
-        tester() {
+        viewPlaylistProgress(successfunc) {
             $.ajax({
-                url: '@Url.Action("Tester", "Hangout")',
-                success: function (obj) { console.log(obj.val); },
+                url: '@Url.Action("ViewPlaylistProgress", "Hangout")',
+                success: successfunc,
                 error: function () { alert('Failed to view playlists'); },
             });
         },

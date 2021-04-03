@@ -76,6 +76,6 @@ namespace Soundche.Core.BLL
             ActivePlaylists = new List<(Playlist pl, User usr)>();
         }
 
-        public string GetProgress() => _queueFunc.GetProgress(CurrentSong);
+        public string GetPlaylistProgress() => _queueFunc?.GetProgress(CurrentSong); // TODO Return some more sane default if no queuemethod is selected. Or maybe always select a queuemethod by default before chosing play? 
     }
 }

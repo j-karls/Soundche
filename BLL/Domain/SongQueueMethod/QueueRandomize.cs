@@ -7,9 +7,9 @@ namespace Soundche.Core.Domain.SongQueueMethod
 {
     public class QueueRandomize : IQueueMethod
     {
-        private List<TrackRequest> _tracks = new List<TrackRequest>();
-        private List<(Playlist pl, User usr)> _playlists;
-        private Random _rand = new Random();
+        private readonly List<TrackRequest> _tracks = new List<TrackRequest>();
+        private readonly List<(Playlist pl, User usr)> _playlists;
+        private readonly Random _rand = new Random();
 
         public QueueRandomize(List<(Playlist pl, User usr)> playlists)
         {
@@ -45,8 +45,9 @@ namespace Soundche.Core.Domain.SongQueueMethod
             _playlists.RemoveAt(i);
         }
 
-        public string GetProgress(TrackRequest currentSong)
+        public string GetProgress(TrackRequest currentSong, int currentSongProgress = 0)
         {
+            // TODO
             return "Randomize details:\nSelects next song randomly from the pool.\n--------------------\n\n" + 
                 String.Join("\n", _tracks.Select(x => x.Song.ToReadableString()));
         }

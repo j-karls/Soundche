@@ -14,7 +14,7 @@ namespace Soundche.Core.Domain.SongQueueMethod
         // Provides a graceful update of our queue method, one that doesn't reset everything
         public void AddPlaylist(Playlist playlist, User user);
         public void RemovePlaylist(Playlist playlist, User user);
-        public string GetProgress(TrackRequest currentSong);
+        public string GetProgress(TrackRequest currentSong, int currentSongProgress = 0);
     }
 
 }

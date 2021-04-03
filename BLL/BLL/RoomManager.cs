@@ -111,6 +111,6 @@ namespace Soundche.Core.BLL
         // TODO Brug til forhåndsvisning af forrige og næste sang
         public void DisconnectAllPlaylists() => PlaylistController.RemoveAllPlaylists();
 
-        public string GetProgress() => PlaylistController.GetProgress();
+        public string GetProgress() => PlaylistController.GetPlaylistProgress();
     }
 }
