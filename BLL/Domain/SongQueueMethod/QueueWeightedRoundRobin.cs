@@ -73,15 +73,9 @@ namespace Soundche.Core.Domain.SongQueueMethod
             Initialize(playlists, users, trackIdxs);
         }
 
-        private List<string> GetPlaylistAsString(Playlist pl, int plIdx, bool isCurrentSong)
-        {
-            List<string> stringList = pl.Tracks.Select(z => "  " + z.ToReadableString().Truncate(23)).ToList();
-            stringList[plIdx] = (isCurrentSong ? ">>" : "> ") + stringList[plIdx][2..];
-            return stringList;
-        }
-
         public string GetProgress(TrackRequest currentSong) 
         {
+            // Creates an ascii matrix containing progress info from all the playlists
             string format = "{0,-15} " + String.Join("", Enumerable.Range(1, _tuple.Count).Select(x => $"{{{ x },-25}} ")) + "\n";
             var ls1 = new List<string> { "Playlist: "   }; ls1.AddRange(_tuple.Select(x => x.playlist.Name));
             var ls2 = new List<string> { "Size: "       }; ls2.AddRange(_tuple.Select(x => x.playlist.Tracks.Count.ToString()));
@@ -97,8 +91,8 @@ namespace Soundche.Core.Domain.SongQueueMethod
             var playlistStrings = new List<List<string>>();
             foreach (var (playlist, user, trackIdx, _) in _tuple)
             {
-                playlistStrings.Add(GetPlaylistAsString(playlist, trackIdx, currentSong.DJ == user && currentSong.PlaylistName == playlist.Name));
-                playedTime += playlist.Tracks.GetRange(0, trackIdx).Select(x => x.Playtime).Aggregate((x, y) => x + y);
+                playlistStrings.Add(QueueProgressHelper.GetPlaylistAsString(playlist, trackIdx, currentSong.DJ == user && currentSong.PlaylistName == playlist.Name));
+                playedTime += playlist.Tracks.GetRange(0, trackIdx).Select(x => x.Exclude ? 0 : x.Playtime).Aggregate((x, y) => x + y);
             }
 
             for (int i = 0; i < _tuple.Max(x => x.playlist.Tracks.Count); i++)
@@ -114,7 +108,6 @@ namespace Soundche.Core.Domain.SongQueueMethod
         }
 
         // TODO ADD THIS AS A BUTTON IN THE UI
-        // TODO Move some of the code to a shared class
         // TODO Fix warnings
     }
 }

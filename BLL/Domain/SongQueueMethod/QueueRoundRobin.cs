@@ -45,9 +45,23 @@ namespace Soundche.Core.Domain.SongQueueMethod
 
         public string GetProgress(TrackRequest currentSong)
         {
-            // TODO Copy from QWRR? 
-            // Create a separate static class to allow for code-reuse in this regard + for total time calculations
-            throw new NotImplementedException();
+            string matrix = "";
+            string format = QueueProgressHelper.CreateStringMatrixFormat(15, 25, _tuple.Count);
+            matrix = QueueProgressHelper.AddLineToMatrix(matrix, format, "Playlist:", _tuple.Select(x => x.playlist.Name));
+            matrix = QueueProgressHelper.AddLineToMatrix(matrix, format, "Size:",     _tuple.Select(x => x.playlist.Tracks.Count.ToString()));
+            matrix = QueueProgressHelper.AddLineToMatrix(matrix, format, "Finished:", _tuple.Select(x => (100 * ((double) x.trackIdx / x.playlist.Tracks.Count)).ToString("N1") + "%"));
+            
+            int playedTime = 0;
+            var playlistStrings = new List<List<string>>();
+            foreach (var (playlist, user, trackIdx) in _tuple)
+            {
+                playlistStrings.Add(QueueProgressHelper.GetPlaylistAsString(playlist, trackIdx, currentSong.DJ == user && currentSong.PlaylistName == playlist.Name));
+                playedTime += playlist.Tracks.GetRange(0, trackIdx).Select(x => x.Exclude ? 0 : x.Playtime).Aggregate((x, y) => x + y);
+            }
+
+            matrix = QueueProgressHelper.AddManyLinesToMatrix(matrix, format, "Songs:", playlistStrings;
+            var totalPlaytime = _tuple.Select(x => x.playlist.Playtime).Aggregate((x, y) => x + y);
+            return $"RoundRobin details:\nTODO Description\nTotal progress { playedTime }/{ totalPlaytime } \n--------------------\n\n" + matrix;
         }
     }
 }
