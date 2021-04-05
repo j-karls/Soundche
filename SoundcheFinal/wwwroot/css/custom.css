@@ -340,6 +340,22 @@ button[disabled] {
     transform: translateX(-50%);
 }
 
+.progress-color-min-mark {
+    position: absolute;
+    background-color: #ff0000;
+    height: 20px;
+    width: 0%;
+    margin-left: 0%;
+}
+
+.progress-color-max-mark {
+    position: absolute;
+    background-color: #ff0000;
+    height: 20px;
+    width: 0%;
+    margin-left: 0%;
+}
+
 /* The Modal (background) */
 .modal {
     display: none; /* Hidden by default */

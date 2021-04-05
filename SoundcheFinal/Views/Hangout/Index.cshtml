@@ -29,6 +29,8 @@
         <div class="progress stretch">
             <div id="progress-color-bar" class="progress-color-bar"></div>
             <div id="progress-text" class="progress-percent">0%</div>
+            <div id="progress-color-min-mark" class="progress-color-min-mark"></div>
+            <div id="progress-color-max-mark" class="progress-color-max-mark"></div>
         </div>
     </div>
 
@@ -148,7 +150,7 @@
     }
 
     function updateCurrentProgress() {
-        if (!sessionStore.isActive) return;
+        if (!sessionStore.isActive || !videoReady ) return;
         var currentTime = youtubeInterface.getCurrentTime() - sessionStore.startTime;
         var endTime = sessionStore.endTime - sessionStore.startTime;
         var progress = Math.round((currentTime / endTime) * 100);
@@ -253,6 +255,8 @@
     var progressBarUpdateIntervalMs = 1000;
     var allowedOutOfSyncSeconds = 5;
 
+    var videoReady = false;
+
     var youtubeInterface = {
 
         onPlayerReady(event) {
@@ -266,7 +270,28 @@
             setInterval(updateCurrentProgress, progressBarUpdateIntervalMs);
         },
 
-        onPlayerStateChange(event) { },
+        onPlayerStateChange(event) {
+            console.log(event);
+            console.log(event.data);
+            var playerStatus = event.data;
+            if (!videoReady && (playerStatus == 1 || playerStatus == 2 || playerStatus == 5)) { // if player is playing, paused or queued and not already set to "running"
+                console.log("Video ready");
+                videoReady = true;
+
+                // Set progress bar attributes once per song
+                var trueSongDur = youtubeInterface.getDuration(); // TODO Lav en ordentlig debug playliste til det
+                var startProgress = Math.round((sessionStore.startTime / trueSongDur) * 100);
+                var endProgress = Math.round((sessionStore.endTime / trueSongDur) * 100);
+                console.log(trueSongDur, startProgress, endProgress, `${endProgress}%`); // TODO DEBUG, også sæt max 100% ? 
+                $("#progress-color-min-mark").width(`${startProgress}%`);  // TODO Bør for det meste være 0 length
+                $("#progress-color-max-mark").width(`${100 - endProgress}%`);  // TODO Bør for det meste være 0 length
+                $("#progress-color-max-mark").css('margin-left', `${endProgress - 1}%`); // Minus one to avoid it going over the edge at the end
+            }
+            else if (videoReady && (playerStatus == -1 || playerStatus == 0)) { // video state unstarted or ended
+                videoReady = false;
+                console.log("Video unready");
+            }
+        },
 
         playVideo() {
             player.playVideo();
