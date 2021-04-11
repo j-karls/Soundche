@@ -73,7 +73,7 @@ namespace Soundche.Web.Controllers
                 youtubeId = lastEvent.NewTrackRequest.Song.YoutubeId,
                 currentDj = lastEvent.NewTrackRequest.DJ.Name,
                 currentDjIsMe = lastEvent.NewTrackRequest.DJ.Name == User.Identity.Name.ToString(),
-                switchedSongTimeTicks = lastEvent.SwitchedSongTime.Ticks,
+                switchedSongTimeTicks = lastEvent.SwitchedSongTime.Ticks.ToString(), // Needs to be a string because JS cannot handle 64bit integers
                 activeUsers = _room.ActiveUsers,
                 activePlaylistNames = _room.GetConnectedPlaylists().pl.Select(x => x.Name)
             });
@@ -193,6 +193,21 @@ namespace Soundche.Web.Controllers
         public PartialViewResult Track()
         {
             return PartialView(new Track());
+        }
+
+        public IActionResult EditSingleTrack(string switchedSongTimeTicks, int newStartTime, int newEndTime)
+        {
+            // We assume that endtime has been checked against the total length of the song, because we get actual youtube duration on backend
+            if (_room.LastSwitchedSongEvent.SwitchedSongTime.Ticks != long.Parse(switchedSongTimeTicks)) throw new Exception("Active song not found");
+            if (_room.LastSwitchedSongEvent.NewTrackRequest.DJ.Name != User.Identity.Name) throw new Exception("Wrong dj");
+            if (_room.LastSwitchedSongEvent.NewTrackRequest.Song.StartTime < 0) throw new Exception("Start time not allowed");
+            if (_room.LastSwitchedSongEvent.NewTrackRequest.Song.StartTime >= newEndTime) throw new Exception("End time must be larger than start time");
+
+            _room.LastSwitchedSongEvent.NewTrackRequest.Song.StartTime = newStartTime;
+            _room.LastSwitchedSongEvent.NewTrackRequest.Song.EndTime = newEndTime;
+            _room.UpdateUser(_room.GetUser(User.Identity.Name));
+            // TODO Still a bug, it doesn't quite always work
+            return Ok();
         }
     }
 }

@@ -31,6 +31,13 @@
             <div id="progress-text" class="progress-percent">0%</div>
             <div id="progress-color-min-mark" class="progress-color-min-mark"></div>
             <div id="progress-color-max-mark" class="progress-color-max-mark"></div>
+            <div id="start-time-input" class="start-time-input">
+                <input id="start-time-input-text" rows="1" type="number" min="0" step="1" class="time-input-text" value="0"/>
+            </div>
+            <div id="end-time-input" class="end-time-input">
+                <input id="end-time-input-text" rows="1" type="number" min="0" step="1" class="time-input-text" value="0"/>
+                <!-- TODO only show if it's my own song-->
+            </div>
         </div>
     </div>
 
@@ -248,6 +255,16 @@
         });
     });
 
+    $('#start-time-input-text').on('blur', function () {
+        var newStart = parseInt($('#start-time-input-text').val());
+        if (sessionStore.currentDjIsMe && sessionStore.startTime != newStart) soundcheInterface.editActiveTrack(true, newStart);
+    });
+
+    $('#end-time-input-text').on('blur', function () {
+        var newEnd = parseInt($('#end-time-input-text').val());
+        if (sessionStore.currentDjIsMe && sessionStore.endTime != newEnd) soundcheInterface.editActiveTrack(false, newEnd);
+    });
+
     ////////////////////////////////
     var defaultVolume = 50;
     var updateActiveSongIntervalMs = 1000;
@@ -281,9 +298,9 @@
                 var trueSongDur = youtubeInterface.getDuration(); // TODO Lav en ordentlig debug playliste til det
                 startProgress = Math.round((sessionStore.startTime / trueSongDur) * 100);
                 var endProgress = Math.round((sessionStore.endTime / trueSongDur) * 100);
-                console.log(trueSongDur, startProgress, endProgress, `${endProgress}%`); // TODO DEBUG, også sæt max 100% ? 
-                $("#progress-color-min-mark").width(`${startProgress}%`); 
-                $("#progress-color-max-mark").width(`${100 - endProgress}%`); 
+                console.log(trueSongDur, startProgress, endProgress, `${endProgress}%`); // TODO DEBUG, også sæt max 100% ?
+                $("#progress-color-min-mark").width(`${startProgress}%`);
+                $("#progress-color-max-mark").width(`${100 - endProgress}%`);
                 $("#progress-color-max-mark").css('margin-left', `${endProgress}%`);
                 updateCurrentProgress();
             }
@@ -383,12 +400,14 @@
                 sessionStore.elapsedTime = sessionData.elapsedTime;
 
                 if (sessionStore.switchedSongTimeTicks != sessionData.switchedSongTimeTicks) { // is it a new song?
+                    console.log(sessionStore.switchedSongTimeTicks, sessionData.switchedSongTimeTicks);
+
                     sessionStore.songName = sessionData.songName;
                     sessionStore.author = sessionData.author;
                     sessionStore.startTime = sessionData.startTime;
                     sessionStore.endTime = sessionData.endTime;
                     sessionStore.youtubeId = sessionData.youtubeId;
-                    sessionStore.switchedSongTimeTicks = sessionData.switchedSongTimeTicks;
+                    sessionStore.switchedSongTimeTicks = sessionData.switchedSongTimeTicks; // Is a string because JS cannot handle 64bit long values
                     sessionStore.thumbnailUrl = `https://img.youtube.com/vi/${sessionData.youtubeId}/mqdefault.jpg`;
                     sessionStore.currentDj = sessionData.currentDj;
                     sessionStore.currentDjIsMe = sessionData.currentDjIsMe;
@@ -406,8 +425,22 @@
                     $("#current-playlists").html(`${sessionData.activePlaylistNames.length} playlists`);
                     $("#current-playlists").attr("title", sessionData.activePlaylistNames); // Adds tooltip
 
-                    if (sessionStore.currentDjIsMe) $("#current-dj-div").css("border", "solid 1px red");
-                    else $("#current-dj-div").css("border", "0px");
+                    if (sessionStore.currentDjIsMe) {
+                        $("#current-dj-div").css("border", "solid 1px red");
+                        $("#start-time-input-text").prop("disabled", false);
+                        $("#start-time-input-text").removeClass("hidden");
+                        $("#start-time-input-text").val(sessionStore.startTime);
+                        $("#end-time-input-text").prop("disabled", false);
+                        $("#end-time-input-text").removeClass("hidden");
+                        $("#end-time-input-text").val(sessionStore.endTime);
+                    }
+                    else {
+                        $("#current-dj-div").css("border", "0px");
+                        $("#start-time-input-text").prop("disabled", true);
+                        $("#end-time-input-text").prop("disabled", true);
+                        $("#start-time-input-text").addClass("hidden");
+                        $("#end-time-input-text").addClass("hidden");
+                    }
                 }
                 else soundcheInterface.synchronizePlaytime();
             }
@@ -452,33 +485,6 @@
             });
         },
 
-        viewConnectedPlaylists() {
-            $.ajax({
-                url: '@Url.Action("ViewConnectedPlaylists", "Hangout")',
-                success: function (jsondata) {
-                    var str = "-- VIEW CONNECTED PLAYLISTS --\n"
-
-                    if (jsondata.activeSongId != null) {
-                        for (var i = 0; i < jsondata.playlistSongs.length; i++) {
-                            str += "\nPLAYLIST " + jsondata.playlistNames[i] + " by " + jsondata.playlistAuthors[i] + "\n";
-
-                            for (var j = 0; j < jsondata.playlistSongs[i].length; j++) {
-                                if (jsondata.playlistSongs[i][j].youtubeId == jsondata.activeSongId) {
-                                    str += "XXX " + jsondata.playlistSongs[i][j].name + "\n";
-                                }
-                                else {
-                                    str += "--- " + jsondata.playlistSongs[i][j].name + "\n";
-                                }
-                            }
-                        }
-                        console.log(str);
-                        //alert(str); // TODO FIGURE OUT GOOD WAY TO DO THIS
-                    }
-                },
-                error: function () { alert('Failed to view connected playlists'); },
-            });
-        },
-
         viewPlaylistProgress(successfunc) {
             $.ajax({
                 url: '@Url.Action("ViewPlaylistProgress", "Hangout")',
@@ -495,6 +501,20 @@
             });
         },
 
+        editActiveTrack(isChangingStartTime, value) {
+            var start = sessionStore.startTime;
+            var end = sessionStore.endTime;
+            if (end > youtubeInterface.getDuration() || start < 0 || start >= end) return;
+
+            if (isChangingStartTime) start = value;
+            else end = value;
+            console.log(sessionStore.startTime, sessionStore.endTime, sessionStore.switchedSongTimeTicks, start, end);
+            $.ajax({
+                url: `/Hangout/EditSingleTrack?switchedSongTimeTicks=${ sessionStore.switchedSongTimeTicks }&newStartTime=${ start }&newEndTime=${ end }`,
+                success: function () { logToUi(`Changed ${ isChangingStartTime ? "start" : "end" } timer of song`); },
+                error: function () { alert(`Failed to change ${ isChangingStartTime ? "start" : "end" } time value`); },
+            });
+        },
     }
 
     // YOUTUBE API INSTANTIATION START

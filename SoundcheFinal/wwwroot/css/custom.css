@@ -361,6 +361,29 @@ button[disabled] {
     z-index: 1;
 }
 
+.start-time-input {
+    position: absolute;
+    width: 25%;
+    margin-left: 0%;
+    z-index: 2; /* Should be on top of progress bar */
+}
+
+.end-time-input {
+    position: absolute;
+    width: 25%;
+    margin-left: 75%;
+    z-index: 2; /* Should be on top of progress bar */
+}
+
+.time-input-text {
+    color: deepskyblue;
+    font-size: 1rem;
+    resize: none;
+    background-color: rgba(0, 0, 0, 0);
+    border-color: rgba(0, 0, 0, 0);
+    text-align: center;
+}
+
 /* The Modal (background) */
 .modal {
     display: none; /* Hidden by default */
