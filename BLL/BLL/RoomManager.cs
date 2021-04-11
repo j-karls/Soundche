@@ -45,7 +45,6 @@ namespace Soundche.Core.BLL
             aliveUserSessionRequests = new List<string>();
         }
 
-
         public event EventHandler<SwitchedSongEventArgs> SwitchedSongEvent;
 
         private void OnSwitchSong(object sender, SwitchedSongEventArgs e)
@@ -69,7 +68,7 @@ namespace Soundche.Core.BLL
         {
             if (newTrack == null) return;
             CurrentTrack = newTrack;
-            StartTimer((newTrack.Song.EndTime * 1000) - (newTrack.Song.StartTime * 1000)); // Convert s to ms
+            StartTimer(newTrack.Song.Playtime * 1000); // Convert s to ms
             SwitchedSongEvent(this, new SwitchedSongEventArgs(newTrack, DateTime.Now));
         }
 

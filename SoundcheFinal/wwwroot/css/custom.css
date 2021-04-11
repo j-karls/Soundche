@@ -96,7 +96,7 @@ body, html {
 .overlay {
     position: fixed;
     display: block;
-    z-index: 2;
+    z-index: 4;
     top: 0%;
     left: 50%;
     overflow-y: auto;
@@ -330,14 +330,17 @@ button[disabled] {
     width: 0%;
     height: 20px;
     transition: width 150ms;
+    z-index: 0;
 }
 
-.progress-text {
+.progress-percent {
     position: absolute;
-    display: inline-block;
-    top: 3px;
+    top: 1px;
     left: 50%;
     transform: translateX(-50%);
+    z-index: 2; /* Should be on top of progress bar */
+    color: blue;
+    font-size: 1rem;
 }
 
 .progress-color-min-mark {
@@ -346,6 +349,7 @@ button[disabled] {
     height: 20px;
     width: 0%;
     margin-left: 0%;
+    z-index: 1;
 }
 
 .progress-color-max-mark {
@@ -354,13 +358,14 @@ button[disabled] {
     height: 20px;
     width: 0%;
     margin-left: 0%;
+    z-index: 1;
 }
 
 /* The Modal (background) */
 .modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    z-index: 3; /* Sit on top */
     padding-top: 100px; /* Location of the box */
     left: 0;
     top: 0;

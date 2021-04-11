@@ -105,6 +105,7 @@
     function logToUi(text) {
         var textarea = $('#text-cmds');
         textarea.val(textarea.val() + text + '\n');
+        textarea.scrollTop = textarea.scrollHeight; // Always scroll down when new text appears
     }
 
     function disableElements(arguments) {
@@ -151,9 +152,7 @@
 
     function updateCurrentProgress() {
         if (!sessionStore.isActive || !videoReady ) return;
-        var currentTime = youtubeInterface.getCurrentTime() - sessionStore.startTime;
-        var endTime = sessionStore.endTime - sessionStore.startTime;
-        var progress = Math.round((currentTime / endTime) * 100);
+        var progress = Math.round((youtubeInterface.getCurrentTime() / youtubeInterface.getDuration()) * 100);
         if (isNaN(progress)) return;
 
         console.log(progress);
@@ -217,7 +216,7 @@
     $('#vol-control').on('input', function () {
         // This one is for updating while dragging the volume slider
         youtubeInterface.setVolume(this.value);
-    });
+    });0
 
     $('#vol-control').on('change', function () {0
         // This one catches when you release the slider
@@ -254,7 +253,7 @@
     var updateActiveSongIntervalMs = 1000;
     var progressBarUpdateIntervalMs = 1000;
     var allowedOutOfSyncSeconds = 5;
-
+    var startProgress = 0; // How many percent offset the progress bar should have for the current song
     var videoReady = false;
 
     var youtubeInterface = {
@@ -280,12 +279,13 @@
 
                 // Set progress bar attributes once per song
                 var trueSongDur = youtubeInterface.getDuration(); // TODO Lav en ordentlig debug playliste til det
-                var startProgress = Math.round((sessionStore.startTime / trueSongDur) * 100);
+                startProgress = Math.round((sessionStore.startTime / trueSongDur) * 100);
                 var endProgress = Math.round((sessionStore.endTime / trueSongDur) * 100);
                 console.log(trueSongDur, startProgress, endProgress, `${endProgress}%`); // TODO DEBUG, også sæt max 100% ? 
-                $("#progress-color-min-mark").width(`${startProgress}%`);  // TODO Bør for det meste være 0 length
-                $("#progress-color-max-mark").width(`${100 - endProgress}%`);  // TODO Bør for det meste være 0 length
-                $("#progress-color-max-mark").css('margin-left', `${endProgress - 1}%`); // Minus one to avoid it going over the edge at the end
+                $("#progress-color-min-mark").width(`${startProgress}%`); 
+                $("#progress-color-max-mark").width(`${100 - endProgress}%`); 
+                $("#progress-color-max-mark").css('margin-left', `${endProgress}%`);
+                updateCurrentProgress();
             }
             else if (videoReady && (playerStatus == -1 || playerStatus == 0)) { // video state unstarted or ended
                 videoReady = false;
@@ -396,7 +396,7 @@
                     sessionStore.activePlaylistNames = sessionData.activePlaylistNames;
 
                     console.log(sessionStore);
-                    youtubeInterface.loadVideo(sessionStore.youtubeId, sessionStore.elapsedTime);
+                    youtubeInterface.loadVideo(sessionStore.youtubeId, sessionStore.startTime);
                     // setSongStyles(sessionData.djInfo);
                     $("#song-img").attr("src", sessionStore.thumbnailUrl);
                     $("#song-info").html(`${sessionData.author} - ${sessionData.songName}`);
@@ -415,8 +415,8 @@
 
         synchronizePlaytime() {
             if (sessionStore.isActive) {
-                if (Math.abs(sessionStore.elapsedTime - youtubeInterface.getCurrentTime()) > allowedOutOfSyncSeconds)
-                    youtubeInterface.loadVideo(sessionStore.youtubeId, sessionStore.elapsedTime);
+                if (Math.abs((sessionStore.startTime + sessionStore.elapsedTime) - youtubeInterface.getCurrentTime()) > allowedOutOfSyncSeconds)
+                    youtubeInterface.loadVideo(sessionStore.youtubeId, sessionStore.startTime + sessionStore.elapsedTime);
             }
         },
 
