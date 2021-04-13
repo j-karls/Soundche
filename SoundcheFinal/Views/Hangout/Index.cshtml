@@ -344,11 +344,11 @@
         },
 
         getDuration() {
-            return player.getDuration()
+            return Math.ceil(player.getDuration())
         },
 
         getCurrentTime() {
-            return player.getCurrentTime()
+            return Math.ceil(player.getCurrentTime())
         },
 
         loadVideo(videoId, startSeconds) {
@@ -504,6 +504,9 @@
         editActiveTrack(isChangingStartTime, value) {
             var start = sessionStore.startTime;
             var end = sessionStore.endTime;
+            console.log(value, start, end, youtubeInterface.getDuration());
+            console.log(end > youtubeInterface.getDuration(), start < 0, start >= end);
+
             if (end > youtubeInterface.getDuration() || start < 0 || start >= end) return;
 
             if (isChangingStartTime) start = value;

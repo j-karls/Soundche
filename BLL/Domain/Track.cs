@@ -34,5 +34,7 @@ namespace Soundche.Core.Domain
         {
             return Exclude ? $"({Name})" : Name;
         }
+
+        public bool IsSameSong(Track track) => YoutubeId == track.YoutubeId;
     }
 }

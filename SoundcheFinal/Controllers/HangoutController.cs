@@ -198,15 +198,26 @@ namespace Soundche.Web.Controllers
         public IActionResult EditSingleTrack(string switchedSongTimeTicks, int newStartTime, int newEndTime)
         {
             // We assume that endtime has been checked against the total length of the song, because we get actual youtube duration on backend
-            if (_room.LastSwitchedSongEvent.SwitchedSongTime.Ticks != long.Parse(switchedSongTimeTicks)) throw new Exception("Active song not found");
-            if (_room.LastSwitchedSongEvent.NewTrackRequest.DJ.Name != User.Identity.Name) throw new Exception("Wrong dj");
-            if (_room.LastSwitchedSongEvent.NewTrackRequest.Song.StartTime < 0) throw new Exception("Start time not allowed");
-            if (_room.LastSwitchedSongEvent.NewTrackRequest.Song.StartTime >= newEndTime) throw new Exception("End time must be larger than start time");
+            SwitchedSongEventArgs lastEvent = _room.LastSwitchedSongEvent;
+            if (lastEvent.SwitchedSongTime.Ticks != long.Parse(switchedSongTimeTicks)) throw new Exception("Active song not found");
+            if (lastEvent.NewTrackRequest.DJ.Name != User.Identity.Name) throw new Exception("Wrong dj");
+            if (lastEvent.NewTrackRequest.Song.StartTime < 0) throw new Exception("Start time not allowed");
+            if (lastEvent.NewTrackRequest.Song.StartTime >= newEndTime) throw new Exception("End time must be larger than start time");
 
-            _room.LastSwitchedSongEvent.NewTrackRequest.Song.StartTime = newStartTime;
-            _room.LastSwitchedSongEvent.NewTrackRequest.Song.EndTime = newEndTime;
-            _room.UpdateUser(_room.GetUser(User.Identity.Name));
-            // TODO Still a bug, it doesn't quite always work
+            // Change the running song in the current deserialized playlist
+            lastEvent.NewTrackRequest.Song.StartTime = newStartTime; 
+            lastEvent.NewTrackRequest.Song.EndTime = newEndTime;
+
+            // Change the song in the database
+            var usr = _room.GetUser(User.Identity.Name);
+            Playlist playlist = usr.GetPlaylist(lastEvent.NewTrackRequest.PlaylistName);
+            List<Track> tracks = playlist.Tracks.FindAll(x => x.IsSameSong(lastEvent.NewTrackRequest.Song));
+            foreach (Track track in tracks)
+            {
+                track.StartTime = newStartTime;
+                track.EndTime = newEndTime;
+            }
+            _room.UpdateUser(usr);
             return Ok();
         }
     }
