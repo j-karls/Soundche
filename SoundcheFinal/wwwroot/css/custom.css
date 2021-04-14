@@ -148,8 +148,7 @@ body, html {
     height: 5%;
 
     grid-template-areas:
-        "status-lineleft status-status status-lineright"
-        "status-user     status-empty  status-playlists";
+        "status-user status-status status-playlists";
 
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(2, 1fr);
@@ -160,11 +159,8 @@ body, html {
     font-size: small;
 }
 
-.hangout-status-left        { grid-area: status-lineleft }
 .hangout-status-status      { grid-area: status-status }
-.hangout-status-lineright   { grid-area: status-lineright }
 .hangout-status-user        { grid-area: status-user }
-.hangout-status-empty       { grid-area: status-empty }
 .hangout-status-playlists   { grid-area: status-playlists }
 
 .hangout-btn-grid-main {
